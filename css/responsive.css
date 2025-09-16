@@ -1,0 +1,1113 @@
+/* ========================================= */
+/* SANGGONG 반응형 디자인 시스템 v2.0 */
+/* ========================================= */
+
+/* 반응형 브레이크포인트 정의 */
+/* 
+  - Mobile: 320px ~ 767px
+  - Tablet: 768px ~ 1023px  
+  - Desktop: 1024px ~ 1439px
+  - Large Desktop: 1440px+
+*/
+
+/* ========================================= */
+/* 1. Typography Scale - Mobile First */
+/* ========================================= */
+
+html {
+    font-size: 14px; /* Base for mobile */
+    -webkit-text-size-adjust: 100%; /* iOS 텍스트 크기 조정 방지 */
+}
+
+@media (min-width: 768px) {
+    html { font-size: 15px; }
+}
+
+@media (min-width: 1024px) {
+    html { font-size: 25px; }
+}
+
+/* ========================================= */
+/* 2. Container System */
+/* ========================================= */
+
+.container {
+    width: 100%;
+    padding: 0 15px;
+    margin: 0 auto;
+}
+
+@media (min-width: 576px) {
+    .container { 
+        max-width: 540px;
+        padding: 0 20px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container { 
+        max-width: 720px; 
+        padding: 0 24px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container { 
+        max-width: 960px; 
+    }
+}
+
+@media (min-width: 1200px) {
+    .container { 
+        max-width: 1140px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .container { 
+        max-width: 1320px; 
+    }
+}
+
+/* ========================================= */
+/* 3. Header & Navigation - Mobile First */
+/* ========================================= */
+
+/* Mobile Navigation Overlay */
+.mobile-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+@media (max-width: 991px) {
+    .header {
+        padding: 12px 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .nav-container {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    /* Logo 크기 조정 */
+    .nav-logo {
+        font-size: 1.2rem;
+    }
+    
+    .logo-symbol {
+        font-size: 1.4rem;
+    }
+    
+    /* Mobile Menu */
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background: white;
+        flex-direction: column;
+        padding: 70px 20px 30px;
+        transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -2px 0 20px rgba(0, 0, 0, 0.1);
+        z-index: 999;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch; /* iOS smooth scroll */
+    }
+    
+    .nav-menu.active {
+        right: 0;
+    }
+    
+    .nav-item {
+        width: 100%;
+        margin: 0;
+        opacity: 0;
+        animation: slideIn 0.3s ease forwards;
+    }
+    
+    .nav-menu.active .nav-item {
+        opacity: 1;
+    }
+    
+    .nav-item:nth-child(1) { animation-delay: 0.1s; }
+    .nav-item:nth-child(2) { animation-delay: 0.15s; }
+    .nav-item:nth-child(3) { animation-delay: 0.2s; }
+    .nav-item:nth-child(4) { animation-delay: 0.25s; }
+    .nav-item:nth-child(5) { animation-delay: 0.3s; }
+    .nav-item:nth-child(6) { animation-delay: 0.35s; }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    .nav-link {
+        font-size: 16px;
+        padding: 15px 10px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        display: block;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+    
+    .nav-link:active {
+        background: var(--color-accent-highlight);
+    }
+    
+    .nav-link.active::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 20px;
+        background: var(--color-primary-main);
+    }
+    
+    /* Hamburger Menu Animation */
+    .nav-toggle {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        width: 30px;
+        height: 30px;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 5px;
+        z-index: 1001;
+        position: relative;
+    }
+    
+    .nav-toggle span {
+        width: 24px;
+        height: 2px;
+        background: var(--color-primary-dark);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: block;
+        transform-origin: center;
+    }
+    
+    .nav-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+    
+    .nav-toggle.active span:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+    }
+    
+    .nav-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+    }
+    
+    /* Nav Actions Mobile */
+    .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .btn-ai-gallo {
+        display: none;
+    }
+    
+    .nav-phone {
+        display: none;
+    }
+    
+    .nav-search {
+        padding: 8px;
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 576px) {
+    .nav-menu {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .top-bar-text {
+        font-size: 11px;
+    }
+}
+
+/* ========================================= */
+/* 4. Hero Section - Mobile Optimized */
+/* ========================================= */
+
+@media (max-width: 991px) {
+    .hero-business {
+        padding: 60px 0;
+        min-height: auto;
+    }
+    
+    .hero-content {
+        padding: 0 15px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .hero-title {
+        font-size: clamp(2.5rem, 8vw, 4rem);
+        line-height: 1.1;
+        margin-bottom: 40px;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .hero-subtitle {
+        font-size: clamp(14px, 2.5vw, 16px);
+        padding: 0;
+        line-height: 1.6;
+        max-width: 90%;
+        margin: 0 auto 30px;
+        text-align: center;
+    }
+    
+    /* Business Tags */
+    .business-tags {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 0;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .tag {
+        padding: 10px 18px;
+        font-size: 13px;
+        min-height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-business {
+        padding: 40px 0;
+    }
+    
+    .hero-content {
+        padding: 0 10px;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+        margin-bottom: 30px;
+    }
+    
+    .hero-subtitle {
+        font-size: 13px;
+        max-width: 100%;
+        margin-bottom: 25px;
+    }
+    
+    .business-tags {
+        gap: 6px;
+    }
+    
+    .tag {
+        padding: 8px 14px;
+        font-size: 12px;
+        flex: 0 1 calc(50% - 4px);
+    }
+}
+
+/* ========================================= */
+/* 5. Carousel Section - Touch Optimized */
+/* ========================================= */
+
+@media (max-width: 991px) {
+    .carousel-section {
+        height: auto;
+        min-height: 450px;
+        padding: 60px 0;
+    }
+    
+    .carousel-container {
+        position: relative;
+    }
+    
+    .slide-content {
+        padding: 40px 20px;
+        text-align: center;
+    }
+    
+    .slide-title {
+        font-size: clamp(1.8rem, 5vw, 2.5rem);
+        margin-bottom: 20px;
+    }
+    
+    .slide-subtitle {
+        font-size: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .slide-description {
+        font-size: 14px;
+        line-height: 1.7;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    
+    /* Touch-friendly controls */
+    .carousel-prev,
+    .carousel-next {
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .carousel-prev { left: 10px; }
+    .carousel-next { right: 10px; }
+    
+    /* Touch swipe area */
+    .carousel-slides {
+        touch-action: pan-y;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    
+    .carousel-indicators {
+        bottom: 20px;
+        gap: 8px;
+    }
+    
+    .indicator {
+        width: 8px;
+        height: 8px;
+        padding: 0;
+        min-width: auto;
+        min-height: auto;
+    }
+    
+    .indicator.active {
+        width: 24px;
+    }
+}
+
+@media (max-width: 576px) {
+    .carousel-section {
+        min-height: 400px;
+        padding: 40px 0;
+    }
+    
+    .slide-content {
+        padding: 30px 15px;
+    }
+    
+    .slide-title {
+        font-size: 1.5rem;
+    }
+    
+    .slide-description {
+        font-size: 13px;
+    }
+    
+    .slide-description br {
+        display: none; /* Remove line breaks on mobile */
+    }
+}
+
+/* ========================================= */
+/* 6. Services Grid - Responsive Cards */
+/* ========================================= */
+
+@media (max-width: 1199px) {
+    .services-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 991px) {
+    .services-section {
+        padding: 60px 0;
+    }
+    
+    .section-header {
+        margin-bottom: 40px;
+        padding: 0 15px;
+    }
+    
+    .section-title {
+        font-size: clamp(1.8rem, 5vw, 2.5rem);
+    }
+    
+    .section-subtitle {
+        font-size: 15px;
+        margin-top: 15px;
+    }
+    
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        padding: 0 15px;
+    }
+    
+    .service-card {
+        padding: 25px 15px;
+        min-height: 260px;
+    }
+    
+    .card-icon-wrapper {
+        margin-bottom: 20px;
+    }
+    
+    .card-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .card-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .card-title {
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+    
+    .card-description {
+        font-size: 13px;
+        line-height: 1.6;
+    }
+    
+    .card-description br {
+        display: none;
+    }
+    
+    .card-link {
+        margin-top: 15px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 576px) {
+    .services-section {
+        padding: 40px 0;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .service-card {
+        min-height: auto;
+        padding: 20px;
+    }
+    
+    .card-icon {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+/* ========================================= */
+/* 7. Statistics Section - Mobile */
+/* ========================================= */
+
+@media (max-width: 991px) {
+    .statistics-section {
+        padding: 60px 0;
+    }
+    
+    .stats-container {
+        padding: 0 15px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+    
+    .stat-card {
+        padding: 30px 20px;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .stat-question {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .stat-answer {
+        text-align: center;
+    }
+    
+    .stat-number {
+        justify-content: center;
+    }
+    
+    .stat-number .number {
+        font-size: clamp(2.5rem, 8vw, 3.5rem);
+    }
+    
+    .stat-number .suffix {
+        font-size: clamp(1.2rem, 4vw, 1.8rem);
+    }
+    
+    /* Hide decorative elements on mobile */
+    .bg-line,
+    .bg-circle {
+        display: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .statistics-section {
+        padding: 40px 0;
+    }
+    
+    .stats-title {
+        font-size: 1.8rem;
+    }
+    
+    .stat-card {
+        padding: 25px 15px;
+    }
+    
+    .stat-question-text {
+        font-size: 15px;
+        display: block;
+    }
+}
+
+/* ========================================= */
+/* 8. Portfolio Grid - Mobile Gallery */
+/* ========================================= */
+
+@media (max-width: 1199px) {
+    .portfolio-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .portfolio-section {
+        padding: 60px 0;
+    }
+    
+    .portfolio-header {
+        margin-bottom: 40px;
+        padding: 0 15px;
+    }
+    
+    .portfolio-title {
+        font-size: clamp(2rem, 6vw, 3rem);
+    }
+    
+    .portfolio-subtitle {
+        font-size: 14px;
+    }
+    
+    .portfolio-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 0 15px;
+    }
+    
+    .portfolio-card {
+        margin: 0;
+        cursor: pointer;
+    }
+    
+    .portfolio-image {
+        height: 200px;
+    }
+    
+    .portfolio-overlay {
+        padding: 30px;
+    }
+    
+    .portfolio-graphic {
+        transform: scale(0.8);
+    }
+    
+    .portfolio-content {
+        padding: 20px;
+    }
+    
+    .portfolio-category {
+        font-size: 12px;
+    }
+    
+    .portfolio-name {
+        font-size: 16px;
+    }
+    
+    .btn-all-works {
+        padding: 14px 30px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 576px) {
+    .portfolio-section {
+        padding: 40px 0;
+    }
+    
+    .portfolio-image {
+        height: 180px;
+    }
+    
+    .portfolio-footer {
+        margin-top: 30px;
+    }
+}
+
+/* ========================================= */
+/* 9. Editorial Section - Mobile Layout */
+/* ========================================= */
+
+@media (max-width: 991px) {
+    .editorial-section {
+        padding: 60px 0;
+    }
+    
+    .editorial-container {
+        padding: 0 15px;
+    }
+    
+    .editorial-content {
+        flex-direction: column;
+        gap: 40px;
+    }
+    
+    .editorial-left {
+        max-width: 100%;
+        text-align: center;
+    }
+    
+    .editorial-title {
+        font-size: clamp(2rem, 6vw, 3rem);
+        margin-bottom: 20px;
+    }
+    
+    .editorial-description {
+        font-size: 14px;
+        line-height: 1.7;
+    }
+    
+    .editorial-description br {
+        display: none;
+    }
+    
+    .editorial-right {
+        width: 100%;
+    }
+    
+    .editorial-grid {
+        gap: 10px;
+        height: auto;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(3, 150px);
+    }
+    
+    .editorial-item {
+        position: relative;
+    }
+    
+    .editorial-item.item-1 { grid-column: 1; grid-row: 1; }
+    .editorial-item.item-2 { grid-column: 2; grid-row: 1; }
+    .editorial-item.item-3 { grid-column: 1; grid-row: 2; }
+    .editorial-item.item-4 { grid-column: 2; grid-row: 2; }
+    .editorial-item.item-5 { grid-column: 1; grid-row: 3; }
+    .editorial-item.item-6 { grid-column: 2; grid-row: 3; }
+}
+
+@media (max-width: 576px) {
+    .editorial-section {
+        padding: 40px 0;
+    }
+    
+    .editorial-grid {
+        grid-template-rows: repeat(3, 120px);
+        gap: 8px;
+    }
+    
+    .editorial-label {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+}
+
+/* ========================================= */
+/* 10. Partners Section - Mobile Scroll */
+/* ========================================= */
+
+@media (max-width: 991px) {
+    .partners-section {
+        padding: 60px 0;
+    }
+    
+    .partners-header {
+        margin-bottom: 30px;
+    }
+    
+    .partners-title {
+        font-size: clamp(1.8rem, 5vw, 2.5rem);
+    }
+    
+    .partners-subtitle {
+        font-size: 14px;
+    }
+    
+    .partner-item {
+        padding: 15px;
+    }
+    
+    .partner-logo {
+        width: 60px;
+        height: 60px;
+        font-size: 20px;
+    }
+    
+    .partner-name {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 576px) {
+    .partners-section {
+        padding: 40px 0;
+    }
+    
+    .partners-slider {
+        height: 120px;
+    }
+    
+    .partner-item {
+        padding: 10px;
+    }
+    
+    .partner-logo {
+        width: 50px;
+        height: 50px;
+        font-size: 18px;
+    }
+    
+    .partner-name {
+        font-size: 10px;
+        margin-top: 5px;
+    }
+}
+
+/* ========================================= */
+/* 11. CTA Section - Mobile Optimized */
+/* ========================================= */
+
+@media (max-width: 991px) {
+    .cta-section {
+        padding: 80px 0;
+    }
+    
+    .cta-container {
+        padding: 0 15px;
+    }
+    
+    .cta-title {
+        font-size: clamp(2rem, 6vw, 3rem);
+        line-height: 1.3;
+    }
+    
+    .cta-button-wrapper {
+        margin-top: 40px;
+    }
+    
+    .cta-button {
+        padding: 16px 48px;
+        font-size: 16px;
+    }
+    
+    .cta-hover-content {
+        display: none; /* Disable hover on mobile */
+    }
+}
+
+@media (max-width: 576px) {
+    .cta-section {
+        padding: 60px 0;
+    }
+    
+    .cta-title {
+        font-size: 1.5rem;
+    }
+    
+    .text-line {
+        display: block;
+        line-height: 1.4;
+    }
+    
+    .cta-button {
+        padding: 14px 40px;
+        font-size: 15px;
+    }
+}
+
+/* ========================================= */
+/* 12. Footer - Mobile Stack */
+/* ========================================= */
+
+@media (max-width: 991px) {
+    .footer {
+        padding: 50px 0 20px;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        text-align: center;
+    }
+    
+    .footer-info {
+        margin-bottom: 20px;
+    }
+    
+    .footer-logo {
+        font-size: 1.5rem;
+    }
+    
+    .footer-contact {
+        padding-left: 0;
+        border-left: none;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .footer-links {
+        flex-direction: row;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .footer-text {
+        font-size: 13px;
+        line-height: 1.8;
+    }
+    
+    .footer-link {
+        font-size: 13px;
+        padding: 8px;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer {
+        padding: 40px 0 20px;
+    }
+    
+    .footer-logo {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+    }
+    
+    .footer-copyright {
+        font-size: 11px;
+    }
+}
+
+/* ========================================= */
+/* 13. Touch Device Optimization */
+/* ========================================= */
+
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    button,
+    a,
+    .nav-link,
+    .tag,
+    .card-link,
+    .cta-button {
+        min-height: 44px;
+        min-width: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Remove hover effects */
+    .service-card:hover,
+    .portfolio-card:hover,
+    .tag:hover {
+        transform: none;
+    }
+    
+    /* Better touch feedback */
+    button:active,
+    a:active,
+    .tag:active {
+        opacity: 0.7;
+        transform: scale(0.98);
+        transition: all 0.1s ease;
+    }
+    
+    /* Disable hover animations */
+    .card-overlay {
+        display: none;
+    }
+    
+    /* Smooth scrolling */
+    * {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* ========================================= */
+/* 14. Utility Classes - Responsive */
+/* ========================================= */
+
+/* Visibility Classes */
+@media (max-width: 576px) {
+    .hide-mobile { display: none !important; }
+    .show-mobile { display: block !important; }
+    .show-mobile-flex { display: flex !important; }
+    .show-mobile-inline { display: inline !important; }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    .hide-tablet-sm { display: none !important; }
+    .show-tablet-sm { display: block !important; }
+}
+
+@media (min-width: 769px) and (max-width: 991px) {
+    .hide-tablet { display: none !important; }
+    .show-tablet { display: block !important; }
+}
+
+@media (min-width: 992px) {
+    .hide-desktop { display: none !important; }
+    .show-desktop { display: block !important; }
+}
+
+/* Text Alignment */
+@media (max-width: 768px) {
+    .text-center-mobile { text-align: center !important; }
+    .text-left-mobile { text-align: left !important; }
+    .text-right-mobile { text-align: right !important; }
+}
+
+/* Spacing Utilities */
+@media (max-width: 768px) {
+    .p-mobile-0 { padding: 0 !important; }
+    .p-mobile-1 { padding: var(--spacing-xs) !important; }
+    .p-mobile-2 { padding: var(--spacing-sm) !important; }
+    .p-mobile-3 { padding: var(--spacing-md) !important; }
+    
+    .m-mobile-0 { margin: 0 !important; }
+    .m-mobile-1 { margin: var(--spacing-xs) !important; }
+    .m-mobile-2 { margin: var(--spacing-sm) !important; }
+    .m-mobile-3 { margin: var(--spacing-md) !important; }
+}
+
+/* ========================================= */
+/* 15. Performance Optimizations */
+/* ========================================= */
+
+/* Reduce animations on low-end devices */
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Optimize images for mobile */
+@media (max-width: 768px) {
+    img {
+        max-width: 100%;
+        height: auto;
+        image-rendering: -webkit-optimize-contrast;
+    }
+}
+
+/* ========================================= */
+/* 16. Print Styles */
+/* ========================================= */
+
+@media print {
+    /* Hide unnecessary elements */
+    .nav-toggle,
+    .carousel-prev,
+    .carousel-next,
+    .carousel-indicators,
+    .top-bar,
+    .nav-actions,
+    .partners-section,
+    .cta-section,
+    .mobile-overlay {
+        display: none !important;
+    }
+    
+    /* Adjust layout for print */
+    .services-grid,
+    .stats-grid,
+    .portfolio-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Remove backgrounds and shadows */
+    * {
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+    
+    /* Ensure links are visible */
+    a[href]::after {
+        content: " (" attr(href) ")";
+        font-size: 0.8em;
+        color: #666;
+    }
+}

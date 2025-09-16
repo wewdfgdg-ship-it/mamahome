@@ -1,0 +1,90 @@
+/* 헤더 스타일 */
+.header {
+    background: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    position: relative;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.header .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 로고 스타일 */
+.logo a {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+}
+
+.logo-m {
+    color: #00d4aa;
+    font-weight: bold;
+    font-size: 28px;
+    margin-right: 5px;
+}
+
+.logo-text {
+    color: #333;
+    font-weight: 500;
+}
+/* 네비게이션 메뉴 */
+.main-nav {
+    display: flex;
+    align-items: center;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 40px;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    font-weight: 400;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: #00d4aa;
+}
+
+.nav-link.active {
+    color: #00d4aa !important;
+    font-weight: 600 !important;
+}
+
+/* 하단 서브텍스트 */
+.header-subtext {
+    text-align: center;
+    padding: 10px;
+    background: #f8f8f8;
+    color: #666;
+    font-size: 14px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .header .container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .nav-menu {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+}

@@ -1,0 +1,64 @@
+/* CSS Variables - SANGGONG Theme System */
+:root {
+    /* Primary Colors - 주요 브랜드 색상 */
+    --color-primary-main: rgb(41, 212, 193);  /* 민트 그린 - CTA, 강조 */
+    --color-primary-dark: rgb(46, 46, 47);    /* 다크 그레이 - 헤더, 제목 */
+    --color-primary-light: rgb(102, 102, 102); /* 라이트 그레이 - 보조 */
+    
+    /* Background Colors - 배경색 */
+    --color-bg-primary: rgb(255, 255, 255);    /* 흰색 - 메인 배경 */
+    --color-bg-secondary: rgb(0, 0, 0);        /* 검정 - 다크 섹션 */
+    --color-bg-overlay: rgba(0, 0, 0, 0.8);    /* 오버레이 */
+    
+    /* Text Colors - 텍스트 색상 */
+    --color-text-primary: rgb(32, 33, 31);     /* 메인 텍스트 */
+    --color-text-secondary: rgb(153, 153, 153); /* 보조 텍스트 */
+    --color-text-light: rgb(255, 255, 255);    /* 밝은 배경용 텍스트 */
+    --color-text-muted: rgb(189, 189, 189);    /* 비활성 텍스트 */
+    
+    /* Accent Colors - 강조 색상 */
+    --color-accent-highlight: rgb(253, 249, 207); /* 하이라이트 */
+    --color-accent-hover: rgb(41, 212, 193);     /* 호버 효과 */
+    
+    /* Font Families */
+    --font-primary: 'Noto Sans KR', sans-serif;    /* 한글 본문 */
+    --font-secondary: 'Poppins', sans-serif;       /* 영문 제목 */
+    --font-tertiary: 'Montserrat', sans-serif;     /* 영문 보조 */
+    
+    /* Spacing System */
+    --spacing-xs: 8px;    /* 최소 간격 */
+    --spacing-sm: 16px;   /* 작은 간격 */
+    --spacing-md: 24px;   /* 중간 간격 */    --spacing-lg: 32px;   /* 큰 간격 */
+    --spacing-xl: 48px;   /* 특대 간격 */
+    --spacing-2xl: 64px;  /* 섹션 간격 (소) */
+    --spacing-3xl: 100px; /* 섹션 간격 (중) */
+    --spacing-4xl: 200px; /* 섹션 간격 (대) */
+    
+    /* Transitions */
+    --transition-default: all 0.3s ease;
+    --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.5s ease-in-out;
+    
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-pill: 50px;
+    --radius-full: 50%;
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+    --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.25);
+    
+    /* Container */
+    --container-width: 1200px;
+    --container-padding: var(--spacing-md);
+    
+    /* Z-index */
+    --z-header: 1000;
+    --z-modal: 2000;
+    --z-tooltip: 3000;
+}

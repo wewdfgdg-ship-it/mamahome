@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>페이앱 결제 - Mrble</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f7;
+        }
+        .payment-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #1d1d1f;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background: #f5f5f7;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .info-label {
+            color: #666;
+        }
+        .info-value {
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+        .payment-button {
+            width: 100%;
+            padding: 16px;
+            background: rgb(41, 212, 193);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .payment-button:hover {
+            background: rgb(30, 180, 165);
+            transform: translateY(-2px);
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <h2>페이앱 결제</h2>
+        
+        <div id="loading" class="loading">
+            결제 정보를 불러오는 중...
+        </div>
+        
+        <div id="payment-info" style="display: none;">
+            <div class="info-box">
+                <div class="info-row">
+                    <span class="info-label">상품명</span>
+                    <span class="info-value" id="goodname">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">결제금액</span>
+                    <span class="info-value" id="price">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">구매자</span>
+                    <span class="info-value" id="buyer">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">연락처</span>
+                    <span class="info-value" id="phone">-</span>
+                </div>
+            </div>
+            
+            <button class="payment-button" onclick="requestPayment()">
+                결제 요청하기
+            </button>
+            
+            <p style="margin-top: 20px; color: #666; font-size: 14px; text-align: center;">
+                결제 요청 후 SMS로 전송된 링크를 통해 결제를 완료해주세요.
+            </p>
+        </div>
+        
+        <div id="result" style="display: none;">
+            <div class="info-box" style="text-align: center;">
+                <h3 id="result-title">-</h3>
+                <p id="result-message">-</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // URL 파라미터 파싱
+        const params = new URLSearchParams(window.location.search);
+        const paymentData = {
+            userid: params.get('userid'),
+            linkkey: params.get('linkkey'),
+            goodname: params.get('goodname'),
+            price: params.get('price'),
+            recvphone: params.get('recvphone'),
+            buyer: params.get('buyer'),
+            email: params.get('email'),
+            memo: params.get('memo')
+        };
+        
+        // 결제 정보 표시
+        window.onload = function() {
+            if (paymentData.goodname) {
+                document.getElementById('goodname').textContent = paymentData.goodname;
+                document.getElementById('price').textContent = parseInt(paymentData.price).toLocaleString() + '원';
+                document.getElementById('buyer').textContent = paymentData.buyer || '-';
+                document.getElementById('phone').textContent = paymentData.recvphone || '-';
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('payment-info').style.display = 'block';
+            } else {
+                document.getElementById('loading').innerHTML = '결제 정보가 없습니다.';
+            }
+        };
+        
+        // 페이앱 즉시 결제 실행
+        function requestPayment() {
+            const button = document.querySelector('.payment-button');
+            button.disabled = true;
+            button.textContent = '결제창으로 이동 중...';
+            
+            // 페이앱 결제 URL 생성 (GET 방식)
+            const payUrl = 'https://api.payapp.kr/oapi/apiLoad.html';
+            const params = new URLSearchParams({
+                cmd: 'paystart',  // payrequest 대신 paystart 사용 (즉시 결제)
+                userid: paymentData.userid,
+                linkkey: paymentData.linkkey,
+                goodname: paymentData.goodname,
+                price: paymentData.price,
+                recvphone: paymentData.recvphone.replace(/-/g, ''),
+                memo: paymentData.memo || '',
+                feedbackurl: 'https://meble.kr/api/payment/callback',
+                returnurl: window.location.origin + '/payment-complete.html',
+                var1: 'blog',
+                var2: paymentData.email || ''
+            });
+            
+            // 결제 페이지로 리다이렉트
+            const paymentUrl = payUrl + '?' + params.toString();
+            console.log('결제 URL:', paymentUrl);
+            
+            // 현재 창에서 결제 페이지로 이동
+            window.location.href = paymentUrl;
+            
+            // 또는 iframe으로 표시
+            // document.getElementById('payment-info').style.display = 'none';
+            // document.getElementById('result').innerHTML = 
+            //     '<iframe src="' + paymentUrl + '" width="100%" height="600" frameborder="0"></iframe>';
+            // document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

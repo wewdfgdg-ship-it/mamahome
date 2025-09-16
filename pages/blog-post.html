@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading... - Mrble</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    
+    <style>
+        .blog-post-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 80px 20px;
+            min-height: 100vh;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #29d4c1;
+            text-decoration: none;
+            margin-bottom: 30px;
+            transition: transform 0.2s;
+        }
+        
+        .back-button:hover {
+            transform: translateX(-5px);
+        }
+        
+        .post-header {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .post-category {
+            display: inline-block;
+            background: #29d4c1;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+        
+        .post-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2e2e2f;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        
+        .post-meta {
+            display: flex;
+            gap: 20px;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .post-excerpt {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-left: 4px solid #29d4c1;
+        }
+        
+        .post-content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #333;
+        }
+        
+        .post-content h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 30px 0 15px;
+            color: #2e2e2f;
+        }
+        
+        .post-content h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 25px 0 12px;
+            color: #2e2e2f;
+        }
+        
+        .post-content p {
+            margin-bottom: 20px;
+        }
+        
+        .post-content ul, .post-content ol {
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+        
+        .post-content li {
+            margin-bottom: 10px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 100px 20px;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #29d4c1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            text-align: center;
+            padding: 50px;
+            color: #ff4444;
+        }
+        
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: #f0f0f0;
+            color: #666;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav-container">
+                <a href="../index.html" class="nav-logo">
+                    <span class="logo-text">Mrble</span>
+                </a>                
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="../index.html#about" class="nav-link">미블체험단</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../pages/press.html" class="nav-link active">마케팅정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../pages/pricing.html" class="nav-link">마케팅상품</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.mrblog.net" class="nav-link" target="_blank">미블홈페이지</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Blog Post Content -->
+    <div class="blog-post-container">
+        <a href="./press.html" class="back-button">
+            ← 목록으로 돌아가기
+        </a>
+        
+        <div id="postContent" class="loading">
+            <div class="loading-spinner"></div>
+            <p>포스트를 불러오는 중...</p>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="simple-footer">
+        <div class="container">
+            <div class="footer-wrapper">
+                <div class="footer-customer">
+                    <div class="footer-title">미블문의</div>
+                    <div class="footer-phone">010-7362-7711</div>
+                </div>
+                <div class="footer-info">
+                    <div class="footer-title">Info.</div>
+                    <div class="footer-info-text">상호명 : 미블(Mrble) | 대표 : 안소연 | 사업자등록번호 : 165-88-02749</div>
+                    <div class="footer-info-text">주소 : 서울특별시 광진구 천호대로 571</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // URL 파라미터에서 slug 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const slug = urlParams.get('slug');
+        
+        // Notion 콘텐츠 렌더링 함수
+        function renderNotionContent(post) {
+            const postContainer = document.getElementById('postContent');
+            
+            const html = `
+                <article class="post-header">
+                    ${post.category ? `<span class="post-category">${post.category}</span>` : ''}
+                    <h1 class="post-title">${post.title || '제목 없음'}</h1>
+                    <div class="post-meta">
+                        ${post.publishedDate ? `<span>📅 ${new Date(post.publishedDate).toLocaleDateString('ko-KR')}</span>` : ''}
+                        ${post.published ? '<span>✅ 발행됨</span>' : '<span>📝 초안</span>'}
+                    </div>
+                </article>
+                
+                ${post.excerpt ? `
+                <div class="post-excerpt">
+                    ${post.excerpt}
+                </div>
+                ` : ''}
+                
+                <div class="post-content">
+                    ${post.content || '<p>콘텐츠를 불러올 수 없습니다.</p>'}
+                </div>
+                
+                ${post.tags ? `
+                <div class="tags-container">
+                    ${post.tags.split(',').map(tag => `<span class="tag">${tag.trim()}</span>`).join('')}
+                </div>
+                ` : ''}
+            `;
+            
+            postContainer.innerHTML = html;
+        }
+        
+        // Notion API에서 데이터 가져오기
+        async function loadNotionPost() {
+            const postContainer = document.getElementById('postContent');
+            
+            if (!slug) {
+                postContainer.innerHTML = '<div class="error-message">포스트를 찾을 수 없습니다.</div>';
+                return;
+            }
+            
+            try {
+                // API 서버에서 데이터 가져오기
+                const response = await fetch(`http://localhost:3000/api/posts/${slug}`);
+                
+                if (!response.ok) {
+                    throw new Error('포스트를 불러올 수 없습니다.');
+                }
+                
+                const data = await response.json();
+                
+                if (data.success && data.post) {
+                    document.title = `${data.post.title} - Mrble`;
+                    renderNotionContent(data.post);
+                } else {
+                    throw new Error('포스트 데이터가 없습니다.');
+                }
+            } catch (error) {
+                console.error('Error loading post:', error);
+                
+                // API 서버가 없을 때 임시 데이터 표시
+                if (slug === 'what-is-experience-group') {
+                    const tempPost = {
+                        title: '체험단이란 무엇인가? 초보자를 위한 완벽 가이드',
+                        category: '체험단팁',
+                        excerpt: '체험단은 기업의 제품이나 서비스를 무료로 체험하고 솔직한 리뷰를 작성하는 마케팅 활동입니다.',
+                        content: `
+                            <h2>🎯 체험단의 핵심 개념</h2>
+                            <ul>
+                                <li>기업: 제품/서비스를 무료로 제공</li>
+                                <li>체험단원: 사용 후 리뷰 작성 (블로그, SNS 등)</li>
+                                <li>Win-Win: 기업은 홍보 효과, 체험단원은 무료 체험</li>
+                            </ul>
+                            
+                            <h2>💡 체험단의 장점</h2>
+                            <ul>
+                                <li>무료로 다양한 제품/서비스 체험 가능</li>
+                                <li>블로그 콘텐츠 소재 확보</li>
+                                <li>리뷰 작성 능력 향상</li>
+                                <li>인플루언서로 성장 기회</li>
+                            </ul>
+                            
+                            <h2>📝 체험단 신청 방법</h2>
+                            <ol>
+                                <li>체험단 모집 공고 확인 (네이버, 인스타그램 등)</li>
+                                <li>신청 조건 확인 (블로그 방문자 수, 포스팅 수 등)</li>
+                                <li>신청서 작성 (개인정보, 블로그 주소, 신청 동기)</li>
+                                <li>선정 발표 대기</li>
+                                <li>선정 시 제품 수령 후 리뷰 작성</li>
+                            </ol>
+                        `,
+                        tags: '체험단, 초보자가이드, 마케팅, 블로그',
+                        published: true,
+                        publishedDate: '2025-09-12'
+                    };
+                    renderNotionContent(tempPost);
+                } else {
+                    postContainer.innerHTML = `
+                        <div class="error-message">
+                            <h2>⚠️ API 서버 연결 필요</h2>
+                            <p>Notion 데이터를 가져오려면 API 서버를 실행해주세요.</p>
+                            <p style="margin-top: 20px; color: #666;">
+                                서버 실행 방법:<br>
+                                1. Node.js 서버 파일 생성<br>
+                                2. npm install 실행<br>
+                                3. npm start로 서버 시작
+                            </p>
+                        </div>
+                    `;
+                }
+            }
+        }
+        
+        // 페이지 로드시 포스트 가져오기
+        loadNotionPost();
+    </script>
+</body>
+</html>

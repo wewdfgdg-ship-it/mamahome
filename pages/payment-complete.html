@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>결제 완료 - Mrble</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .payment-complete {
+            min-height: 100vh;
+            background: linear-gradient(135deg, rgba(41, 212, 193, 0.1), rgba(255, 255, 255, 0.9));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-large);
+        }
+
+        .complete-card {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, var(--color-primary-main), var(--color-primary-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            animation: successPulse 1s ease;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .complete-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: 15px;
+        }
+
+        .complete-message {
+            font-size: 16px;
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .order-info {
+            background: var(--color-bg-light);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .order-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .order-row:last-child {
+            border-bottom: none;
+        }
+
+        .order-label {
+            color: var(--color-text-secondary);
+            font-size: 14px;
+        }
+
+        .order-value {
+            color: var(--color-text-primary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+        }
+
+        .loading-info {
+            display: none;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--color-bg-light);
+            border-top: 4px solid var(--color-primary-main);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-state {
+            display: none;
+        }
+
+        .error-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            background: #ff4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-complete">
+        <div class="complete-card">
+            <!-- 로딩 상태 -->
+            <div class="loading-info" id="loadingState">
+                <div class="loading-spinner"></div>
+                <div class="complete-title">결제 확인 중...</div>
+                <div class="complete-message">잠시만 기다려주세요.</div>
+            </div>
+
+            <!-- 성공 상태 -->
+            <div id="successState" style="display: none;">
+                <div class="success-icon">✓</div>
+                <h1 class="complete-title">결제가 완료되었습니다!</h1>
+                <p class="complete-message">
+                    결제가 성공적으로 처리되었습니다.<br>
+                    등록하신 이메일로 상세 내용을 전송해드렸습니다.
+                </p>
+                
+                <div class="order-info" id="orderInfo">
+                    <div class="order-row">
+                        <span class="order-label">주문번호</span>
+                        <span class="order-value" id="orderId">-</span>
+                    </div>
+                    <div class="order-row">
+                        <span class="order-label">상품명</span>
+                        <span class="order-value" id="productName">-</span>
+                    </div>
+                    <div class="order-row">
+                        <span class="order-label">결제금액</span>
+                        <span class="order-value" id="amount">-</span>
+                    </div>
+                    <div class="order-row">
+                        <span class="order-label">결제일시</span>
+                        <span class="order-value" id="paymentDate">-</span>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="/dashboard" class="btn btn-primary">대시보드로 이동</a>
+                    <a href="/" class="btn btn-secondary">홈으로 이동</a>
+                </div>
+            </div>
+
+            <!-- 에러 상태 -->
+            <div class="error-state" id="errorState">
+                <div class="error-icon">✕</div>
+                <h1 class="complete-title">결제 처리 실패</h1>
+                <p class="complete-message" id="errorMessage">
+                    결제 처리 중 오류가 발생했습니다.<br>
+                    다시 시도해주세요.
+                </p>
+                <div class="action-buttons">
+                    <a href="/pages/checkout.html" class="btn btn-primary">다시 시도</a>
+                    <a href="/" class="btn btn-secondary">홈으로 이동</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // URL 파라미터 파싱
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // 주문 데이터를 백엔드 API로 저장
+        async function saveOrderToDatabase(orderData) {
+            try {
+                // 로컬 스토리지에서 추가 정보 가져오기
+                const checkoutData = localStorage.getItem('checkoutData');
+                let customerInfo = {};
+
+                if (checkoutData) {
+                    try {
+                        const parsed = JSON.parse(checkoutData);
+                        customerInfo = {
+                            name: parsed.name || '',
+                            email: parsed.email || '',
+                            phone: parsed.phone || '',
+                            businessName: parsed.businessName || '',
+                            businessNumber: parsed.businessNumber || ''
+                        };
+                    } catch (e) {
+                        console.error('Checkout data parsing error:', e);
+                    }
+                }
+
+                // 주문 데이터 구성
+                const fullOrderData = {
+                    orderNumber: orderData.orderNumber || 'ORD-' + Date.now(),
+                    customer: customerInfo,
+                    packageInfo: {
+                        name: orderData.goodname || '세금계산서 발급 서비스',
+                        price: orderData.price || 0
+                    },
+                    amount: orderData.price || 0,
+                    paymentMethod: 'payapp',
+                    status: 'paid',
+                    createdAt: new Date().toISOString()
+                };
+
+                // API 호출 (현재는 로컬 개발용으로 console.log)
+                console.log('주문 저장:', fullOrderData);
+
+                // 실제 배포 시 Vercel Functions 호출
+                // const response = await fetch('/api/orders', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //     },
+                //     body: JSON.stringify(fullOrderData)
+                // });
+
+                // if (!response.ok) {
+                //     throw new Error('Failed to save order');
+                // }
+
+                // const result = await response.json();
+                // console.log('Order saved successfully:', result);
+
+                // 임시로 로컬 스토리지에 저장
+                const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+                orders.push(fullOrderData);
+                localStorage.setItem('orders', JSON.stringify(orders));
+
+                // 성공 메시지
+                console.log('주문이 저장되었습니다.');
+
+            } catch (error) {
+                console.error('주문 저장 실패:', error);
+                // 실패해도 사용자 경험을 해치지 않도록 에러는 콘솔에만 표시
+            }
+        }
+
+        // 결제 결과 처리
+        function processPaymentResult() {
+            const state = urlParams.get('state');
+            const orderid = urlParams.get('orderid');
+            const goodname = urlParams.get('goodname');
+            const price = urlParams.get('price');
+            const message = urlParams.get('message');
+            
+            // 로딩 상태 숨기기
+            document.getElementById('loadingState').style.display = 'none';
+            
+            if (state === 'success' || state === 'SUCCESS' || orderid) {
+                // 성공 상태 표시
+                document.getElementById('successState').style.display = 'block';
+                
+                // 주문 정보 표시
+                if (orderid) {
+                    document.getElementById('orderId').textContent = orderid;
+                }
+                if (goodname) {
+                    document.getElementById('productName').textContent = goodname;
+                }
+                if (price) {
+                    document.getElementById('amount').textContent = parseInt(price).toLocaleString() + '원';
+                }
+                
+                // 현재 시간 표시
+                const now = new Date();
+                document.getElementById('paymentDate').textContent = 
+                    `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ` +
+                    `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+                
+                // 로컬 스토리지에서 주문 정보 가져오기 (있으면)
+                const orderData = localStorage.getItem('lastOrder');
+                if (orderData) {
+                    try {
+                        const order = JSON.parse(orderData);
+                        if (order.goodname && !goodname) {
+                            document.getElementById('productName').textContent = order.goodname;
+                        }
+                        if (order.price && !price) {
+                            document.getElementById('amount').textContent = parseInt(order.price).toLocaleString() + '원';
+                        }
+                    } catch (e) {
+                        console.error('주문 정보 파싱 오류:', e);
+                    }
+                }
+                
+                // 주문 데이터 저장 API 호출
+                saveOrderToDatabase({
+                    orderNumber: orderid,
+                    goodname: goodname,
+                    price: price,
+                    state: 'success'
+                });
+
+                // 성공 메시지를 부모 창에 전달 (iframe 사용 시)
+                if (window.parent !== window) {
+                    window.parent.postMessage({
+                        state: 'SUCCESS',
+                        orderid: orderid,
+                        goodname: goodname,
+                        price: price
+                    }, '*');
+                }
+                
+            } else if (state === 'cancel' || state === 'CANCEL') {
+                // 취소 상태
+                document.getElementById('errorState').style.display = 'block';
+                document.getElementById('errorMessage').innerHTML = 
+                    '결제가 취소되었습니다.<br>필요하시면 다시 시도해주세요.';
+                    
+            } else if (state === 'error' || state === 'ERROR') {
+                // 에러 상태
+                document.getElementById('errorState').style.display = 'block';
+                if (message) {
+                    document.getElementById('errorMessage').innerHTML = message;
+                }
+                
+            } else {
+                // 파라미터가 없는 경우 3초 후 홈으로 이동
+                setTimeout(() => {
+                    document.getElementById('successState').style.display = 'block';
+                    document.getElementById('orderInfo').style.display = 'none';
+                }, 1000);
+            }
+        }
+        
+        // 페이지 로드 시 처리
+        window.onload = function() {
+            // 로딩 상태 표시
+            document.getElementById('loadingState').style.display = 'block';
+            
+            // 0.5초 후 결과 처리 (로딩 애니메이션 효과)
+            setTimeout(processPaymentResult, 500);
+        };
+    </script>
+</body>
+</html>

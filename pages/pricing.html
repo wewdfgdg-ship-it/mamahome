@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마케팅상품 - Mrble</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    
+    <style>
+        /* 헤더 네비게이션 폰트 스타일 - 메인과 동일하게 */
+        .nav-logo {
+            font-size: 18px;
+            white-space: nowrap;
+        }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .nav-link {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav-container">
+                <a href="../index.html" class="nav-logo">
+                    <span class="logo-text">Mrble</span>
+                </a>                
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="../index.html#about" class="nav-link">미블체험단</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a href="../pages/experience.html" class="nav-link">체험단</a>
+                    </li> -->
+                    <li class="nav-item">
+                        <a href="../pages/press.html" class="nav-link">마케팅정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../pages/pricing.html" class="nav-link active">마케팅상품</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.mrblog.net" class="nav-link" target="_blank">미블홈페이지</a>
+                    </li>
+                </ul>
+                <div class="nav-spacer"></div>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- 페이지 콘텐츠 -->
+    <main class="page-content">
+        <!-- 페이지 히어로 섹션 -->
+        <section class="section section-large" style="background: var(--color-bg-secondary); color: var(--color-text-light); padding: 20px 0;">
+            <div class="container" style="text-align: center;">
+                <h1 class="heading-1" style="color: var(--color-primary-main); margin-bottom: var(--spacing-md); padding-top: 50px;">마케팅상품 안내</h1>
+                <p class="text-body" style="color: var(--color-text-light); padding-bottom: 50px;">전국 최저가, 투명한 가격 정책</p>
+            </div>
+        </section>
+    </main>
+    <!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>미블 마케팅 패키지</title>
+    
+    <!-- 폰트 로드 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS 변수 정의 - 테마 시스템 */
+        :root {
+            /* Primary Colors */
+            --color-primary-main: rgb(41, 212, 193);
+            --color-primary-dark: rgb(46, 46, 47);
+            --color-primary-light: rgb(102, 102, 102);
+            
+            /* Background Colors */
+            --color-bg-primary: rgb(255, 255, 255);
+            --color-bg-secondary: rgb(0, 0, 0);
+            --color-bg-overlay: rgba(0, 0, 0, 0.8);
+            
+            /* Text Colors */
+            --color-text-primary: rgb(32, 33, 31);
+            --color-text-secondary: rgb(153, 153, 153);
+            --color-text-light: rgb(255, 255, 255);
+            --color-text-muted: rgb(189, 189, 189);
+            
+            /* Accent Colors */
+            --color-accent-highlight: rgb(253, 249, 207);
+            --color-accent-hover: rgb(41, 212, 193);
+            
+            /* Font Families */
+            --font-primary: 'Noto Sans KR', sans-serif;
+            --font-secondary: 'Poppins', sans-serif;
+            --font-tertiary: 'Montserrat', sans-serif;
+            
+            /* Spacing */
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 32px;
+            --spacing-xl: 48px;
+            --spacing-2xl: 64px;
+            --spacing-3xl: 100px;
+            --spacing-4xl: 200px;
+            
+            /* Transitions */
+            --transition-default: all 0.3s ease;
+            --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.5s ease-in-out;
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+            --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+        
+        /* Section */
+        .packages-section {
+            padding: var(--spacing-3xl) 0;
+        }
+        
+        /* Section Header */
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--spacing-3xl);
+        }
+        
+        .section-subtitle {
+            font-family: var(--font-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-primary-main);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .section-title {
+            font-family: var(--font-primary);
+            font-size: clamp(28px, 5vw, 48px);
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .section-desc {
+            font-size: 16px;
+            color: var(--color-text-secondary);
+        }
+        
+        /* Grid System - 3x3 */
+        .grid-3x3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-2xl);
+        }
+        
+        /* Card Component */
+        .package-card {
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-default);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 420px;
+            position: relative;
+            border: 2px solid transparent;
+        }
+        
+        /* Featured Card */
+        .package-card.featured {
+            grid-column: 2;
+            grid-row: 1;
+            border: 2px solid transparent;
+            transition: border 0.3s ease;
+        }
+        
+        /* Hover effect for all cards */
+        .package-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border: 2px solid var(--color-primary-main);
+        }
+        
+        /* Card Image - 60% */
+        .card-image-wrapper {
+            height: 60%;
+            position: relative;
+            overflow: hidden;
+            background: var(--color-bg-secondary);
+        }
+        
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-slow);
+        }
+        
+        .package-card:hover .card-image {
+            transform: scale(1.1);
+        }
+        
+        /* Card Overlay Gradient */
+        .card-image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            pointer-events: none;
+        }
+        
+        /* Card Badge */
+        .card-badge {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            background: var(--color-primary-main);
+            color: var(--color-text-light);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            font-family: var(--font-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .featured .card-badge {
+            background: var(--color-accent-highlight);
+            color: var(--color-text-primary);
+        }
+        
+        /* Card Content - 40% */
+        .card-content {
+            height: 40%;
+            padding: var(--spacing-md);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .card-title {
+            font-family: var(--font-primary);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .card-description {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--spacing-sm);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-price {
+            display: flex;
+            align-items: baseline;
+            gap: var(--spacing-xs);
+        }
+        
+        .price-value {
+            font-family: var(--font-tertiary);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--color-primary-main);
+        }
+        
+        .price-unit {
+            font-size: 14px;
+            color: var(--color-text-muted);
+        }
+        
+        .card-cta {
+            font-family: var(--font-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-primary-main);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            transition: var(--transition-fast);
+        }
+        
+        .card-cta:hover {
+            gap: var(--spacing-sm);
+        }
+        
+        /* Responsive - Tablet */
+        @media (max-width: 1024px) {
+            .grid-3x3 {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--spacing-md);
+            }
+            
+            .package-card.featured {
+                grid-column: span 2;
+            }
+        }
+        
+        /* Responsive - Mobile */
+        @media (max-width: 767px) {
+            .grid-3x3 {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-md);
+            }
+            
+            .package-card.featured {
+                grid-column: 1;
+            }
+            
+            .package-card {
+                height: 380px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="packages-section">
+        <div class="container">
+            <!-- Section Header -->
+            <div class="section-header">
+                <p class="section-subtitle">Marketing Packages</p>
+                <h2 class="section-title">미블 마케팅 패키지</h2>
+                <p class="section-desc">브랜드 성장을 위한 최적의 마케팅 솔루션</p>
+            </div>
+            
+            <!-- 3x3 Grid -->
+            <div class="grid-3x3">
+                 <!-- 1. 이번달 패키지 (Featured) -->
+                <div class="package-card featured">
+                    <div class="card-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=800&h=600&fit=crop" alt="이번달 패키지" class="card-image">
+                        <div class="card-image-overlay"></div>
+                        <span class="card-badge">🔥 Hot Deal</span>
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h3 class="card-title">이번달 패키지</h3>
+                            <p class="card-description">모든 마케팅 채널 통합! 한번에 관리하는 프리미엄 패키지</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-price">
+                                <span class="price-value">299,000</span>
+                                <span class="price-unit">원~</span>
+                            </div>
+                            <a href="#" class="card-cta">자세히 보기 →</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 2. 블로그 체험단 -->
+                <div class="package-card" onclick="window.location.href='package-detail.html?package=blog-experience'" style="cursor: pointer;">
+                    <div class="card-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&fit=crop" alt="블로그 체험단" class="card-image">
+                        <div class="card-image-overlay"></div>
+                        <span class="card-badge">인기</span>
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h3 class="card-title">블로그 체험단</h3>
+                            <p class="card-description">파워블로거의 진정성 있는 리뷰로 검색 상위 노출 보장</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-price">
+                                <span class="price-value">23,700</span>
+                                <span class="price-unit">원~</span>
+                            </div>
+                            <a href="package-detail.html?package=blog-experience" class="card-cta">자세히 보기 →</a>
+                        </div>
+                    </div>
+                </div>
+                            
+                <!-- 3. 인스타 체험단 -->
+                <div class="package-card">
+                    <div class="card-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1598128558393-70ff21433be0?w=800" alt="인스타 체험단" class="card-image">
+                        <div class="card-image-overlay"></div>
+                        <span class="card-badge">SNS</span>
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h3 class="card-title">인스타 체험단</h3>
+                            <p class="card-description">인플루언서 협업으로 브랜드 인지도 상승</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-price">
+                                <span class="price-value">25,500</span>
+                                <span class="price-unit">원~</span>
+                            </div>
+                            <a href="#" class="card-cta">자세히 보기 →</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 4. 클립 체험단 -->
+                <div class="package-card">
+                    <div class="card-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1626544827763-d516dce335e2?w=800&h=600&fit=crop" alt="클립 체험단" class="card-image">
+                        <div class="card-image-overlay"></div>
+                        <span class="card-badge">Video</span>
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h3 class="card-title">클립 체험단</h3>
+                            <p class="card-description">유튜브 쇼츠로 빠른 바이럴 마케팅 효과</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-price">
+                                <span class="price-value">45,000</span>
+                                <span class="price-unit">원~</span>
+                            </div>
+                            <a href="#" class="card-cta">자세히 보기 →</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 5. 릴스 체험단 -->
+                <div class="package-card">
+                    <div class="card-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=800&h=600&fit=crop" alt="릴스 체험단" class="card-image">
+                        <div class="card-image-overlay"></div>
+                        <span class="card-badge">Reels</span>
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h3 class="card-title">릴스 체험단</h3>
+                            <p class="card-description">MZ세대 타겟 짧고 강렬한 콘텐츠 마케팅</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-price">
+                                <span class="price-value">35,000</span>
+                                <span class="price-unit">원~</span>
+                            </div>
+                            <a href="#" class="card-cta">자세히 보기 →</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 6. 네이버지도 최적화 -->
+                <div class="package-card">
+                    <div class="card-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop" alt="네이버지도 최적화" class="card-image">
+                        <div class="card-image-overlay"></div>
+                        <span class="card-badge">Local</span>
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h3 class="card-title">네이버지도 최적화</h3>
+                            <p class="card-description">지역 검색 1페이지 노출을 위한 전문 최적화</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-price">
+                                <span class="price-value">179,000</span>
+                                <span class="price-unit">원~</span>
+                            </div>
+                            <a href="#" class="card-cta">자세히 보기 →</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 7. 플레이스 광고 세팅 -->
+                <div class="package-card">
+                    <div class="card-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop" alt="플레이스 광고" class="card-image">
+                        <div class="card-image-overlay"></div>
+                        <span class="card-badge">AD</span>
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h3 class="card-title">플레이스 광고 세팅</h3>
+                            <p class="card-description">네이버 플레이스 광고 전문가의 맞춤 전략</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-price">
+                                <span class="price-value">150,000</span>
+                                <span class="price-unit">원~</span>
+                            </div>
+                            <a href="#" class="card-cta">자세히 보기 →</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 8. 블로그 기자단 -->
+                <div class="package-card">
+                    <div class="card-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=600&fit=crop" alt="블로그 기자단" class="card-image">
+                        <div class="card-image-overlay"></div>
+                        <span class="card-badge">Press</span>
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h3 class="card-title">블로그 기자단</h3>
+                            <p class="card-description">전문 기자단의 고품질 콘텐츠 제작</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-price">
+                                <span class="price-value">77,000</span>
+                                <span class="price-unit">원~</span>
+                            </div>
+                            <a href="#" class="card-cta">자세히 보기 →</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 9. 인스타 기자단 -->
+                <div class="package-card">
+                    <div class="card-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&h=600&fit=crop" alt="인스타 기자단" class="card-image">
+                        <div class="card-image-overlay"></div>
+                        <span class="card-badge">Magazine</span>
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h3 class="card-title">인스타 기자단</h3>
+                            <p class="card-description">매거진 스타일 고품질 인스타 콘텐츠</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-price">
+                                <span class="price-value">85,000</span>
+                                <span class="price-unit">원~</span>
+                            </div>
+                            <a href="#" class="card-cta">자세히 보기 →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+    <!-- 심플 푸터 -->
+    <footer class="simple-footer">
+        <div class="container">
+            <div class="footer-wrapper">
+                <!-- Customer Service -->
+                <div class="footer-customer">
+                    <div class="footer-title">미블문의</div>
+                    <div class="footer-phone">010-7362-7711</div>
+                    <!--<div class="footer-fax">Fax. 02-000-0000</div>"-->
+                </div>
+                
+                <!-- Info -->
+                <div class="footer-info">
+                    <div class="footer-title">Info.</div>
+                    <div class="footer-info-text">상호명 : 미블(Mrble)  |  대표 : 안소연  |  사업자등록번호 : 165-88-02749</div>
+                    <div class="footer-info-text">주소 : 서울특별시 광진구 천호대로 571 | 전국 최저가 정직한 체험단 마케팅 플랫폼</div>
+                </div>
+                
+                <!-- Chart Icon -->
+                <div class="footer-chart">
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script src="../js/main.js"></script>
+</body>
+</html>

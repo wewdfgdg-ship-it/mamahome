@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마케팅정보 - Mrble</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    
+    <style>
+        /* CSS 변수 정의 - 테마 시스템 */
+        :root {
+            /* Primary Colors */
+            --color-primary-main: rgb(41, 212, 193);
+            --color-primary-dark: rgb(46, 46, 47);
+            --color-primary-light: rgb(102, 102, 102);
+            
+            /* Background Colors */
+            --color-bg-primary: rgb(255, 255, 255);
+            --color-bg-secondary: rgb(0, 0, 0);
+            --color-bg-overlay: rgba(0, 0, 0, 0.8);
+            --color-bg-light: rgb(248, 249, 250);
+            
+            /* Text Colors */
+            --color-text-primary: rgb(32, 33, 31);
+            --color-text-secondary: rgb(153, 153, 153);
+            --color-text-light: rgb(255, 255, 255);
+            --color-text-muted: rgb(189, 189, 189);
+            
+            /* Accent Colors */
+            --color-accent-highlight: rgb(253, 249, 207);
+            --color-accent-hover: rgb(41, 212, 193);
+            
+            /* Font Families */
+            --font-primary: 'Noto Sans KR', sans-serif;
+            --font-secondary: 'Poppins', sans-serif;
+            --font-tertiary: 'Montserrat', sans-serif;
+            
+            /* Spacing */
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 32px;
+            --spacing-xl: 48px;
+            --spacing-2xl: 64px;
+            --spacing-3xl: 100px;
+            
+            /* Transitions */
+            --transition-default: all 0.3s ease;
+            --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+        
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--color-bg-light);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: var(--color-text-primary);
+            padding: var(--spacing-3xl) 0 var(--spacing-2xl);
+            margin-bottom: var(--spacing-3xl);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .hero-content {
+            text-align: center;
+        }
+        
+        .hero-subtitle {
+            font-family: var(--font-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-primary-main);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .hero-title {
+            font-family: var(--font-primary);
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .hero-description {
+            font-size: 18px;
+            color: var(--color-text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Blog Grid Section */
+        .blog-section {
+            padding-bottom: var(--spacing-3xl);
+        }
+        
+        /* 2x8 Grid */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-lg);
+        }
+        
+        /* Blog Card */
+        .blog-card {
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-default);
+            cursor: pointer;
+            display: flex;
+            height: 320px;
+        }
+        
+        .blog-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* Card Image */
+        .blog-card-image {
+            width: 45%;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary-main));
+        }
+        
+        .blog-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-default);
+        }
+        
+        .blog-card:hover .blog-card-image img {
+            transform: scale(1.05);
+        }
+        
+        /* Card Category Badge */
+        .card-category {
+            position: absolute;
+            top: var(--spacing-md);
+            left: var(--spacing-md);
+            background: var(--color-bg-primary);
+            color: var(--color-primary-main);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            font-family: var(--font-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Card Content */
+        .blog-card-content {
+            width: 55%;
+            padding: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .card-header {
+            flex: 1;
+        }
+        
+        .card-title {
+            font-family: var(--font-primary);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-sm);
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .card-hook {
+            font-size: 13px;
+            color: var(--color-primary-main);
+            font-weight: 600;
+            font-style: italic;
+            padding-top: var(--spacing-sm);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-excerpt {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: var(--spacing-md);
+            flex: 1;
+        }
+        
+        .card-meta {
+            padding-top: var(--spacing-sm);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            font-size: 13px;
+            color: var(--color-primary-main);
+            font-weight: 600;
+            font-style: italic;
+        }
+        
+        /* Responsive - Tablet */
+        @media (max-width: 1024px) {
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .blog-card {
+                height: 240px;
+            }
+        }
+        
+        /* Responsive - Mobile */
+        @media (max-width: 767px) {
+            .blog-card {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .blog-card-image {
+                width: 100%;
+                height: 200px;
+            }
+            
+            .blog-card-content {
+                width: 100%;
+                padding: var(--spacing-md);
+            }
+            
+            .card-title {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav-container">
+                <a href="../index.html" class="nav-logo">
+                    <span class="logo-text">Mrble</span>
+                </a>                
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="../index.html#about" class="nav-link">미블체험단</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a href="../pages/experience.html" class="nav-link">체험단</a>
+                    </li> -->
+                    <li class="nav-item">
+                        <a href="../pages/press.html" class="nav-link active">마케팅정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../pages/pricing.html" class="nav-link">마케팅상품</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.mrblog.net" class="nav-link" target="_blank">미블홈페이지</a>
+                    </li>
+                </ul>
+                
+                <div class="nav-actions">
+                    <!-- nav actions -->
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <p class="hero-subtitle">Marketing Insights</p>
+                <h1 class="hero-title">마케팅 인사이트 & 가이드</h1>
+                <p class="hero-description">
+                    성공적인 마케팅을 위한 전문가의 노하우와 실전 팁을 소개합니다
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Blog Grid Section -->
+    <section class="blog-section">
+        <div class="container">
+            <div class="blog-grid">
+                <!-- 1. 체험단이란 무엇인가? (Notion 연동) -->
+                <article class="blog-card" data-slug="what-is-experience-group">
+                    <div class="blog-card-image">
+                        <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400" alt="체험단이란 무엇인가?">
+                        <span class="card-category">체험단 팁</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">체험단이란 무엇인가?</h3>
+                            <p class="card-excerpt">체험단은 기업의 제품이나 서비스를 무료로 체험하고 솔직한 리뷰를 작성하는 마케팅 활동입니다. 이 글에서는 체험단의 개념부터 신청 방법, 선정 팁까지 상세히 알아봅니다.</p>
+                        </div>
+                        <div class="card-meta">
+                            "체험단 입문자를 위한 완벽한 가이드"
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- 2. 브랜드 계정 임플로이언서 -->
+                <article class="blog-card" onclick="location.href='./blog-post.html?id=2'">
+                    <div class="blog-card-image">
+                        <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400" alt="임플로이언서">
+                        <span class="card-category">체험단 팁</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">체험단은 온라인전단지!!!</h3>
+                            <p class="card-excerpt">광고보다 믿음직한 직원 추천! 임플로이언서(Employee+Influencer) 전략으로 신뢰와 비용 효율을 동시에 잡는 브랜드 성장법을 알려드립니다. 직원들의 자발적인 브랜드 홍보가 만들어내는 놀라운 파급력과 진정성. 실제 사례와 함께 임플로이언서 프로그램 구축 방법을 단계별로 소개합니다.</p>
+                        </div>
+                        <div class="card-meta">
+                            "직원이 가장 강력한 브랜드 홍보대사가 되는 비법"
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- 3. 체험단 마케팅 ROI -->
+                <article class="blog-card">
+                    <div class="blog-card-image">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400" alt="ROI 분석">
+                        <span class="card-category">전략</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">체험단 마케팅 ROI 극대화하는 5가지 전략</h3>
+                            <p class="card-excerpt">단순 리뷰를 넘어 매출로 연결되는 체험단 운영법. 데이터 기반 성과 측정과 최적화 방법을 공개합니다. 체험단 선정부터 리뷰 관리, 2차 확산까지 ROI를 극대화하는 검증된 5가지 전략. 실제 기업들의 성공 사례와 함께 즉시 적용 가능한 실무 팁을 제공합니다.</p>
+                        </div>
+                        <div class="card-meta">
+                            "리뷰 10개로 매출 2배 만드는 데이터 드리븐 전략"
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- 4. 네이버 플레이스 최적화 -->
+                <article class="blog-card">
+                    <div class="blog-card-image">
+                        <img src="https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=400" alt="네이버 플레이스">
+                        <span class="card-category">SEO</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">네이버 플레이스 상위노출 완벽 가이드</h3>
+                            <p class="card-excerpt">지역 검색 1페이지 진입을 위한 필수 최적화 전략. 리뷰 관리부터 키워드 세팅까지 실전 노하우 대공개. 네이버 플레이스 알고리즘의 비밀과 상위 노출을 위한 체크리스트. 경쟁업체를 제치고 지역 검색 1위를 차지하는 검증된 방법론을 단계별로 설명합니다.</p>
+                        </div>
+                        <div class="card-meta">
+                            "지역 검색 1위 만드는 비밀 공개"
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- 5. 인스타그램 릴스 마케팅 -->
+                <article class="blog-card">
+                    <div class="blog-card-image">
+                        <img src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=400" alt="릴스 마케팅">
+                        <span class="card-category">SNS</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">2024 릴스 알고리즘 완벽 정복법</h3>
+                            <p class="card-excerpt">MZ세대 공략 필수! 릴스 조회수 100만 달성하는 콘텐츠 제작 공식과 최신 트렌드 활용법. 인스타그램 알고리즘의 핵심 원리와 바이럴을 일으키는 콘텐츠 패턴 분석. 음악 선택부터 해시태그 전략까지, 릴스 성공을 위한 모든 것을 담았습니다.</p>
+                        </div>
+                        <div class="card-meta">
+                            "조회수 100만 보장하는 바이럴 공식"
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- 6. 블로그 체험단 선정 -->
+                <article class="blog-card">
+                    <div class="blog-card-image">
+                        <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400" alt="블로거 선정">
+                        <span class="card-category">가이드</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">파워블로거 vs 일반블로거, 현명한 선택법</h3>
+                            <p class="card-excerpt">예산 대비 최고 효율! 블로거 지수 읽는 법부터 타겟별 매칭 전략까지 체험단 선정의 모든 것. 파워블로거의 영향력과 일반블로거의 진정성, 각각의 장단점을 비교 분석. 제품 특성과 마케팅 목표에 따른 최적의 블로거 선정 가이드를 제시합니다.</p>
+                        </div>
+                        <div class="card-meta">
+                            "예산 50% 절감하면서 효과 2배 높이는 비밀"
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- 7. 유튜브 쇼츠 전략 -->
+                <article class="blog-card">
+                    <div class="blog-card-image">
+                        <img src="https://images.unsplash.com/photo-1626544827763-d516dce335e2?w=400" alt="유튜브 쇼츠">
+                        <span class="card-category">Video</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">유튜브 쇼츠로 구독자 10만 만들기</h3>
+                            <p class="card-excerpt">60초 안에 승부를 결정짓는 쇼츠 제작 비법. 알고리즘 최적화와 바이럴 포인트 완벽 분석. 첫 3초의 임팩트부터 엔딩 훅까지, 시청자를 사로잡는 쇼츠 스토리텔링 기법. 실제 10만 구독자 달성 채널들의 성공 패턴을 분석한 실전 가이드입니다.</p>
+                        </div>
+                        <div class="card-meta">
+                            "60초로 승부보는 바이럴 콘텐츠의 비밀"
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- 8. 키워드 마케팅 -->
+                <article class="blog-card">
+                    <div class="blog-card-image">
+                        <img src="https://images.unsplash.com/photo-1432821596592-e2c18b78144f?w=400" alt="키워드 전략">
+                        <span class="card-category">SEO</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">검색 1페이지 진입하는 키워드 전략</h3>
+                            <p class="card-excerpt">메인 키워드와 롱테일 키워드의 황금 비율. 검색 의도 파악부터 콘텐츠 최적화까지 실전 가이드. 네이버 검색 알고리즘의 핵심 요소와 상위 노출을 위한 SEO 전략. 키워드 리서치부터 콘텐츠 구조화까지, 검색 1페이지 진입을 위한 완벽한 로드맵을 제공합니다.</p>
+                        </div>
+                        <div class="card-meta">
+                            "네이버가 사랑하는 콘텐츠 만드는 공식"
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- 9. 인플루언서 협업 -->
+                <article class="blog-card">
+                    <div class="blog-card-image">
+                        <img src="https://images.unsplash.com/photo-1598128558393-70ff21433be0?w=400" alt="인플루언서 협업">
+                        <span class="card-category">협업</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">인플루언서와 win-win하는 협업 전략</h3>
+                            <p class="card-excerpt">단발성 광고를 넘어 장기 파트너십 구축법. 계약서 작성부터 성과 측정까지 실무 체크리스트. 인플루언서와의 신뢰 관계 구축부터 상호 이익을 극대화하는 협업 모델 설계. 성공적인 인플루언서 마케팅을 위한 단계별 가이드와 실제 계약서 샘플을 제공합니다.</p>
+                        </div>
+                        <div class="card-meta">
+                            "인플루언서를 우리 팀으로 만드는 비법"
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- 10. 리뷰 관리 -->
+                <article class="blog-card">
+                    <div class="blog-card-image">
+                        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400" alt="리뷰 관리">
+                        <span class="card-category">관리</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">악성 리뷰 대응하는 스마트한 방법</h3>
+                            <p class="card-excerpt">위기를 기회로! 부정 리뷰를 브랜드 신뢰도 상승의 계기로 만드는 대응 매뉴얼. 감정적 대응이 아닌 전략적 접근으로 악성 리뷰를 관리하는 방법. 실제 위기 상황 대응 사례와 함께 브랜드 이미지를 지키면서도 고객 신뢰를 얻는 커뮤니케이션 기법을 소개합니다.</p>
+                        </div>
+                        <div class="card-meta">
+                            "악플러를 팬으로 만드는 위기관리 비법"
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- 11. 콘텐츠 마케팅 -->
+                <article class="blog-card">
+                    <div class="blog-card-image">
+                        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=400" alt="콘텐츠 전략">
+                        <span class="card-category">콘텐츠</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">스토리텔링으로 팬덤 만드는 법</h3>
+                            <p class="card-excerpt">단순 홍보를 넘어 고객과 교감하는 콘텐츠 제작법. 브랜드 내러티브 구축 실전 가이드. 감성을 자극하는 스토리 구조부터 팬덤 형성까지의 과정을 체계적으로 설명. 성공적인 브랜드 스토리텔링 사례와 함께 즉시 적용 가능한 프레임워크를 제공합니다.</p>
+                        </div>
+                        <div class="card-meta">
+                            "평범한 제품을 특별하게 만드는 스토리의 힘"
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- 12. 광고 최적화 -->
+                <article class="blog-card">
+                    <div class="blog-card-image">
+                        <img src="https://images.unsplash.com/photo-1533750349088-cd871a92f312?w=400" alt="광고 최적화">
+                        <span class="card-category">광고</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">광고비 50% 절감하는 타겟팅 비법</h3>
+                            <p class="card-excerpt">정밀 타겟팅으로 전환율 극대화! A/B 테스트부터 리타겟팅까지 광고 효율 개선 전략. 페이스북, 구글, 네이버 광고 플랫폼별 최적화 방법과 예산 배분 전략. 데이터 기반의 과학적인 광고 운영으로 ROI를 극대화하는 실전 노하우를 공개합니다.</p>
+                        </div>
+                        <div class="card-meta">
+                            "무작정 쓰는 광고비, 반으로 줄이고 효과는 2배로"
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- 13. 시즌 마케팅 -->
+                <article class="blog-card">
+                    <div class="blog-card-image">
+                        <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400" alt="시즌 마케팅">
+                        <span class="card-category">이벤트</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">시즌별 마케팅 캘린더 완벽 정리</h3>
+                            <p class="card-excerpt">연중 놓치면 안 되는 마케팅 기회! 월별 이벤트 아이디어와 체험단 활용 타이밍 가이드. 발렌타인데이부터 연말 시즌까지, 각 시즌별 소비 트렌드와 마케팅 전략. 업종별 맞춤 시즌 마케팅 캘린더와 함께 성공 사례를 분석한 실무 가이드북입니다.</p>
+                        </div>
+                        <div class="card-meta">
+                            "매출 급등하는 골든타임을 절대 놓치지 마세요"
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- 14. 데이터 분석 -->
+                <article class="blog-card">
+                    <div class="blog-card-image">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400" alt="데이터 분석">
+                        <span class="card-category">분석</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">마케팅 데이터, 이것만 보면 된다</h3>
+                            <p class="card-excerpt">숫자에 숨은 인사이트 찾기! 핵심 지표 설정부터 리포트 작성까지 데이터 활용 실무. CAC, LTV, 전환율 등 꼭 알아야 할 마케팅 지표와 분석 방법. 구글 애널리틱스부터 자체 데이터 대시보드 구축까지, 데이터 드리븐 마케팅의 모든 것을 담았습니다.</p>
+                        </div>
+                        <div class="card-meta">
+                            "복잡한 숫자 속 숨겨진 매출 증대의 비밀"
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- 15. 커뮤니티 마케팅 -->
+                <article class="blog-card">
+                    <div class="blog-card-image">
+                        <img src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=400" alt="커뮤니티">
+                        <span class="card-category">커뮤니티</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">충성 고객 만드는 커뮤니티 운영법</h3>
+                            <p class="card-excerpt">단순 구매자를 브랜드 앰버서더로! 온라인 커뮤니티 활성화와 오프라인 연계 전략. 커뮤니티 초기 구축부터 활성화, 확장까지 단계별 운영 노하우. 멤버십 프로그램 설계와 보상 체계 구축으로 진정한 브랜드 팬덤을 만드는 방법을 소개합니다.</p>
+                        </div>
+                        <div class="card-meta">
+                            "고객이 알아서 홍보하게 만드는 커뮤니티의 마법"
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- 16. 트렌드 분석 -->
+                <article class="blog-card">
+                    <div class="blog-card-image">
+                        <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=400" alt="트렌드">
+                        <span class="card-category">트렌드</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="card-header">
+                            <h3 class="card-title">2024 마케팅 트렌드 TOP 10</h3>
+                            <p class="card-excerpt">AI, 메타버스, 숏폼... 올해 꼭 주목해야 할 마케팅 트렌드와 실전 적용 방법 총정리. 생성형 AI 활용부터 초개인화 마케팅까지, 2024년을 이끌 10가지 핵심 트렌드 분석. 각 트렌드별 활용 전략과 성공 사례를 통해 미래 마케팅의 방향성을 제시합니다.</p>
+                        </div>
+                        <div class="card-meta">
+                            "남들보다 한 발 빠른 마케팅 성공의 비결"
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 심플 푸터 -->
+    <footer class="simple-footer">
+        <div class="container">
+            <div class="footer-wrapper">
+                <!-- Customer Service -->
+                <div class="footer-customer">
+                    <div class="footer-title">미블문의</div>
+                    <div class="footer-phone">010-7362-7711</div>
+                    <!--<div class="footer-fax">Fax. 02-000-0000</div>-->
+                </div>
+                
+                <!-- Info -->
+                <div class="footer-info">
+                    <div class="footer-title">Info.</div>
+                    <div class="footer-info-text">상호명 : 미블(Mrble)  |  대표 : 안소연  |  사업자등록번호 : 165-88-02749</div>
+                    <div class="footer-info-text">주소 : 서울특별시 광진구 천호대로 571 | 전국 최저가 정직한 체험단 마케팅 플랫폼</div>
+                </div>
+                
+                <!-- Chart Icon -->
+                <div class="footer-chart">
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script src="../js/main.js"></script>
+</body>
+</html>    <!-- Notion API 연동 스크립트 -->
+    <script>
+        // 페이지 로드시 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            // 모든 카드에 클릭 이벤트 추가
+            const blogCards = document.querySelectorAll('.blog-card');
+            
+            blogCards.forEach(card => {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', function() {
+                    // data-slug 속성 확인
+                    const slug = this.getAttribute('data-slug');
+                    
+                    if (slug) {
+                        // Notion 연동된 글은 blog-post.html로 이동
+                        window.location.href = `./blog-post.html?slug=${slug}`;
+                    } else {
+                        // 연동 안된 글은 알림 표시
+                        alert('이 콘텐츠는 아직 준비 중입니다.');
+                    }
+                });
+            });
+            
+            // Notion 데이터 동기화 (옵션)
+            checkNotionConnection();
+        });
+        
+        // Notion API 서버 연결 확인
+        async function checkNotionConnection() {
+            try {
+                const response = await fetch('http://localhost:3000/health');
+                const data = await response.json();
+                
+                if (data.status === 'OK') {
+                    console.log('✅ Notion API 서버 연결됨');
+                    // 필요시 실시간 데이터 로드
+                    loadLatestPosts();
+                }
+            } catch (error) {
+                console.log('⚠️ Notion API 서버가 실행되지 않음');
+                console.log('서버 시작: npm start');
+            }
+        }
+        
+        // 최신 포스트 로드 (옵션)
+        async function loadLatestPosts() {
+            try {
+                const response = await fetch('http://localhost:3000/api/posts');
+                const data = await response.json();
+                
+                if (data.success && data.posts.length > 0) {
+                    console.log('📝 Notion 포스트:', data.posts);
+                    // 여기서 카드를 동적으로 업데이트할 수 있음
+                }
+            } catch (error) {
+                console.error('포스트 로드 실패:', error);
+            }
+        }
+    </script>
+해결 

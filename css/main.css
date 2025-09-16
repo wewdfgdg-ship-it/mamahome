@@ -1,0 +1,672 @@
+/* Main CSS - Layout and Responsive */
+
+/* Layout Adjustments */
+body {
+    padding-top: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    /* Tablet Styles */
+    /* .nav-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: var(--color-bg-primary);
+        flex-direction: column;
+        padding: var(--spacing-md);
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .nav-menu.active {
+        display: flex;
+    }
+    
+    .nav-phone {
+        display: none;
+    } */
+    
+    .hero-title {
+        font-size: clamp(48px, 8vw, 80px);
+    }
+}
+@media (max-width: 767px) {
+    /* Mobile Styles */
+    .top-bar {
+        display: none;
+    }
+    
+    .header {
+        padding: 10px 0;
+    }
+    
+    .nav-container {
+        padding: 0 15px;
+    }
+    
+    .nav-logo {
+        font-size: 18px;
+        white-space: nowrap;
+    }
+    
+    .logo-symbol {
+        font-size: 20px;
+    }
+    
+    .btn-ai-gallo {
+        white-space: nowrap;
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .hero-subtitle {
+        font-size: 14px;
+        padding: 0 var(--spacing-md);
+    }
+    
+    .hero-title {
+        font-size: clamp(36px, 10vw, 60px);
+    }
+    
+    .business-tags {
+        padding: 0 var(--spacing-md);
+    }
+    
+    .tag {
+        font-size: 12px;
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+}}
+/* Enhance Carousel Smoke Effect */
+.slide-background::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 60%;
+    height: 150%;
+    background: radial-gradient(circle, rgba(41, 212, 193, 0.15) 0%, transparent 60%);
+    filter: blur(100px);
+    animation: smokeDrift 10s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes smokeDrift {
+    0% {
+        transform: translateX(0) translateY(0) scale(1);
+        opacity: 0.3;
+    }
+    50% {
+        transform: translateX(-20px) translateY(20px) scale(1.1);
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateX(20px) translateY(-20px) scale(0.9);
+        opacity: 0.3;
+    }
+}
+/* Service Card Enhanced Hover */
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, 
+        rgba(41, 212, 193, 0.2) 0%, 
+        transparent 70%);
+    opacity: 0;
+    transition: var(--transition-default);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.service-card:hover::before {
+    opacity: 1;
+}
+
+.service-card:hover .card-icon {
+    transform: rotateY(360deg);
+    transition: transform 0.6s ease-out;
+}
+
+.service-card:hover .card-link {
+    color: var(--color-primary-main);
+}
+/* Statistics Enhanced Effects */
+.stats-container {
+    overflow: visible;
+}
+
+.stat-card {
+    position: relative;
+    transition: var(--transition-default);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+        transparent 0%, 
+        rgba(41, 212, 193, 0.05) 100%);
+    opacity: 0;
+    transition: var(--transition-default);
+    pointer-events: none;
+}
+
+.stat-card:hover::before {
+    opacity: 1;
+}
+/* Statistics 정렬 - 숫자 가로줄 맞추기 */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: stretch;
+}
+
+.stat-answer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    flex-grow: 1;
+}
+
+.stat-number {
+    display: flex;
+    align-items: flex-end;
+    height: 80px;
+}
+
+.stat-number .suffix {
+    padding-bottom: 10px;
+    margin-left: 8px;
+}
+
+/* Number Animation */
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-number {
+    animation: countUp 1s ease-out;
+}
+/* 모바일 반응형 - 통계 섹션 */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;  /* 1열로 변경 */
+        gap: 30px;
+    }
+    
+    .stat-card {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .stat-number .number {
+        font-size: 56px;  /* 모바일에서 작게 */
+    }
+    
+    .stat-number .suffix {
+        font-size: 20px;
+    }
+    
+    .stat-number {
+        height: 60px;  /* 모바일에서 높이 줄이기 */
+        justify-content: center;  /* 가운데 정렬 */
+    }
+}
+
+/* 더 작은 화면 (480px 이하) */
+@media (max-width: 480px) {
+    .stat-number .number {
+        font-size: 48px;
+    }
+    
+    .stat-question-text {
+        font-size: 14px;
+    }
+    
+    .stat-description {
+        font-size: 12px;
+    }
+}
+
+/* Add gradient glow effect on hover */
+.stat-card:hover {
+    background-color: rgba(41, 212, 193, 0.02);
+}
+
+.stat-card:hover .stat-question-text {
+    color: var(--color-accent-hover);
+}
+
+.stat-card:hover .stat-number .number {
+    transform: scale(1.05);
+    transition: var(--transition-default);
+}
+/* Portfolio Card Enhanced Effects */
+.portfolio-card {
+    opacity: 1;
+    transform: translateY(0px);
+}
+
+.portfolio-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+        transparent 0%, 
+        rgba(41, 212, 193, 0.1) 100%);
+    opacity: 0;
+    transition: var(--transition-default);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.portfolio-card:hover::before {
+    opacity: 1;
+}
+
+.portfolio-card:hover .portfolio-overlay {
+    transform: scale(1.05);
+}
+
+.portfolio-graphic > div {
+    transition: var(--transition-default);
+}
+
+/* Add gradient border on hover */
+.portfolio-card::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, 
+        var(--color-primary-main) 0%, 
+        var(--color-accent-hover) 100%);
+    border-radius: var(--radius-lg);
+    opacity: 0;
+    transition: var(--transition-default);
+    z-index: -1;
+}
+
+.portfolio-card:hover::after {
+    opacity: 0.5;
+}
+
+
+/* Editorial Section Animation */
+@keyframes scaleIn {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}  /* ← 중괄호 닫기 */
+
+/* 기존 코드 아래에 추가 */
+.portfolio-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.6s ease;
+}
+
+/* Editorial Items Initial State */
+.editorial-item {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Add parallax effect on scroll */
+.editorial-section {
+    position: relative;
+}
+
+.editorial-title {
+    transition: transform 0.3s ease-out;
+}
+
+/* Add subtle glow to items on hover */
+.editorial-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, 
+        rgba(41, 212, 193, 0.2) 0%, 
+        transparent 70%);
+    opacity: 0;
+    transition: var(--transition-default);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.editorial-item:hover::before {
+    opacity: 1;
+}
+/* 모바일 반응형 - 필수! */
+@media (max-width: 768px) {
+    .editorial-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important; /* 2열로 변경 */
+        gap: 10px !important;
+        width: 100% !important;
+        overflow: visible !important;
+    }
+    
+    .editorial-item {
+        width: 100% !important;
+        opacity: 1 !important;
+        transform: none !important;
+        display: block !important;
+    }
+    
+    .editorial-right {
+        width: 100% !important;
+        padding: 0 15px !important;
+        overflow-x: hidden !important; /* 가로 스크롤 방지 */
+    }
+}
+
+/* 더 작은 화면 */
+@media (max-width: 480px) {
+    .editorial-grid {
+        grid-template-columns: 1fr !important; /* 1열로 변경 */
+    }
+}
+
+/* Add gradient background pattern */
+.editorial-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(41, 212, 193, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(41, 212, 193, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+/* Enhanced Partners Animation */
+.partners-track::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 100px;
+    background: linear-gradient(90deg, 
+        var(--color-bg-primary) 0%, 
+        transparent 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.partners-track::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--color-bg-primary) 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Add subtle shadow for depth */
+.partner-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, 
+        transparent 0%, 
+        rgba(0, 0, 0, 0.03) 100%);
+    opacity: 0;
+    transition: var(--transition-default);
+    pointer-events: none;
+}
+
+.partner-item:hover::before {
+    opacity: 1;
+}
+
+/* Add gradient border on hover */
+.partner-item::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, 
+        var(--color-primary-main) 0%, 
+        var(--color-accent-hover) 100%);
+    border-radius: var(--radius-lg);
+    opacity: 0;
+    transition: var(--transition-default);
+    z-index: -1;
+}
+
+.partner-item:hover::after {
+    opacity: 0.3;
+}
+/* ============================================
+   CTA Section - 통합 코드
+   ============================================ */
+.cta-section {
+    background: radial-gradient(circle at center, 
+        rgba(0, 0, 0, 0.95) 0%, 
+        var(--color-bg-secondary) 100%);
+    position: relative;
+}
+
+/* 파티클 효과 유지 */
+.cta-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 50%, rgba(41, 212, 193, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(41, 212, 193, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 50% 30%, rgba(41, 212, 193, 0.03) 0%, transparent 40%);
+    animation: floatParticles 10s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes floatParticles {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-20px) scale(1.05);
+    }
+}
+
+/* 글자 애니메이션 - 수정된 버전 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cta-title .letter {
+    display: inline-block;
+    color: var(--color-text-light);
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards;
+    /* animation-delay는 HTML에서 인라인으로 처리됨 */
+}
+
+/* 버튼 스타일 */
+.cta-button {
+    position: relative;
+    color: var(--color-text-light);
+    border: 1px solid var(--color-text-light);
+    background: transparent;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    cursor: pointer;
+    transition: var(--transition-default);
+    opacity: 0;
+    animation: fadeInUp 0.8s ease forwards;
+    animation-delay: 1.5s;
+}
+
+/* 버튼 글로우 효과 */
+.cta-button::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: radial-gradient(circle, 
+        rgba(41, 212, 193, 0.4) 0%, 
+        transparent 70%);
+    opacity: 0;
+    transition: var(--transition-default);
+    border-radius: 50px;
+    z-index: -1;
+}
+
+.cta-button:hover {
+    color: var(--color-primary-main);
+    border-color: var(--color-primary-main);
+    transform: translateY(-2px);
+}
+
+.cta-button:hover::before {
+    opacity: 1;
+}
+
+.button-text {
+    color: white !important;
+}
+/* 심플 푸터 스타일 */
+.simple-footer {
+    background-color: rgb(51, 51, 51); /* 이미지와 동일한 색상 */
+    padding: var(--spacing-lg) 0;
+}
+
+.footer-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    color: var(--color-text-light);
+}
+
+/* 고객 서비스 섹션 */
+.footer-customer {
+    flex: 0 0 auto;
+}
+
+.footer-title {
+    font-family: var(--font-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-xs);
+}
+
+.footer-phone {
+    font-family: var(--font-tertiary);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-xs);
+    letter-spacing: -0.5px;
+}
+
+.footer-fax {
+    font-family: var(--font-primary);
+    font-size: 13px;
+    color: var(--color-text-muted);
+}
+
+/* 정보 섹션 */
+.footer-info {
+    flex: 0 0 auto;
+    text-align: left;
+}
+
+.footer-info-text {
+    font-family: var(--font-primary);
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-xs);
+}
+
+/* 차트 아이콘 섹션 */
+.footer-chart {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: flex-end;
+    height: 60px;
+}
+
+.chart-bar {
+    width: 8px;
+    background-color: var(--color-text-muted);
+    margin-right: 4px;
+}
+
+.chart-bar:nth-child(1) { height: 30px; }
+.chart-bar:nth-child(2) { height: 45px; }
+.chart-bar:nth-child(3) { height: 60px; }
+.chart-bar:nth-child(4) { height: 40px; }
+  /* 모바일 메뉴 숨기기 */
+  @media (max-width: 767px) {
+      .nav-menu {
+          display: none !important;
+      }
+  }
+  
+   @media (max-width: 767px) {
+      .footer-wrapper {
+          flex-direction: column;
+          gap: 30px;
+      }
+      .footer-info-text {
+          font-size: 10px;
+          word-break: break-all;
+      }
+  }

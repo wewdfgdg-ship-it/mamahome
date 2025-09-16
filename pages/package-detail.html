@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>블로그 체험단 - Mrble</title>
+    
+    <!-- 폰트 로드 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    
+    <style>
+        /* 상세페이지 전용 스타일 */
+        
+        /* 헤더 네비게이션 폰트 스타일 - 메인과 동일하게 */
+        .nav-logo {
+            font-size: 18px;
+            white-space: nowrap;
+        }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .nav-link {
+            font-size: 14px;
+        }
+        
+        /* 푸터 차트 아이콘 명시적 표시 */
+        .footer-chart {
+            flex: 0 0 auto !important;
+            display: flex !important;
+            align-items: flex-end !important;
+            height: 60px !important;
+            visibility: visible !important;
+        }
+        
+        .footer-chart .chart-bar {
+            width: 8px !important;
+            background-color: rgba(255, 255, 255, 0.3) !important;
+            margin-right: 4px !important;
+            display: block !important;
+        }
+        
+        .footer-chart .chart-bar:nth-child(1) { height: 30px !important; }
+        .footer-chart .chart-bar:nth-child(2) { height: 45px !important; }
+        .footer-chart .chart-bar:nth-child(3) { height: 60px !important; }
+        .footer-chart .chart-bar:nth-child(4) { height: 40px !important; }
+        
+        .detail-hero {
+            background: var(--color-bg-secondary);
+            padding: var(--spacing-3xl) 0 var(--spacing-2xl);
+            margin-top: 60px;
+        }
+        
+        .detail-hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-3xl);
+            align-items: center;
+        }
+        
+        .hero-image-wrapper {
+            position: relative;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            height: 500px;
+            background: var(--color-bg-overlay);
+        }
+        
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .hero-badge {
+            position: absolute;
+            top: var(--spacing-md);
+            left: var(--spacing-md);
+            background: var(--color-primary-main);
+            color: var(--color-text-light);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .hero-info {
+            color: var(--color-text-light);
+        }
+        
+        .package-category {
+            color: var(--color-primary-main);
+            font-family: var(--font-secondary);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .hero-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            font-family: var(--font-primary);
+            color: var(--color-text-light);
+        }
+        
+        .hero-description {
+            font-size: 18px;
+            color: var(--color-text-muted);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.6;
+        }
+        
+        .price-area {
+            display: flex;
+            align-items: baseline;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .price-label {
+            font-size: 14px;
+            color: var(--color-text-muted);
+        }
+        
+        .price-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--color-primary-main);
+            font-family: var(--font-tertiary);
+        }
+        
+        .price-unit {
+            font-size: 16px;
+            color: var(--color-text-muted);
+        }
+        
+        /* 탭 네비게이션 */
+        .tab-navigation {
+            background: var(--color-bg-primary);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            position: sticky;
+            top: 60px;
+            z-index: 100;
+        }
+        
+        .tab-list {
+            display: flex;
+            gap: var(--spacing-xl);
+            list-style: none;
+            padding: 0;
+        }
+        
+        .tab-item {
+            position: relative;
+            padding: var(--spacing-md) 0;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            transition: var(--transition-default);
+        }
+        
+        .tab-item.active {
+            color: var(--color-text-primary);
+        }
+        
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--color-primary-main);
+        }
+        
+        .tab-item:hover {
+            color: var(--color-text-primary);
+        }
+        
+        /* 탭 콘텐츠 */
+        .tab-content {
+            padding: var(--spacing-3xl) 0;
+        }
+        
+        .tab-panel {
+            display: none;
+        }
+        
+        .tab-panel.active {
+            display: block;
+        }
+        
+        /* 서비스 특징 */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-2xl);
+        }
+        
+        .feature-card {
+            background: var(--color-bg-primary);
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            text-align: center;
+            transition: var(--transition-default);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--color-primary-main);
+        }
+        
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto var(--spacing-md);
+            background: var(--color-primary-main);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-light);
+            font-size: 24px;
+        }
+        
+        .feature-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+            color: var(--color-text-primary);
+        }
+        
+        .feature-desc {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* 패키지 옵션 */
+        .options-section {
+            background: rgba(41, 212, 193, 0.05);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-2xl);
+            margin-top: var(--spacing-2xl);
+        }
+        
+        .option-group {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .option-label {
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-text-primary);
+        }
+        
+        .option-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+        }
+        
+        .option-btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 2px solid var(--color-primary-main);
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition-default);
+            font-weight: 500;
+        }
+        
+        .option-btn:hover {
+            background: rgba(41, 212, 193, 0.1);
+        }
+        
+        .option-btn.selected {
+            background: var(--color-primary-main);
+            color: var(--color-text-light);
+        }
+        
+        /* 진행 프로세스 */
+        .process-timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: var(--spacing-3xl);
+        }
+        
+        .process-timeline::before {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(to right, var(--color-primary-main), var(--color-primary-main));
+            z-index: 0;
+        }
+        
+        .process-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: var(--color-primary-main);
+            color: var(--color-text-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-sm);
+            font-weight: 700;
+            font-size: 18px;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+            color: var(--color-text-primary);
+        }
+        
+        .step-desc {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+        }
+        
+        /* 하단 고정 구매바 */
+        .sticky-purchase {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--color-bg-primary);
+            border-top: 1px solid rgba(0,0,0,0.1);
+            padding: var(--spacing-md) 0;
+            z-index: 1000;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .sticky-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--spacing-xl);
+        }
+        
+        .sticky-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+        
+        .sticky-title {
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+        
+        .sticky-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-primary-main);
+        }
+        
+        /* 반응형 */
+        @media (max-width: 1024px) {
+            .detail-hero-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .hero-title {
+                font-size: 32px;
+            }
+            
+            .hero-image-wrapper {
+                height: 300px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tab-list {
+                overflow-x: auto;
+                gap: var(--spacing-md);
+            }
+            
+            .process-timeline {
+                flex-direction: column;
+                gap: var(--spacing-lg);
+            }
+            
+            .process-timeline::before {
+                display: none;
+            }
+            
+            .sticky-content {
+                flex-direction: column;
+                gap: var(--spacing-md);
+            }
+            
+            .sticky-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .btn-large {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav-container">
+                <a href="../index.html" class="nav-logo">
+                    <span class="logo-text">Mrble</span>
+                </a>                
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="../index.html#about" class="nav-link">미블체험단</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../pages/press.html" class="nav-link">마케팅정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../pages/pricing.html" class="nav-link active">마케팅상품</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.mrblog.net" class="nav-link" target="_blank">미블홈페이지</a>
+                    </li>
+                </ul>
+                <div class="nav-spacer"></div>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- 히어로 섹션 -->
+    <section class="detail-hero">
+        <div class="container">
+            <div class="detail-hero-content">
+                <div class="hero-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&fit=crop" alt="블로그 체험단" class="hero-image">
+                    <span class="hero-badge">인기 상품</span>
+                </div>
+                <div class="hero-info">
+                    <div class="package-category">Marketing Package</div>
+                    <h1 class="hero-title">블로그 체험단</h1>
+                    <p class="hero-description">
+                        체험단은 전문 블로거들이<br>
+                        직접 체험하고 작성하는<br>
+                        고품질 콘텐츠로 브랜드 신뢰도를 높여드립니다.
+                    </p>
+                    <div class="price-area">
+                        <span class="price-label">월</span>
+                        <span class="price-value">30,000</span>
+                        <span class="price-unit">원~</span>
+                    </div>
+                    <button class="btn btn-primary btn-large" onclick="goToCheckout()" style="background: var(--color-primary-main); font-size: 18px; padding: 16px 40px; font-weight: 700; margin-top: var(--spacing-lg);">지금 구매하기</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 탭 네비게이션 -->
+    <div class="tab-navigation">
+        <div class="container">
+            <ul class="tab-list">
+                <li class="tab-item active" data-tab="overview">서비스 소개</li>
+                <!-- 숨김 처리
+                <li class="tab-item" data-tab="included">포함 내역</li>
+                <li class="tab-item" data-tab="process">진행 과정</li>
+                <li class="tab-item" data-tab="reviews">후기</li>
+                <li class="tab-item" data-tab="faq">FAQ</li>
+                -->
+            </ul>
+        </div>
+    </div>
+    
+    <!-- 탭 콘텐츠 -->
+    <div class="tab-content">
+        <div class="container">
+            <!-- 서비스 소개 탭 -->
+            <div class="tab-panel active" id="overview">
+                <h2 class="heading-2">왜 블로그 체험단인가?</h2>
+                <p class="text-body" style="margin-top: var(--spacing-md);">
+                    네이버 검색의 80% 이상이 블로그를 통해 정보를 얻습니다.<br> 
+                    미블의 블로그 체험단은 검증된 블로거들과 함께<br> 
+                    귀사의 제품과 서비스를 효과적으로 알립니다.
+                </p>
+                
+                <!-- 마케팅 이미지들 -->
+                <div style="margin-top: var(--spacing-2xl); margin-bottom: var(--spacing-2xl);">
+                    <img src="../images/marketing/blog-experience-1.jpg" alt="업계최초 전국 최저가 진행" 
+                         style="width: 100%; height: auto; border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg); box-shadow: var(--shadow-md);">
+                    
+                    <img src="../images/marketing/blog-experience-2.jpg" alt="월 3만원대 체험단 마케팅" 
+                         style="width: 100%; height: auto; border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg); box-shadow: var(--shadow-md);">
+                    
+                    <img src="../images/marketing/blog-experience-3.jpg" alt="신규고객 지원 월 3만원" 
+                         style="width: 100%; height: auto; border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg); box-shadow: var(--shadow-md);">
+                    
+                    <img src="../images/marketing/blog-experience-4.jpg" alt="블로그 마케팅 서비스" 
+                         style="width: 100%; height: auto; border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg); box-shadow: var(--shadow-md);">
+                    
+                    <img src="../images/marketing/blog-experience-5.jpg" alt="인스타그램 마케팅 서비스" 
+                         style="width: 100%; height: auto; border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg); box-shadow: var(--shadow-md);">
+                    
+                    <img src="../images/marketing/blog-experience-6.jpg" alt="유튜브 마케팅 서비스" 
+                         style="width: 100%; height: auto; border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg); box-shadow: var(--shadow-md);">
+                    
+                    <img src="../images/marketing/blog-experience-7.jpg" alt="릴스 마케팅 서비스" 
+                         style="width: 100%; height: auto; border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg); box-shadow: var(--shadow-md);">
+                    
+                    <img src="../images/marketing/blog-experience-8.jpg" alt="체험단 마케팅 프로세스" 
+                         style="width: 100%; height: auto; border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg); box-shadow: var(--shadow-md);">
+                    
+                    <img src="../images/marketing/blog-experience-9.jpg" alt="마케팅 효과 분석" 
+                         style="width: 100%; height: auto; border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg); box-shadow: var(--shadow-md);">
+                    
+                    <img src="../images/marketing/blog-experience-10.jpg" alt="고객 후기 및 성과" 
+                         style="width: 100%; height: auto; border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg); box-shadow: var(--shadow-md);">
+                    
+                    <img src="../images/marketing/blog-experience-11.jpg" alt="특별 혜택 안내" 
+                         style="width: 100%; height: auto; border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg); box-shadow: var(--shadow-md);">
+                </div>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📝</div>
+                        <h3 class="feature-title">고품질 콘텐츠</h3>
+                        <p class="feature-desc">전문 블로거가 직접 체험하고 작성하는 진정성 있는 리뷰</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <h3 class="feature-title">검색 최적화</h3>
+                        <p class="feature-desc">SEO 최적화된 포스팅으로 검색 상위 노출 보장</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3 class="feature-title">성과 리포트</h3>
+                        <p class="feature-desc">상세한 마케팅 효과 분석 리포트 제공</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">👥</div>
+                        <h3 class="feature-title">타겟 매칭</h3>
+                        <p class="feature-desc">업종별 전문 블로거 매칭 시스템</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3 class="feature-title">빠른 진행</h3>
+                        <p class="feature-desc">신청 후 7일 이내 포스팅 완료</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💰</div>
+                        <h3 class="feature-title">합리적 가격</h3>
+                        <p class="feature-desc">업계 최저가 보장 정책</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 숨김 처리: 포함 내역, 진행 과정, 후기, FAQ 탭 -->
+            <!-- 
+            <div class="tab-panel" id="included">
+                <h2 class="heading-2">패키지 포함 내역</h2>
+                
+                <div class="options-section">
+                    <div class="option-group">
+                        <div class="option-label">✅ 기본 제공 서비스</div>
+                        <ul style="padding-left: var(--spacing-md); line-height: 2;">
+                            <li>파워블로거 10명 이상 참여</li>
+                            <li>고품질 사진 촬영 및 편집</li>
+                            <li>SEO 최적화 키워드 선정</li>
+                            <li>7일 이내 포스팅 완료</li>
+                            <li>30일간 포스팅 유지 보장</li>
+                            <li>상세 리포트 제공</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="option-group">
+                        <div class="option-label">🎯 선택 옵션</div>
+                        <div class="option-buttons">
+                            <button class="option-btn selected">10명</button>
+                            <button class="option-btn">20명</button>
+                            <button class="option-btn">30명</button>
+                            <button class="option-btn">50명</button>
+                            <button class="option-btn">100명</button>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <div class="option-label">📅 진행 기간</div>
+                        <div class="option-buttons">
+                            <button class="option-btn selected">7일 완료</button>
+                            <button class="option-btn">14일 완료</button>
+                            <button class="option-btn">30일 완료</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 진행 과정 탭 -->
+            <div class="tab-panel" id="process">
+                <h2 class="heading-2">진행 프로세스</h2>
+                
+                <div class="process-timeline">
+                    <div class="process-step">
+                        <div class="step-number">1</div>
+                        <h4 class="step-title">상담 신청</h4>
+                        <p class="step-desc">전문 상담사와 무료 상담</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">2</div>
+                        <h4 class="step-title">블로거 매칭</h4>
+                        <p class="step-desc">업종별 전문 블로거 선정</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">3</div>
+                        <h4 class="step-title">체험 진행</h4>
+                        <p class="step-desc">제품/서비스 직접 체험</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">4</div>
+                        <h4 class="step-title">콘텐츠 작성</h4>
+                        <p class="step-desc">고품질 리뷰 포스팅</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">5</div>
+                        <h4 class="step-title">리포트 전달</h4>
+                        <p class="step-desc">상세 효과 분석 제공</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 후기 탭 -->
+            <div class="tab-panel" id="reviews">
+                <h2 class="heading-2">고객 후기</h2>
+                <div class="grid grid-2" style="margin-top: var(--spacing-2xl);">
+                    <div class="card">
+                        <div class="card-content">
+                            <div style="color: var(--color-primary-main); margin-bottom: var(--spacing-sm);">⭐⭐⭐⭐⭐</div>
+                            <p class="text-body">"블로그 체험단 진행 후 매출이 30% 상승했습니다. 검색 노출도 크게 개선되어 만족합니다."</p>
+                            <p class="text-small" style="margin-top: var(--spacing-sm); color: var(--color-text-secondary);">- 카페 사장님</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content">
+                            <div style="color: var(--color-primary-main); margin-bottom: var(--spacing-sm);">⭐⭐⭐⭐⭐</div>
+                            <p class="text-body">"합리적인 가격에 퀄리티 높은 서비스를 받았습니다. 재구매 의사 100%입니다."</p>
+                            <p class="text-small" style="margin-top: var(--spacing-sm); color: var(--color-text-secondary);">- 온라인 쇼핑몰 대표</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FAQ 탭 -->
+            <div class="tab-panel" id="faq">
+                <h2 class="heading-2">자주 묻는 질문</h2>
+                <div style="margin-top: var(--spacing-2xl);">
+                    <div class="card" style="margin-bottom: var(--spacing-md);">
+                        <div class="card-content">
+                            <h4 class="heading-4">Q. 블로거는 어떻게 선정되나요?</h4>
+                            <p class="text-body" style="margin-top: var(--spacing-sm);">
+                                A. 일평균 방문자 1,000명 이상의 파워블로거 중 업종별 전문성을 갖춘 블로거를 엄선하여 매칭합니다.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-bottom: var(--spacing-md);">
+                        <div class="card-content">
+                            <h4 class="heading-4">Q. 포스팅은 얼마나 유지되나요?</h4>
+                            <p class="text-body" style="margin-top: var(--spacing-sm);">
+                                A. 최소 30일 이상 유지를 보장하며, 대부분의 포스팅은 영구적으로 유지됩니다.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content">
+                            <h4 class="heading-4">Q. 효과를 어떻게 확인할 수 있나요?</h4>
+                            <p class="text-body" style="margin-top: var(--spacing-sm);">
+                                A. 포스팅 URL, 조회수, 댓글 등이 포함된 상세 리포트를 제공하며, 검색 순위 변화도 추적해드립니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            -->
+        </div>
+    </div>
+    
+    <!-- 하단 고정 구매바 -->
+    <div class="sticky-purchase">
+        <div class="container">
+            <div class="sticky-content">
+                <div class="sticky-info">
+                    <span class="sticky-title">블로그 체험단</span>
+                    <span class="sticky-price">30,000원~</span>
+                </div>
+                <button class="btn btn-primary btn-large" onclick="goToCheckout()" style="background: var(--color-primary-main); color: var(--color-text-light); font-size: 16px; padding: 14px 36px; font-weight: 700; border: none; border-radius: var(--radius-md); box-shadow: 0 4px 12px rgba(41, 212, 193, 0.3); cursor: pointer; transition: var(--transition-default); margin-right: var(--spacing-3xl);">지금 구매하기</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <!-- 심플 푸터 -->
+    <footer class="simple-footer">
+        <div class="container">
+            <div class="footer-wrapper">
+                <!-- Customer Service -->
+                <div class="footer-customer">
+                    <div class="footer-title">미블문의</div>
+                    <div class="footer-phone">010-7362-7711</div>
+                    <!--<div class="footer-fax">Fax. 02-000-0000</div>"-->
+                </div>
+                
+                <!-- Info -->
+                <div class="footer-info">
+                    <div class="footer-title">Info.</div>
+                    <div class="footer-info-text">상호명 : 미블(Mrble)  |  대표 : 안소연  |  사업자등록번호 : 165-88-02749</div>
+                    <div class="footer-info-text">주소 : 서울특별시 광진구 천호대로 571 | 전국 최저가 정직한 체험단 마케팅 플랫폼</div>
+                </div>
+                
+                <!-- Chart Icon -->
+                <div class="footer-chart">
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // 탭 전환 기능
+        const tabItems = document.querySelectorAll('.tab-item');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+        
+        tabItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const targetTab = item.getAttribute('data-tab');
+                
+                // 모든 탭 비활성화
+                tabItems.forEach(tab => tab.classList.remove('active'));
+                tabPanels.forEach(panel => panel.classList.remove('active'));
+                
+                // 선택한 탭 활성화
+                item.classList.add('active');
+                document.getElementById(targetTab).classList.add('active');
+            });
+        });
+        
+        // 옵션 선택 기능
+        const optionGroups = document.querySelectorAll('.option-group');
+        optionGroups.forEach(group => {
+            const buttons = group.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    buttons.forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                });
+            });
+        });
+        
+        // 결제 페이지로 이동
+        function goToCheckout() {
+            window.location.href = 'checkout.html?package=blog-experience';
+        }
+    </script>
+</body>
+</html>
