@@ -10,7 +10,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     
-    <!-- 페이앱 설정 파일 (민감한 정보 포함) -->
+    <!-- 페이앱 설정 -->
+    <script>
+        // config.js 파일이 없을 때를 위한 기본 설정
+        if (typeof CONFIG === 'undefined') {
+            const CONFIG = {
+                userid: 'ksbm',
+                linkkey: 'QLo9WUgFwaqAYjAiv6z86e1DPJnCCRVaOgT+oqg6zaM=',
+                feedbackurl: 'https://mamahome-five.vercel.app/api/orders',
+                returnurl: 'https://wewdfgdg-ship-it.github.io/mamahome/pages/payment-complete.html',
+                environment: 'production'
+            };
+            window.CONFIG = CONFIG;
+        }
+    </script>
     <script src="../config.js"></script>
     
     <!-- 페이앱 커스텀 결제 모듈 -->
