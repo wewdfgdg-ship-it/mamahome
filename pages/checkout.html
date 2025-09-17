@@ -1201,8 +1201,8 @@
                     PayApp.setParam('openpaytype', payType);  // 결제 수단
                     PayApp.setParam('var1', paymentData.package.people.toString());
                     PayApp.setParam('var2', paymentData.package.discountRate.toString());
-                    PayApp.setParam('returnurl', window.location.origin + '/pages/payment-complete.html');
-                    // feedbackurl 제거 (에러 70080 방지 - 콜백 서버가 없는 경우)
+                    PayApp.setParam('returnurl', CONFIG.returnurl || 'https://wewdfgdg-ship-it.github.io/mamahome/pages/payment-complete.html');
+                    PayApp.setParam('feedbackurl', CONFIG.feedbackurl || 'https://mamahome-five.vercel.app/api/orders')
                     
                     console.log('PayApp 파라미터 설정 완료');
                     
