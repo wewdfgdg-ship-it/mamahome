@@ -1,9 +1,13 @@
 {
-  "buildCommand": "echo 'No build required'",
+  "buildCommand": "",
   "outputDirectory": ".",
   "framework": null,
   "functions": {
-    "api/*.js": {
+    "api/orders.js": {
+      "runtime": "nodejs20.x",
+      "maxDuration": 10
+    },
+    "api/admin-auth.js": {
       "runtime": "nodejs20.x",
       "maxDuration": 10
     }
