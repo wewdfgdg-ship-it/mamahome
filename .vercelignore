@@ -1,0 +1,22 @@
+# Ignore PHP files
+*.php
+**/*.php
+
+# Ignore config files
+config-server.php
+.htaccess
+
+# Ignore development files
+.git
+.gitignore
+*.md
+.env
+.env.*
+
+# Ignore unnecessary folders
+node_modules
+.next
+backup
+docs
+test-*
+*.test.*
