@@ -1214,7 +1214,18 @@
                     PayApp.setParam('openpaytype', payType);  // 결제 수단
                     PayApp.setParam('var1', paymentData.package.people.toString());
                     PayApp.setParam('var2', paymentData.package.discountRate.toString());
-                    PayApp.setParam('returnurl', CONFIG.returnurl || window.location.origin + '/pages/payment-complete.html');
+                    // returnurl 설정 - 페이앱은 GET 방식으로 리다이렉트
+                    // Vercel에서는 정적 HTML만 제공하므로 POST는 405 에러 발생
+                    if (window.location.hostname.includes('vercel.app')) {
+                        // Vercel 환경에서는 GitHub Pages로 리다이렉트
+                        PayApp.setParam('returnurl', 'https://wewdfgdg-ship-it.github.io/mamahome/pages/payment-complete.html');
+                    } else if (window.location.protocol === 'file:') {
+                        // 로컬 테스트 환경
+                        PayApp.setParam('returnurl', '');
+                    } else {
+                        // 기타 환경
+                        PayApp.setParam('returnurl', window.location.origin + '/pages/payment-complete.html');
+                    }
                     // feedbackurl 제거 - 에러 70080 방지 (페이앱이 접속할 수 없는 URL일 때)
                     // PayApp.setParam('feedbackurl', CONFIG.feedbackurl)
                     
