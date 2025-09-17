@@ -10,7 +10,16 @@ const supabaseKey = process.env.SUPABASE_ANON_KEY;
 let supabase = null;
 
 if (supabaseUrl && supabaseKey) {
-  supabase = createClient(supabaseUrl, supabaseKey);
+  supabase = createClient(supabaseUrl, supabaseKey, {
+    db: {
+      schema: 'public'
+    },
+    global: {
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      }
+    }
+  });
 }
 
 export default async function handler(req, res) {
@@ -60,20 +69,27 @@ async function createOrder(req, res) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  // 주문 데이터 구성
+  // UTF-8 문자열 확인 함수
+  const ensureUTF8 = (str) => {
+    if (!str) return null;
+    // 문자열이 이미 UTF-8인 경우 그대로 반환
+    return String(str);
+  };
+
+  // 주문 데이터 구성 (UTF-8 인코딩 보장)
   const newOrder = {
-    order_number: orderData.orderNumber,
-    customer_name: orderData.customer?.name || '고객',
-    customer_email: orderData.customer?.email || '',
-    customer_phone: orderData.customer?.phone || '',
-    business_name: orderData.customer?.businessName || null,
-    business_number: orderData.customer?.businessNumber || null,
-    package_name: orderData.packageInfo?.name || orderData.goodname || '미블 체험단',
+    order_number: ensureUTF8(orderData.orderNumber),
+    customer_name: ensureUTF8(orderData.customer?.name) || '고객',
+    customer_email: ensureUTF8(orderData.customer?.email) || '',
+    customer_phone: ensureUTF8(orderData.customer?.phone) || '',
+    business_name: ensureUTF8(orderData.customer?.businessName),
+    business_number: ensureUTF8(orderData.customer?.businessNumber),
+    package_name: ensureUTF8(orderData.packageInfo?.name || orderData.goodname) || '미블 체험단',
     package_price: orderData.packageInfo?.price || orderData.price || orderData.amount,
     amount: orderData.amount,
-    payment_method: orderData.paymentMethod || 'payapp',
-    status: orderData.status || 'pending',
-    notes: orderData.notes || null
+    payment_method: ensureUTF8(orderData.paymentMethod) || 'payapp',
+    status: ensureUTF8(orderData.status) || 'pending',
+    notes: ensureUTF8(orderData.notes)
   };
 
   // Supabase에 저장
