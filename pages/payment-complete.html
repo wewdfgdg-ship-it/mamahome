@@ -212,15 +212,24 @@
                     try {
                         const parsed = JSON.parse(checkoutData);
                         customerInfo = {
-                            name: parsed.name || '',
-                            email: parsed.email || '',
-                            phone: parsed.phone || '',
+                            name: parsed.name || orderData.buyer || '',
+                            email: parsed.email || orderData.buyeremail || '',
+                            phone: parsed.phone || orderData.buyerphone || '',
                             businessName: parsed.businessName || '',
                             businessNumber: parsed.businessNumber || ''
                         };
                     } catch (e) {
                         console.error('Checkout data parsing error:', e);
                     }
+                } else {
+                    // checkoutData가 없으면 페이앱에서 받은 정보 사용
+                    customerInfo = {
+                        name: orderData.buyer || '미확인',
+                        email: orderData.buyeremail || '',
+                        phone: orderData.buyerphone || '',
+                        businessName: '',
+                        businessNumber: ''
+                    };
                 }
 
                 // 주문 데이터 구성
@@ -276,6 +285,9 @@
             const orderid = urlParams.get('orderid');
             const goodname = urlParams.get('goodname');
             const price = urlParams.get('price');
+            const buyer = urlParams.get('buyer');
+            const buyerphone = urlParams.get('buyerphone');
+            const buyeremail = urlParams.get('buyeremail');
             const message = urlParams.get('message');
             
             // 로딩 상태 숨기기
@@ -323,6 +335,9 @@
                     orderNumber: orderid,
                     goodname: goodname,
                     price: price,
+                    buyer: buyer,
+                    buyerphone: buyerphone,
+                    buyeremail: buyeremail,
                     state: 'success'
                 });
 

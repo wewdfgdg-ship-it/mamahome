@@ -1215,11 +1215,13 @@
                     PayApp.setParam('cmd', 'payrequest');  // 명령어 추가
                     PayApp.setParam('userid', CONFIG.userid);  // userid 명시적 설정
                     PayApp.setParam('linkkey', CONFIG.linkkey);  // linkkey 필수
-                    PayApp.setParam('goodname', paymentData.customer.company || '미입력');
+                    PayApp.setParam('goodname', `미블 체험단 ${paymentData.package.people}명`);
                     PayApp.setParam('price', paymentData.package.total.toString());
                     PayApp.setParam('recvphone', paymentData.customer.phone.replace(/-/g, ''));
                     PayApp.setParam('email', paymentData.customer.email || '');
                     PayApp.setParam('buyer', paymentData.customer.name);
+                    PayApp.setParam('buyerphone', paymentData.customer.phone);
+                    PayApp.setParam('buyeremail', paymentData.customer.email);
                     PayApp.setParam('memo', `블로그 체험단 ${paymentData.package.people}명 패키지`);
                     PayApp.setParam('smsuse', 'n');  // SMS 사용 안함
                     PayApp.setParam('redirectpay', '1');  // 바로 결제창으로

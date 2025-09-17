@@ -3,7 +3,7 @@
 
 export default async function handler(req, res) {
   // POST 데이터 받기
-  const { state, orderid, goodname, price, buyer, message } = req.body || req.query;
+  const { state, orderid, goodname, price, buyer, buyerphone, buyeremail, email, recvphone, message } = req.body || req.query;
 
   // GET 파라미터로 변환
   const params = new URLSearchParams();
@@ -12,6 +12,10 @@ export default async function handler(req, res) {
   if (goodname) params.append('goodname', goodname);
   if (price) params.append('price', price);
   if (buyer) params.append('buyer', buyer);
+  if (buyerphone) params.append('buyerphone', buyerphone);
+  if (buyeremail) params.append('buyeremail', buyeremail);
+  if (email) params.append('buyeremail', email);  // email이 있으면 buyeremail로 매핑
+  if (recvphone) params.append('buyerphone', recvphone);  // recvphone이 있으면 buyerphone으로 매핑
   if (message) params.append('message', message);
 
   // GitHub Pages의 payment-complete.html로 리다이렉트
