@@ -1169,7 +1169,20 @@
             };
             
             console.log('Payment Data:', paymentData);
-            
+
+            // 결제 정보를 로컬 스토리지에 저장 (payment-complete에서 사용)
+            localStorage.setItem('checkoutData', JSON.stringify({
+                name: paymentData.customer.name,
+                email: paymentData.customer.email,
+                phone: paymentData.customer.phone,
+                businessName: paymentData.customer.company || '',
+                businessType: paymentData.customer.businessType || '',
+                packageName: paymentData.package.name,
+                packagePrice: paymentData.package.total,
+                packagePeople: paymentData.package.people,
+                timestamp: new Date().toISOString()
+            }));
+
             // 페이앱 결제 요청
             console.log('=== 결제 프로세스 시작 ===');
             console.log('페이앱 라이브러리 확인:', typeof PayApp);

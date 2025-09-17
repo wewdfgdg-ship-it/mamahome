@@ -14,11 +14,12 @@ if (supabaseUrl && supabaseKey) {
 }
 
 export default async function handler(req, res) {
-  // CORS 헤더 설정
+  // CORS 헤더 설정 - UTF-8 인코딩 포함
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
   if (req.method === 'OPTIONS') {
     res.status(200).end();
