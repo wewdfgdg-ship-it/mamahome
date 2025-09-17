@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>결제 처리 중 - Mrble</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .processing-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 20px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="processing-container">
+        <div class="spinner"></div>
+        <h2>결제를 처리하고 있습니다</h2>
+        <p>잠시만 기다려주세요...</p>
+    </div>
+
+    <script>
+        // 페이앱에서 POST로 전달된 데이터 처리
+        // POST 데이터는 직접 읽을 수 없으므로 GET 파라미터로 변환하여 리다이렉트
+
+        // 3초 후 자동으로 payment-complete 페이지로 이동
+        setTimeout(() => {
+            // GET 파라미터 생성
+            const params = new URLSearchParams();
+            params.append('state', 'success');
+            params.append('message', '결제가 완료되었습니다');
+            params.append('timestamp', new Date().toISOString());
+
+            // payment-complete.html로 리다이렉트
+            window.location.href = 'payment-complete.html?' + params.toString();
+        }, 1500);
+    </script>
+</body>
+</html>
