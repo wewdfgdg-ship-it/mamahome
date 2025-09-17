@@ -1,9 +1,10 @@
 {
-  "buildCommand": "",
+  "buildCommand": "echo 'No build required'",
   "outputDirectory": ".",
   "framework": null,
   "functions": {
     "api/*.js": {
+      "runtime": "nodejs20.x",
       "maxDuration": 10
     }
   },
