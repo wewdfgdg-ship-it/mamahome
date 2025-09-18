@@ -110,8 +110,15 @@ function toggleMobileMenu() {
 
 // 로그인 상태 확인 함수
 function checkAuthStatus() {
-  const token = localStorage.getItem('authToken');
-  const isLoggedIn = !!token;
+  // 새로운 토큰 시스템 확인 (accessToken)
+  const accessToken = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+  const userInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
+
+  // 구식 토큰도 함께 확인 (호환성)
+  const oldAuthToken = localStorage.getItem('authToken');
+  const oldUserToken = localStorage.getItem('userToken') || sessionStorage.getItem('userToken');
+
+  const isLoggedIn = (accessToken && userInfo) || oldAuthToken || (oldUserToken && userInfo);
 
   // 데스크톱 메뉴
   const loginLink = document.getElementById('login-link');
@@ -145,17 +152,33 @@ function checkAuthStatus() {
 }
 
 // 로그아웃 함수
-function logout() {
-  localStorage.removeItem('authToken');
-  localStorage.removeItem('userInfo');
+async function logout() {
+  // AuthManager가 있으면 사용
+  if (typeof AuthManager !== 'undefined') {
+    await AuthManager.logout();
+  } else {
+    // localStorage 및 sessionStorage 정리
+    // 새로운 토큰 시스템
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userInfo');
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('refreshToken');
+    sessionStorage.removeItem('userInfo');
 
-  // 현재 페이지 경로 확인
-  const currentPath = window.location.pathname;
-  const isInPagesFolder = currentPath.includes('/pages/');
+    // 구식 토큰 시스템 (호환성)
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userToken');
+    sessionStorage.removeItem('userToken');
 
-  // 로그인 페이지로 리다이렉트
-  const loginPath = isInPagesFolder ? '../login.html' : '/login.html';
-  window.location.href = loginPath;
+    // 현재 페이지 경로 확인
+    const currentPath = window.location.pathname;
+    const isInPagesFolder = currentPath.includes('/pages/');
+
+    // 로그인 페이지로 리다이렉트
+    const loginPath = isInPagesFolder ? '../login.html' : '/login.html';
+    window.location.href = loginPath;
+  }
 }
 
 // 페이지 로드 시 헤더 로드
