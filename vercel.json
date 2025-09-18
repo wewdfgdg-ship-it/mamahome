@@ -31,6 +31,29 @@
     {
       "source": "/admin/",
       "destination": "/admin/index.html"
+    },
+    {
+      "source": "/pages/payment-complete",
+      "destination": "/pages/payment-complete.html"
+    },
+    {
+      "source": "/pages/checkout",
+      "destination": "/pages/checkout.html"
+    },
+    {
+      "source": "/pages/register",
+      "destination": "/pages/register.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/pages/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
     }
   ]
 }

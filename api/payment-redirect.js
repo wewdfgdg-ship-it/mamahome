@@ -18,8 +18,8 @@ export default async function handler(req, res) {
   if (recvphone) params.append('buyerphone', recvphone);  // recvphone이 있으면 buyerphone으로 매핑
   if (message) params.append('message', message);
 
-  // GitHub Pages의 payment-complete.html로 리다이렉트
-  const redirectUrl = `https://wewdfgdg-ship-it.github.io/mamahome/pages/payment-complete.html?${params.toString()}`;
+  // Vercel의 payment-complete.html로 리다이렉트
+  const redirectUrl = `https://mamahome-five.vercel.app/pages/payment-complete.html?${params.toString()}`;
 
   // HTML로 자동 리다이렉트 (POST를 GET으로 변환)
   const html = `
