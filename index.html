@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/main.css">
+
+    <!-- Auth Manager -->
+    <script src="js/auth.js"></script>
 </head>
 <body>
         <!-- Header -->
@@ -1028,14 +1031,18 @@ window.addEventListener('scroll', () => {
 
 // 로그인 상태 확인 및 UI 업데이트
 function checkLoginStatus() {
+    // 새로운 토큰 시스템 확인 (accessToken)
+    const accessToken = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
     const userInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
-    const userToken = localStorage.getItem('userToken') || sessionStorage.getItem('userToken');
+
+    // 구식 토큰도 함께 확인 (호환성)
+    const oldUserToken = localStorage.getItem('userToken') || sessionStorage.getItem('userToken');
 
     const loginBtn = document.getElementById('loginBtn');
     const mypageBtn = document.getElementById('mypageBtn');
     const logoutBtn = document.getElementById('logoutBtn');
 
-    if (userInfo && userToken) {
+    if ((accessToken && userInfo) || (oldUserToken && userInfo)) {
         // 로그인된 상태
         if (loginBtn) loginBtn.style.display = 'none';
         if (mypageBtn) mypageBtn.style.display = 'inline-block';
@@ -1049,20 +1056,31 @@ function checkLoginStatus() {
 }
 
 // 로그아웃 함수
-function logout() {
+async function logout() {
     if (confirm('로그아웃 하시겠습니까?')) {
-        // localStorage 및 sessionStorage 정리
-        localStorage.removeItem('userInfo');
-        localStorage.removeItem('userToken');
-        sessionStorage.removeItem('userInfo');
-        sessionStorage.removeItem('userToken');
+        // AuthManager가 있으면 사용
+        if (typeof AuthManager !== 'undefined') {
+            await AuthManager.logout();
+        } else {
+            // localStorage 및 sessionStorage 정리
+            // 새로운 토큰 시스템
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('userInfo');
+            sessionStorage.removeItem('accessToken');
+            sessionStorage.removeItem('refreshToken');
+            sessionStorage.removeItem('userInfo');
 
-        // UI 업데이트
-        checkLoginStatus();
+            // 구식 토큰 시스템 (호환성)
+            localStorage.removeItem('userToken');
+            sessionStorage.removeItem('userToken');
 
-        // 홈으로 리다이렉트 (현재 페이지 유지)
-        alert('로그아웃되었습니다.');
-        // 현재 페이지에서 로그아웃 상태로 유지
+            // UI 업데이트
+            checkLoginStatus();
+
+            // 홈으로 리다이렉트 (현재 페이지 유지)
+            alert('로그아웃되었습니다.');
+        }
     }
 }
 
