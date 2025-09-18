@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이페이지 - 미블(Mrble)</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- 인증 헬퍼 로드 -->
+    <script src="js/auth.js"></script>
     <style>
         .dashboard {
             min-height: 100vh;
@@ -457,22 +459,34 @@
     <script>
         // 페이지 로드 시
         window.addEventListener('DOMContentLoaded', () => {
-            checkUserLogin();
-            loadUserInfo();
-            loadUserOrders();
+            // 로그인 상태 확인 후 처리
+            if (checkUserLogin()) {
+                // 로그인된 경우에만 정보 로드
+                loadUserInfo();
+                loadUserOrders();
+            }
         });
 
         // 로그인 상태 확인
         function checkUserLogin() {
-            const userInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
-            const userToken = localStorage.getItem('userToken') || sessionStorage.getItem('userToken');
-
-            if (!userInfo || !userToken) {
-                // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
-                // alert('로그인이 필요한 서비스입니다.'); // 팝업 제거
-                window.location.href = '/login.html';
-                return;
+            // AuthManager 사용
+            if (typeof AuthManager !== 'undefined' && AuthManager.isLoggedIn()) {
+                // 로그인된 경우 - 아무 작업 안함
+                return true;
             }
+
+            // 로그인 안된 경우 - 토큰 확인
+            const accessToken = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+            const userInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
+
+            if (!accessToken && !userInfo) {
+                // 로그인 페이지로 리다이렉트 (한 번만)
+                if (!window.location.pathname.includes('/login')) {
+                    window.location.replace('/login.html');
+                }
+                return false;
+            }
+            return true;
         }
 
         // 사용자 정보 표시
