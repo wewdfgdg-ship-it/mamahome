@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 정보 - Mrble</title>
+
+    <!-- 폰트 로드 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Common Header CSS -->
+    <link rel="stylesheet" href="../css/common-header.css">
+
+    <style>
+        :root {
+            --color-primary-main: rgb(41, 212, 193);
+            --color-primary-dark: rgb(46, 46, 47);
+            --color-primary-light: rgb(102, 102, 102);
+            --color-bg-primary: rgb(255, 255, 255);
+            --color-text-primary: rgb(32, 33, 31);
+            --color-text-secondary: rgb(153, 153, 153);
+            --color-text-light: rgb(255, 255, 255);
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 32px;
+            --spacing-xl: 48px;
+            --font-primary: 'Noto Sans KR', -apple-system, sans-serif;
+            --font-secondary: 'Poppins', sans-serif;
+            --transition-default: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: #f5f5f7;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--spacing-xl) var(--spacing-md);
+        }
+
+        /* 페이지 타이틀 */
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+        }
+
+        /* 정보 카드 */
+        .info-card {
+            background: white;
+            border-radius: 16px;
+            padding: var(--spacing-lg);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* 섹션 타이틀 */
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 1px solid #e5e5e7;
+        }
+
+        /* 폼 그룹 */
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d2d2d7;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: var(--transition-default);
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary-main);
+            box-shadow: 0 0 0 3px rgba(41, 212, 193, 0.1);
+        }
+
+        .form-input:disabled {
+            background: #f5f5f7;
+            cursor: not-allowed;
+            color: var(--color-text-secondary);
+        }
+
+        /* 읽기 전용 필드 */
+        .readonly-field {
+            background: #f5f5f7;
+        }
+
+        /* 비밀번호 섹션 */
+        .password-section {
+            margin-top: var(--spacing-xl);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid #e5e5e7;
+        }
+
+        .password-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+        }
+
+        /* 버튼 그룹 */
+        .button-group {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-xl);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid #e5e5e7;
+        }
+
+        .btn {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-default);
+        }
+
+        .btn-primary {
+            background: var(--color-primary-main);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: rgb(30, 190, 170);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--color-text-primary);
+            border: 1px solid #d2d2d7;
+        }
+
+        .btn-secondary:hover {
+            background: #f5f5f7;
+        }
+
+        .btn-danger {
+            background: #ff3b30;
+            color: white;
+            margin-left: auto;
+        }
+
+        .btn-danger:hover {
+            background: #ff453a;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 알림 메시지 */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: var(--spacing-md);
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4f4dd;
+            color: #00a854;
+            border: 1px solid #00a854;
+        }
+
+        .alert-error {
+            background: #ffebe9;
+            color: #ff3b30;
+            border: 1px solid #ff3b30;
+        }
+
+        .alert-info {
+            background: #e3f7ff;
+            color: #007aff;
+            border: 1px solid #007aff;
+        }
+
+        /* 편집 모드 */
+        .edit-mode .form-input:not(.readonly-field) {
+            background: white;
+            cursor: text;
+        }
+
+        .view-mode .form-input:not(.readonly-field) {
+            background: #f5f5f7;
+            cursor: default;
+        }
+
+        /* 로딩 스피너 */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--color-primary-main);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--spacing-md);
+            }
+
+            .password-row {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn-danger {
+                margin-left: 0;
+                margin-top: var(--spacing-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Common Header Container -->
+    <div id="header-container"></div>
+    <script src="../js/common-header.js"></script>
+    <script src="../js/auth.js"></script>
+
+    <div class="container">
+        <h1 class="page-title">내 정보</h1>
+
+        <!-- 알림 메시지 -->
+        <div id="alertMessage" class="alert"></div>
+
+        <div class="info-card view-mode" id="infoCard">
+            <div class="section-title">기본 정보</div>
+
+            <!-- 이메일 (읽기 전용) -->
+            <div class="form-group">
+                <label class="form-label">이메일</label>
+                <input type="email" id="email" class="form-input readonly-field" readonly>
+            </div>
+
+            <!-- 이름 -->
+            <div class="form-group">
+                <label class="form-label">이름 *</label>
+                <input type="text" id="name" class="form-input" disabled required>
+            </div>
+
+            <!-- 연락처 -->
+            <div class="form-group">
+                <label class="form-label">연락처 *</label>
+                <input type="tel" id="phone" class="form-input" placeholder="010-0000-0000" disabled required>
+            </div>
+
+            <!-- 업체명 -->
+            <div class="form-group">
+                <label class="form-label">업체명</label>
+                <input type="text" id="businessName" class="form-input" placeholder="업체명 (선택)" disabled>
+            </div>
+
+            <!-- 사업자번호 -->
+            <div class="form-group">
+                <label class="form-label">사업자등록번호</label>
+                <input type="text" id="businessNumber" class="form-input" placeholder="000-00-00000" disabled>
+            </div>
+
+            <!-- 비밀번호 변경 섹션 -->
+            <div class="password-section">
+                <div class="section-title">비밀번호 변경</div>
+
+                <div class="form-group">
+                    <label class="form-label">현재 비밀번호</label>
+                    <input type="password" id="currentPassword" class="form-input" placeholder="현재 비밀번호 입력" disabled>
+                </div>
+
+                <div class="password-row">
+                    <div class="form-group">
+                        <label class="form-label">새 비밀번호</label>
+                        <input type="password" id="newPassword" class="form-input" placeholder="새 비밀번호 입력" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">새 비밀번호 확인</label>
+                        <input type="password" id="confirmPassword" class="form-input" placeholder="새 비밀번호 재입력" disabled>
+                    </div>
+                </div>
+
+                <small style="color: #999; font-size: 12px;">
+                    * 비밀번호는 8자 이상, 영문/숫자/특수문자 조합을 권장합니다.
+                </small>
+            </div>
+
+            <!-- 버튼 그룹 -->
+            <div class="button-group">
+                <button type="button" id="editBtn" class="btn btn-primary" onclick="toggleEditMode()">
+                    수정
+                </button>
+                <button type="button" id="saveBtn" class="btn btn-primary" onclick="saveProfile()" style="display: none;">
+                    저장<span id="saveSpinner" class="spinner" style="display: none;"></span>
+                </button>
+                <button type="button" id="cancelBtn" class="btn btn-secondary" onclick="cancelEdit()" style="display: none;">
+                    취소
+                </button>
+                <button type="button" class="btn btn-danger" onclick="deleteAccount()">
+                    회원 탈퇴
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let originalData = {};
+        let isEditMode = false;
+
+        // 페이지 로드 시 사용자 정보 불러오기
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserInfo();
+
+            // 전화번호 자동 포맷팅
+            document.getElementById('phone').addEventListener('input', function(e) {
+                formatPhoneNumber(e.target);
+            });
+
+            // 사업자번호 자동 포맷팅
+            document.getElementById('businessNumber').addEventListener('input', function(e) {
+                formatBusinessNumber(e.target);
+            });
+        });
+
+        // 사용자 정보 불러오기
+        function loadUserInfo() {
+            const userInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
+
+            if (!userInfo) {
+                showAlert('로그인이 필요합니다.', 'error');
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 2000);
+                return;
+            }
+
+            try {
+                const user = JSON.parse(userInfo);
+
+                // 폼 필드에 데이터 설정
+                document.getElementById('email').value = user.email || '';
+                document.getElementById('name').value = user.name || '';
+                document.getElementById('phone').value = user.phone || '';
+                document.getElementById('businessName').value = user.business_name || '';
+                document.getElementById('businessNumber').value = user.business_number || '';
+
+                // 원본 데이터 저장
+                originalData = {
+                    email: user.email || '',
+                    name: user.name || '',
+                    phone: user.phone || '',
+                    business_name: user.business_name || '',
+                    business_number: user.business_number || ''
+                };
+
+            } catch (e) {
+                console.error('사용자 정보 파싱 오류:', e);
+                showAlert('사용자 정보를 불러올 수 없습니다.', 'error');
+            }
+        }
+
+        // 편집 모드 토글
+        function toggleEditMode() {
+            isEditMode = true;
+            const card = document.getElementById('infoCard');
+            card.classList.remove('view-mode');
+            card.classList.add('edit-mode');
+
+            // 입력 필드 활성화 (이메일 제외)
+            document.getElementById('name').disabled = false;
+            document.getElementById('phone').disabled = false;
+            document.getElementById('businessName').disabled = false;
+            document.getElementById('businessNumber').disabled = false;
+            document.getElementById('currentPassword').disabled = false;
+            document.getElementById('newPassword').disabled = false;
+            document.getElementById('confirmPassword').disabled = false;
+
+            // 버튼 표시 변경
+            document.getElementById('editBtn').style.display = 'none';
+            document.getElementById('saveBtn').style.display = 'inline-block';
+            document.getElementById('cancelBtn').style.display = 'inline-block';
+        }
+
+        // 편집 취소
+        function cancelEdit() {
+            if (confirm('변경사항을 취소하시겠습니까?')) {
+                isEditMode = false;
+                const card = document.getElementById('infoCard');
+                card.classList.remove('edit-mode');
+                card.classList.add('view-mode');
+
+                // 원본 데이터로 복원
+                document.getElementById('name').value = originalData.name;
+                document.getElementById('phone').value = originalData.phone;
+                document.getElementById('businessName').value = originalData.business_name;
+                document.getElementById('businessNumber').value = originalData.business_number;
+
+                // 비밀번호 필드 초기화
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+
+                // 입력 필드 비활성화
+                document.getElementById('name').disabled = true;
+                document.getElementById('phone').disabled = true;
+                document.getElementById('businessName').disabled = true;
+                document.getElementById('businessNumber').disabled = true;
+                document.getElementById('currentPassword').disabled = true;
+                document.getElementById('newPassword').disabled = true;
+                document.getElementById('confirmPassword').disabled = true;
+
+                // 버튼 표시 변경
+                document.getElementById('editBtn').style.display = 'inline-block';
+                document.getElementById('saveBtn').style.display = 'none';
+                document.getElementById('cancelBtn').style.display = 'none';
+
+                hideAlert();
+            }
+        }
+
+        // 프로필 저장
+        async function saveProfile() {
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const businessName = document.getElementById('businessName').value.trim();
+            const businessNumber = document.getElementById('businessNumber').value.trim();
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // 유효성 검사
+            if (!name) {
+                showAlert('이름을 입력해주세요.', 'error');
+                return;
+            }
+
+            if (!phone) {
+                showAlert('연락처를 입력해주세요.', 'error');
+                return;
+            }
+
+            // 비밀번호 변경 시 검증
+            if (newPassword || confirmPassword) {
+                if (!currentPassword) {
+                    showAlert('현재 비밀번호를 입력해주세요.', 'error');
+                    return;
+                }
+
+                if (newPassword !== confirmPassword) {
+                    showAlert('새 비밀번호가 일치하지 않습니다.', 'error');
+                    return;
+                }
+
+                if (newPassword.length < 8) {
+                    showAlert('비밀번호는 8자 이상이어야 합니다.', 'error');
+                    return;
+                }
+            }
+
+            // 로딩 표시
+            document.getElementById('saveBtn').disabled = true;
+            document.getElementById('saveSpinner').style.display = 'inline-block';
+
+            try {
+                // API 호출 준비
+                const updateData = {
+                    action: 'updateProfile',
+                    name: name,
+                    phone: phone,
+                    business_name: businessName,
+                    business_number: businessNumber
+                };
+
+                // 비밀번호 변경이 있는 경우
+                if (newPassword) {
+                    updateData.currentPassword = currentPassword;
+                    updateData.newPassword = newPassword;
+                }
+
+                // API 호출
+                const response = await fetch('https://mamahome-five.vercel.app/api/auth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    // 로컬 스토리지 업데이트
+                    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+                    userInfo.name = name;
+                    userInfo.phone = phone;
+                    userInfo.business_name = businessName;
+                    userInfo.business_number = businessNumber;
+                    localStorage.setItem('userInfo', JSON.stringify(userInfo));
+
+                    // 원본 데이터 업데이트
+                    originalData = { ...userInfo };
+
+                    showAlert('정보가 성공적으로 저장되었습니다.', 'success');
+
+                    // 비밀번호 필드 초기화
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+
+                    // 편집 모드 종료
+                    setTimeout(() => {
+                        cancelEdit();
+                    }, 1500);
+
+                } else {
+                    showAlert(result.error || '저장에 실패했습니다.', 'error');
+                }
+
+            } catch (error) {
+                console.error('프로필 저장 오류:', error);
+                showAlert('네트워크 오류가 발생했습니다.', 'error');
+            } finally {
+                document.getElementById('saveBtn').disabled = false;
+                document.getElementById('saveSpinner').style.display = 'none';
+            }
+        }
+
+        // 회원 탈퇴
+        async function deleteAccount() {
+            if (!confirm('정말로 회원 탈퇴를 하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
+                return;
+            }
+
+            const confirmDelete = prompt('탈퇴를 확인하려면 "탈퇴"를 입력해주세요.');
+
+            if (confirmDelete !== '탈퇴') {
+                showAlert('회원 탈퇴가 취소되었습니다.', 'info');
+                return;
+            }
+
+            try {
+                const response = await fetch('https://mamahome-five.vercel.app/api/auth', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                    }
+                });
+
+                if (response.ok) {
+                    // 로컬 스토리지 정리
+                    localStorage.clear();
+                    sessionStorage.clear();
+
+                    alert('회원 탈퇴가 완료되었습니다.\n그동안 이용해주셔서 감사합니다.');
+                    window.location.href = '/';
+                } else {
+                    showAlert('회원 탈퇴에 실패했습니다.', 'error');
+                }
+
+            } catch (error) {
+                console.error('회원 탈퇴 오류:', error);
+                showAlert('네트워크 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        // 전화번호 포맷팅
+        function formatPhoneNumber(input) {
+            let value = input.value.replace(/[^0-9]/g, '');
+            let formattedValue = '';
+
+            if (value.length <= 3) {
+                formattedValue = value;
+            } else if (value.length <= 7) {
+                formattedValue = value.slice(0, 3) + '-' + value.slice(3);
+            } else if (value.length <= 11) {
+                formattedValue = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7);
+            }
+
+            input.value = formattedValue;
+        }
+
+        // 사업자번호 포맷팅
+        function formatBusinessNumber(input) {
+            let value = input.value.replace(/[^0-9]/g, '');
+            let formattedValue = '';
+
+            if (value.length <= 3) {
+                formattedValue = value;
+            } else if (value.length <= 5) {
+                formattedValue = value.slice(0, 3) + '-' + value.slice(3);
+            } else if (value.length <= 10) {
+                formattedValue = value.slice(0, 3) + '-' + value.slice(3, 5) + '-' + value.slice(5);
+            }
+
+            input.value = formattedValue;
+        }
+
+        // 알림 표시
+        function showAlert(message, type) {
+            const alert = document.getElementById('alertMessage');
+            alert.textContent = message;
+            alert.className = `alert alert-${type} show`;
+        }
+
+        // 알림 숨기기
+        function hideAlert() {
+            const alert = document.getElementById('alertMessage');
+            alert.classList.remove('show');
+        }
+    </script>
+</body>
+</html>

@@ -1461,15 +1461,17 @@
                 }
             }
 
-            // checkoutUserData가 없으면 AuthManager를 통해 사용자 정보 확인
-            if (!userInfo && typeof AuthManager !== 'undefined' && AuthManager.isLoggedIn()) {
-                try {
-                    // 서버에서 최신 사용자 정보 가져오기
-                    const currentUser = await AuthManager.getCurrentUser();
-                    userInfo = currentUser || AuthManager.getUserInfo();
-                    console.log('AuthManager에서 가져온 사용자 정보:', userInfo);
-                } catch (e) {
-                    console.error('사용자 정보 가져오기 오류:', e);
+            // checkoutUserData가 없으면 localStorage의 userInfo 직접 사용
+            if (!userInfo) {
+                // localStorage에서 userInfo 가져오기
+                const storedUserInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
+                if (storedUserInfo) {
+                    try {
+                        userInfo = JSON.parse(storedUserInfo);
+                        console.log('localStorage에서 가져온 사용자 정보:', userInfo);
+                    } catch (e) {
+                        console.error('userInfo 파싱 오류:', e);
+                    }
                 }
             }
 

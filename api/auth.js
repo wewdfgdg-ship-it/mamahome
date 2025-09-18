@@ -85,6 +85,9 @@ export default async function handler(req, res) {
         case 'logout':
           return await handleLogout(req, res);
 
+        case 'updateProfile':
+          return await handleUpdateProfile(req, res);
+
         case 'health':
           return res.status(200).json({ status: 'ok', supabase: !!supabase });
 
@@ -95,6 +98,11 @@ export default async function handler(req, res) {
       console.error('Auth API Error:', error);
       res.status(500).json({ error: 'Internal server error' });
     }
+  }
+
+  // DELETE 요청의 경우 (회원 탈퇴)
+  if (req.method === 'DELETE') {
+    return await handleDeleteAccount(req, res);
   }
 
   // GET 요청의 경우
@@ -480,4 +488,165 @@ async function handleLogout(req, res) {
     success: true,
     message: '로그아웃되었습니다.'
   });
+}
+
+// 프로필 업데이트
+async function handleUpdateProfile(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: '인증이 필요합니다.' });
+  }
+
+  const token = authHeader.slice(7);
+  const { name, phone, business_name, business_number, currentPassword, newPassword } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    if (!supabase) {
+      // 개발 환경용 응답
+      return res.status(200).json({
+        success: true,
+        message: '프로필이 업데이트되었습니다.',
+        user: {
+          id: decoded.userId,
+          email: decoded.email,
+          name,
+          phone,
+          business_name,
+          business_number
+        }
+      });
+    }
+
+    // 비밀번호 변경이 요청된 경우
+    if (newPassword) {
+      if (!currentPassword) {
+        return res.status(400).json({ error: '현재 비밀번호를 입력해주세요.' });
+      }
+
+      // 현재 비밀번호 확인
+      const { data: user } = await supabase
+        .from('users')
+        .select('password')
+        .eq('id', decoded.userId)
+        .single();
+
+      if (user) {
+        const isValid = await bcrypt.compare(currentPassword, user.password);
+        if (!isValid) {
+          return res.status(400).json({ error: '현재 비밀번호가 일치하지 않습니다.' });
+        }
+
+        // 새 비밀번호 해싱
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // 비밀번호 업데이트
+        await supabase
+          .from('users')
+          .update({ password: hashedPassword })
+          .eq('id', decoded.userId);
+      }
+    }
+
+    // 프로필 정보 업데이트
+    const updateData = {
+      name,
+      phone,
+      business_name,
+      business_number,
+      updated_at: new Date().toISOString()
+    };
+
+    const { data: updatedUser, error } = await supabase
+      .from('users')
+      .update(updateData)
+      .eq('id', decoded.userId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Profile update error:', error);
+      return res.status(500).json({ error: '프로필 업데이트에 실패했습니다.' });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: '프로필이 성공적으로 업데이트되었습니다.',
+      user: {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        name: updatedUser.name,
+        phone: updatedUser.phone,
+        business_name: updatedUser.business_name,
+        business_number: updatedUser.business_number
+      }
+    });
+
+  } catch (error) {
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ error: '유효하지 않은 토큰입니다.' });
+    }
+    console.error('Update profile error:', error);
+    res.status(500).json({ error: '프로필 업데이트 중 오류가 발생했습니다.' });
+  }
+}
+
+// 회원 탈퇴
+async function handleDeleteAccount(req, res) {
+  if (req.method !== 'DELETE') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: '인증이 필요합니다.' });
+  }
+
+  const token = authHeader.slice(7);
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    if (!supabase) {
+      // 개발 환경용 응답
+      return res.status(200).json({
+        success: true,
+        message: '회원 탈퇴가 완료되었습니다.'
+      });
+    }
+
+    // 사용자 삭제 (cascade로 관련 데이터도 함께 삭제)
+    const { error } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', decoded.userId);
+
+    if (error) {
+      console.error('Account deletion error:', error);
+      return res.status(500).json({ error: '회원 탈퇴에 실패했습니다.' });
+    }
+
+    // 세션 삭제
+    await supabase
+      .from('user_sessions')
+      .delete()
+      .eq('user_id', decoded.userId);
+
+    res.status(200).json({
+      success: true,
+      message: '회원 탈퇴가 완료되었습니다.'
+    });
+
+  } catch (error) {
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ error: '유효하지 않은 토큰입니다.' });
+    }
+    console.error('Delete account error:', error);
+    res.status(500).json({ error: '회원 탈퇴 중 오류가 발생했습니다.' });
+  }
 }
