@@ -114,8 +114,10 @@
 
         /* 읽기 전용 필드 */
         .readonly-field {
-            background: #f5f5f7;
+            background: #f5f5f7 !important;
+            cursor: not-allowed !important;
         }
+
 
         /* 비밀번호 섹션 */
         .password-section {
@@ -214,16 +216,6 @@
             border: 1px solid #007aff;
         }
 
-        /* 편집 모드 */
-        .edit-mode .form-input:not(.readonly-field) {
-            background: white;
-            cursor: text;
-        }
-
-        .view-mode .form-input:not(.readonly-field) {
-            background: #f5f5f7;
-            cursor: default;
-        }
 
         /* 로딩 스피너 */
         .spinner {
@@ -275,7 +267,7 @@
         <!-- 알림 메시지 -->
         <div id="alertMessage" class="alert"></div>
 
-        <div class="info-card view-mode" id="infoCard">
+        <div class="info-card" id="infoCard">
             <div class="section-title">기본 정보</div>
 
             <!-- 이메일 (읽기 전용) -->
@@ -287,25 +279,25 @@
             <!-- 이름 -->
             <div class="form-group">
                 <label class="form-label">이름 *</label>
-                <input type="text" id="name" class="form-input" disabled required>
+                <input type="text" id="name" class="form-input" required>
             </div>
 
             <!-- 연락처 -->
             <div class="form-group">
                 <label class="form-label">연락처 *</label>
-                <input type="tel" id="phone" class="form-input" placeholder="010-0000-0000" disabled required>
+                <input type="tel" id="phone" class="form-input" placeholder="010-0000-0000" required>
             </div>
 
             <!-- 업체명 -->
             <div class="form-group">
                 <label class="form-label">업체명</label>
-                <input type="text" id="businessName" class="form-input" placeholder="업체명 (선택)" disabled>
+                <input type="text" id="businessName" class="form-input" placeholder="업체명 (선택)">
             </div>
 
             <!-- 사업자번호 -->
             <div class="form-group">
                 <label class="form-label">사업자등록번호</label>
-                <input type="text" id="businessNumber" class="form-input" placeholder="000-00-00000" disabled>
+                <input type="text" id="businessNumber" class="form-input" placeholder="000-00-00000">
             </div>
 
             <!-- 비밀번호 변경 섹션 -->
@@ -314,18 +306,18 @@
 
                 <div class="form-group">
                     <label class="form-label">현재 비밀번호</label>
-                    <input type="password" id="currentPassword" class="form-input" placeholder="현재 비밀번호 입력" disabled>
+                    <input type="password" id="currentPassword" class="form-input" placeholder="현재 비밀번호 입력">
                 </div>
 
                 <div class="password-row">
                     <div class="form-group">
                         <label class="form-label">새 비밀번호</label>
-                        <input type="password" id="newPassword" class="form-input" placeholder="새 비밀번호 입력" disabled>
+                        <input type="password" id="newPassword" class="form-input" placeholder="새 비밀번호 입력">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">새 비밀번호 확인</label>
-                        <input type="password" id="confirmPassword" class="form-input" placeholder="새 비밀번호 재입력" disabled>
+                        <input type="password" id="confirmPassword" class="form-input" placeholder="새 비밀번호 재입력">
                     </div>
                 </div>
 
@@ -336,14 +328,8 @@
 
             <!-- 버튼 그룹 -->
             <div class="button-group">
-                <button type="button" id="editBtn" class="btn btn-primary" onclick="toggleEditMode()">
-                    수정
-                </button>
-                <button type="button" id="saveBtn" class="btn btn-primary" onclick="saveProfile()" style="display: none;">
+                <button type="button" id="saveBtn" class="btn btn-primary" onclick="saveProfile()">
                     저장<span id="saveSpinner" class="spinner" style="display: none;"></span>
-                </button>
-                <button type="button" id="cancelBtn" class="btn btn-secondary" onclick="cancelEdit()" style="display: none;">
-                    취소
                 </button>
                 <button type="button" class="btn btn-danger" onclick="deleteAccount()">
                     회원 탈퇴
@@ -354,11 +340,25 @@
 
     <script>
         let originalData = {};
-        let isEditMode = false;
 
         // 페이지 로드 시 사용자 정보 불러오기
         document.addEventListener('DOMContentLoaded', function() {
             loadUserInfo();
+
+            // 필드들이 실제로 입력 가능한지 확인
+            console.log('이름 필드 readonly:', document.getElementById('name').hasAttribute('readonly'));
+            console.log('이름 필드 disabled:', document.getElementById('name').disabled);
+
+            // 모든 입력 필드가 활성화되어 있는지 확인
+            const inputs = ['name', 'phone', 'businessName', 'businessNumber', 'currentPassword', 'newPassword', 'confirmPassword'];
+            inputs.forEach(id => {
+                const elem = document.getElementById(id);
+                if (elem) {
+                    // readonly나 disabled 속성이 있다면 제거
+                    elem.removeAttribute('readonly');
+                    elem.removeAttribute('disabled');
+                }
+            });
 
             // 전화번호 자동 포맷팅
             document.getElementById('phone').addEventListener('input', function(e) {
@@ -408,64 +408,6 @@
             }
         }
 
-        // 편집 모드 토글
-        function toggleEditMode() {
-            isEditMode = true;
-            const card = document.getElementById('infoCard');
-            card.classList.remove('view-mode');
-            card.classList.add('edit-mode');
-
-            // 입력 필드 활성화 (이메일 제외)
-            document.getElementById('name').disabled = false;
-            document.getElementById('phone').disabled = false;
-            document.getElementById('businessName').disabled = false;
-            document.getElementById('businessNumber').disabled = false;
-            document.getElementById('currentPassword').disabled = false;
-            document.getElementById('newPassword').disabled = false;
-            document.getElementById('confirmPassword').disabled = false;
-
-            // 버튼 표시 변경
-            document.getElementById('editBtn').style.display = 'none';
-            document.getElementById('saveBtn').style.display = 'inline-block';
-            document.getElementById('cancelBtn').style.display = 'inline-block';
-        }
-
-        // 편집 취소
-        function cancelEdit() {
-            if (confirm('변경사항을 취소하시겠습니까?')) {
-                isEditMode = false;
-                const card = document.getElementById('infoCard');
-                card.classList.remove('edit-mode');
-                card.classList.add('view-mode');
-
-                // 원본 데이터로 복원
-                document.getElementById('name').value = originalData.name;
-                document.getElementById('phone').value = originalData.phone;
-                document.getElementById('businessName').value = originalData.business_name;
-                document.getElementById('businessNumber').value = originalData.business_number;
-
-                // 비밀번호 필드 초기화
-                document.getElementById('currentPassword').value = '';
-                document.getElementById('newPassword').value = '';
-                document.getElementById('confirmPassword').value = '';
-
-                // 입력 필드 비활성화
-                document.getElementById('name').disabled = true;
-                document.getElementById('phone').disabled = true;
-                document.getElementById('businessName').disabled = true;
-                document.getElementById('businessNumber').disabled = true;
-                document.getElementById('currentPassword').disabled = true;
-                document.getElementById('newPassword').disabled = true;
-                document.getElementById('confirmPassword').disabled = true;
-
-                // 버튼 표시 변경
-                document.getElementById('editBtn').style.display = 'inline-block';
-                document.getElementById('saveBtn').style.display = 'none';
-                document.getElementById('cancelBtn').style.display = 'none';
-
-                hideAlert();
-            }
-        }
 
         // 프로필 저장
         async function saveProfile() {
@@ -557,10 +499,10 @@
                     document.getElementById('newPassword').value = '';
                     document.getElementById('confirmPassword').value = '';
 
-                    // 편집 모드 종료
+                    // 성공 메시지 후 알림 숨기기
                     setTimeout(() => {
-                        cancelEdit();
-                    }, 1500);
+                        hideAlert();
+                    }, 3000);
 
                 } else {
                     showAlert(result.error || '저장에 실패했습니다.', 'error');
