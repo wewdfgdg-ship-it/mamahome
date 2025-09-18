@@ -7,11 +7,20 @@ import jwt from 'jsonwebtoken';
 
 // Supabase 클라이언트 초기화
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
+const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_KEY;
 
 let supabase = null;
 if (supabaseUrl && supabaseKey) {
-  supabase = createClient(supabaseUrl, supabaseKey);
+  supabase = createClient(supabaseUrl, supabaseKey, {
+    db: {
+      schema: 'public'
+    },
+    global: {
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      }
+    }
+  });
 }
 
 // JWT 비밀키
