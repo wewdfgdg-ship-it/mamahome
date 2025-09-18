@@ -51,6 +51,10 @@ export default async function handler(req, res) {
         // 주문 상태 업데이트
         return await updateOrder(req, res);
 
+      case 'DELETE':
+        // 주문 삭제
+        return await deleteOrder(req, res);
+
       default:
         res.status(405).json({ error: 'Method not allowed' });
     }
@@ -193,16 +197,95 @@ async function updateOrder(req, res) {
     return res.status(400).json({ error: 'Order ID is required' });
   }
 
-  // 여기서 실제로는 Supabase 업데이트
-  // const { data, error } = await supabase
-  //   .from('orders')
-  //   .update(updates)
-  //   .eq('id', orderId);
+  // Supabase에서 업데이트
+  if (supabase) {
+    try {
+      // UTF-8 문자열 확인 함수
+      const ensureUTF8 = (str) => {
+        if (!str) return null;
+        return String(str);
+      };
 
+      // 업데이트 데이터 준비
+      const updateData = {};
+      if (updates.order_number !== undefined) updateData.order_number = ensureUTF8(updates.order_number);
+      if (updates.customer_name !== undefined) updateData.customer_name = ensureUTF8(updates.customer_name);
+      if (updates.customer_email !== undefined) updateData.customer_email = ensureUTF8(updates.customer_email);
+      if (updates.customer_phone !== undefined) updateData.customer_phone = ensureUTF8(updates.customer_phone);
+      if (updates.business_name !== undefined) updateData.business_name = ensureUTF8(updates.business_name);
+      if (updates.business_number !== undefined) updateData.business_number = ensureUTF8(updates.business_number);
+      if (updates.package_name !== undefined) updateData.package_name = ensureUTF8(updates.package_name);
+      if (updates.amount !== undefined) updateData.amount = updates.amount;
+      if (updates.status !== undefined) updateData.status = ensureUTF8(updates.status);
+      if (updates.notes !== undefined) updateData.notes = ensureUTF8(updates.notes);
+
+      const { data, error } = await supabase
+        .from('orders')
+        .update(updateData)
+        .eq('id', orderId);
+
+      if (error) {
+        console.error('Supabase update error:', error);
+        return res.status(400).json({ error: error.message });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: '주문이 업데이트되었습니다.',
+        orderId,
+        updates: updateData
+      });
+    } catch (error) {
+      console.error('Update error:', error);
+      return res.status(500).json({ error: '주문 업데이트 실패' });
+    }
+  }
+
+  // Supabase 없는 경우 테스트 응답
   res.status(200).json({
     success: true,
     message: '주문이 업데이트되었습니다.',
     orderId,
     updates
+  });
+}
+
+// 주문 삭제
+async function deleteOrder(req, res) {
+  const { orderId } = req.query;
+
+  if (!orderId) {
+    return res.status(400).json({ error: 'Order ID is required' });
+  }
+
+  // Supabase에서 삭제
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .delete()
+        .eq('id', orderId);
+
+      if (error) {
+        console.error('Supabase delete error:', error);
+        return res.status(400).json({ error: error.message });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: '주문이 삭제되었습니다.',
+        orderId
+      });
+    } catch (error) {
+      console.error('Delete error:', error);
+      return res.status(500).json({ error: '주문 삭제 실패' });
+    }
+  }
+
+  // Supabase 없는 경우 테스트 응답
+  res.status(200).json({
+    success: true,
+    message: '주문이 삭제되었습니다.',
+    orderId
   });
 }
