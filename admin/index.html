@@ -802,14 +802,15 @@
 
                 // 오늘 주문 필터링
                 const todayOrders = orders.filter(order => {
-                    const orderDate = new Date(order.created_at);
+                    // KST 시간 우선 사용
+                    const orderDate = new Date(order.created_at_kst || order.created_at);
                     return orderDate >= todayStart && orderDate < todayEnd;
                 }).length;
 
                 // 이번 주 매출 (최근 7일)
                 const weekAgo = new Date();
                 weekAgo.setDate(weekAgo.getDate() - 7);
-                const weekOrders = orders.filter(order => new Date(order.created_at) >= weekAgo);
+                const weekOrders = orders.filter(order => new Date(order.created_at_kst || order.created_at) >= weekAgo);
                 const weekSales = weekOrders.reduce((sum, order) => sum + (order.amount || 0), 0);
 
                 const pendingOrders = orders.filter(order => order.status === 'pending').length;
@@ -864,7 +865,8 @@
                     packageType: order.package_name || '미블 체험단',
                     amount: `₩${(order.amount || 0).toLocaleString()}`,
                     status: order.status || 'pending',
-                    createdAt: new Date(order.created_at).toLocaleString('ko-KR'),
+                    // KST 시간 사용 (서버에서 변환된 값 우선 사용)
+                    createdAt: order.created_at_kst ? new Date(order.created_at_kst).toLocaleString('ko-KR') : new Date(order.created_at).toLocaleString('ko-KR'),
                     businessName: order.business_name || '',
                     businessNumber: order.business_number || ''
                 }));
@@ -964,7 +966,7 @@
                     let detailText = `주문 상세 정보:\n`;
                     detailText += `================================\n`;
                     detailText += `주문번호: ${order.order_number || `ORD-${order.id}`}\n`;
-                    detailText += `주문일시: ${new Date(order.created_at).toLocaleString('ko-KR')}\n`;
+                    detailText += `주문일시: ${order.created_at_kst ? new Date(order.created_at_kst).toLocaleString('ko-KR') : new Date(order.created_at).toLocaleString('ko-KR')}\n`;
                     detailText += `\n고객 정보:\n`;
                     detailText += `- 이름: ${order.customer_name || '미확인'}\n`;
                     detailText += `- 이메일: ${order.customer_email || '없음'}\n`;

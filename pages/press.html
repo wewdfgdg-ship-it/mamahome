@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="../css/components.css">
     <link rel="stylesheet" href="../css/responsive.css">
 
+    <!-- Common Header CSS -->
+    <link rel="stylesheet" href="../css/common-header.css">
+
     <!-- Auth Manager -->
     <script src="../js/auth.js"></script>
 
@@ -282,65 +285,9 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <nav class="nav-container">
-                <a href="../index.html" class="nav-logo">
-                    <span class="logo-text">Mrble</span>
-                </a>                
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="../index.html#about" class="nav-link">미블체험단</a>
-                    </li>
-                    <!-- <li class="nav-item">
-                        <a href="../pages/experience.html" class="nav-link">체험단</a>
-                    </li> -->
-                    <li class="nav-item">
-                        <a href="../pages/press.html" class="nav-link active">마케팅정보</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="../pages/pricing.html" class="nav-link">마케팅상품</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="https://www.mrblog.net" class="nav-link" target="_blank">미블홈페이지</a>
-                    </li>
-                </ul>
-                
-                <div class="nav-actions" id="navActions">
-                    <a href="../login.html" class="btn-login" id="loginBtn" style="
-                        background: linear-gradient(135deg, rgb(41, 212, 193), rgb(36, 192, 174));
-                        color: white;
-                        padding: 6px 15px;
-                        border-radius: 20px;
-                        font-weight: 600;
-                        font-size: 14px;
-                        text-decoration: none;
-                        display: inline-block;
-                        transition: all 0.3s ease;
-                        box-shadow: 0 3px 10px rgba(41, 212, 193, 0.25);
-                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 15px rgba(41, 212, 193, 0.35)'"
-                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 3px 10px rgba(41, 212, 193, 0.25)'">로그인</a>
-                    <a href="../dashboard.html" class="nav-link" id="mypageBtn" style="font-weight: 600; margin-left: 15px; display: none;">마이페이지</a>
-                    <button class="logout-btn" id="logoutBtn" style="
-                        background: transparent;
-                        border: 1px solid rgb(41, 212, 193);
-                        color: rgb(41, 212, 193);
-                        padding: 6px 15px;
-                        border-radius: 20px;
-                        font-weight: 600;
-                        font-size: 14px;
-                        cursor: pointer;
-                        transition: all 0.3s ease;
-                        display: none;
-                        margin-left: 10px;
-                    " onmouseover="this.style.background='rgb(41, 212, 193)'; this.style.color='white'"
-                       onmouseout="this.style.background='transparent'; this.style.color='rgb(41, 212, 193)'"
-                       onclick="logout()">로그아웃</button>
-                </div>
-            </nav>
-        </div>
-    </header>
+    <!-- Common Header Container -->
+    <div id="header-container"></div>
+    <script src="../js/common-header.js"></script>
     
     <!-- Hero Section -->
     <section class="hero-section">

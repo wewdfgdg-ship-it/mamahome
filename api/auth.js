@@ -27,6 +27,13 @@ if (supabaseUrl && supabaseKey) {
 const JWT_SECRET = process.env.JWT_SECRET || 'mrble-secret-key-2024';
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'mrble-refresh-secret-2024';
 
+// 한국 시간으로 변환하는 헬퍼 함수
+function toKST(date) {
+  const kstDate = new Date(date);
+  kstDate.setHours(kstDate.getHours() + 9); // UTC + 9 = KST
+  return kstDate.toISOString();
+}
+
 // JWT 토큰 생성
 function generateTokens(userId, email) {
   const accessToken = jwt.sign(
@@ -170,7 +177,7 @@ async function handleRegister(req, res) {
     // 비밀번호 해시화
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 사용자 생성
+    // 사용자 생성 (한국 시간으로 저장)
     const { data: newUser, error: insertError } = await supabase
       .from('users')
       .insert([{
@@ -180,7 +187,7 @@ async function handleRegister(req, res) {
         phone: phone || null,
         business_name: businessName || null,
         business_number: businessNumber || null,
-        created_at: new Date().toISOString(),
+        created_at: toKST(new Date()),
         is_active: true,
         email_verified: false
       }])
@@ -200,13 +207,13 @@ async function handleRegister(req, res) {
     // JWT 토큰 생성
     const { accessToken, refreshToken } = generateTokens(newUser.id, email);
 
-    // 세션 저장
+    // 세션 저장 (한국 시간)
     await supabase
       .from('user_sessions')
       .insert([{
         user_id: newUser.id,
         token: refreshToken,
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+        expires_at: toKST(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
       }]);
 
     res.status(201).json({
@@ -289,22 +296,22 @@ async function handleLogin(req, res) {
       return res.status(401).json({ error: '이메일 또는 비밀번호가 올바르지 않습니다.' });
     }
 
-    // 마지막 로그인 시간 업데이트
+    // 마지막 로그인 시간 업데이트 (한국 시간)
     await supabase
       .from('users')
-      .update({ last_login: new Date().toISOString() })
+      .update({ last_login: toKST(new Date()) })
       .eq('id', user.id);
 
     // JWT 토큰 생성
     const { accessToken, refreshToken } = generateTokens(user.id, email);
 
-    // 세션 저장
+    // 세션 저장 (한국 시간)
     await supabase
       .from('user_sessions')
       .insert([{
         user_id: user.id,
         token: refreshToken,
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+        expires_at: toKST(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
       }]);
 
     res.status(200).json({

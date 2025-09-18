@@ -16,87 +16,16 @@
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/main.css">
 
+    <!-- Common Header CSS -->
+    <link rel="stylesheet" href="css/common-header.css">
+
     <!-- Auth Manager -->
     <script src="js/auth.js"></script>
 </head>
 <body>
-        <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <nav class="nav-container">
-                <a href="#home" class="nav-logo">
-                    <span class="logo-text">Mrble</span>
-                </a>                
-                <ul class="nav-menu">
-                    <!-- <li class="nav-item">
-                        <a href="#" class="nav-link">PORTFOLIO</a>
-                    </li> -->
-                    <li class="nav-item">
-                        <a href="#about" class="nav-link">미블체험단</a>
-                    </li>
-                    <!-- <li class="nav-item">
-                        <a href="pages/experience.html" class="nav-link">체험단</a>
-                    </li> -->
-                    <li class="nav-item">
-                        <a href="pages/press.html" class="nav-link">마케팅정보</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="pages/pricing.html" class="nav-link">마케팅상품</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="https://www.mrblog.net" class="nav-link" target="_blank">미블홈페이지</a>
-                    </li>
-                </ul>
-
-                <div class="nav-actions" id="navActions">
-                    <a href="/login.html" class="btn-login" id="loginBtn" style="
-                        background: linear-gradient(135deg, rgb(41, 212, 193), rgb(36, 192, 174));
-                        color: white;
-                        padding: 6px 15px;
-                        border-radius: 20px;
-                        font-weight: 600;
-                        font-size: 14px;
-                        text-decoration: none;
-                        display: inline-block;
-                        transition: all 0.3s ease;
-                        box-shadow: 0 3px 10px rgba(41, 212, 193, 0.25);
-                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 15px rgba(41, 212, 193, 0.35)'"
-                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 3px 10px rgba(41, 212, 193, 0.25)'">로그인</a>
-                    <a href="/dashboard.html" class="nav-link" id="mypageBtn" style="font-weight: 600; margin-left: 15px; display: none;">마이페이지</a>
-                    <button class="logout-btn" id="logoutBtn" style="
-                        background: transparent;
-                        border: 1px solid rgb(41, 212, 193);
-                        color: rgb(41, 212, 193);
-                        padding: 6px 15px;
-                        border-radius: 20px;
-                        font-weight: 600;
-                        font-size: 14px;
-                        cursor: pointer;
-                        transition: all 0.3s ease;
-                        display: none;
-                        margin-left: 10px;
-                    " onmouseover="this.style.background='rgb(41, 212, 193)'; this.style.color='white'"
-                       onmouseout="this.style.background='transparent'; this.style.color='rgb(41, 212, 193)'"
-                       onclick="logout()">로그아웃</button>
-                    <!-- <a href="#" class="btn-ai-gallo">
-                        <span class="ai-icon">🤖</span>
-                        <span>AI갤로</span>
-                    </a> -->
-                    <!-- <a href="tel:02-6925-6865" class="nav-phone">02-6925-6865</a> -->
-                    <!-- <button class="nav-toggle" aria-label="메뉴">
-                        <span></span>
-                        <span></span>
-                        <span></span>                    </button> -->
-                    <!-- <button class="nav-search" aria-label="검색">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
-                            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                    </button> -->
-                </div>
-            </nav>
-        </div>
-    </header>
+    <!-- Common Header Container -->
+    <div id="header-container"></div>
+    <script src="js/common-header.js"></script>
 
     <!-- Hero Section -->
     <section id="home" class="hero-business">

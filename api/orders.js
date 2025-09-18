@@ -7,6 +7,13 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
+// 한국 시간으로 변환하는 헬퍼 함수
+function toKST(date) {
+  const kstDate = new Date(date);
+  kstDate.setHours(kstDate.getHours() + 9); // UTC + 9 = KST
+  return kstDate.toISOString();
+}
+
 let supabase = null;
 
 if (supabaseUrl && supabaseKey) {
@@ -155,10 +162,17 @@ async function getOrders(req, res) {
         return res.status(500).json({ error: error.message });
       }
 
+      // 시간을 한국 시간으로 표시 (표시용)
+      const ordersWithKST = (data || []).map(order => ({
+        ...order,
+        created_at_kst: order.created_at ? toKST(order.created_at) : null,
+        updated_at_kst: order.updated_at ? toKST(order.updated_at) : null
+      }));
+
       return res.status(200).json({
         success: true,
-        orders: data || [],
-        total: data?.length || 0
+        orders: ordersWithKST,
+        total: ordersWithKST.length
       });
     } catch (err) {
       console.error('Database error:', err);

@@ -14,24 +14,12 @@
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/components.css">
     <link rel="stylesheet" href="../css/responsive.css">
-    
+
+    <!-- Common Header CSS -->
+    <link rel="stylesheet" href="../css/common-header.css">
+
     <style>
         /* 상세페이지 전용 스타일 */
-        
-        /* 헤더 네비게이션 폰트 스타일 - 메인과 동일하게 */
-        .nav-logo {
-            font-size: 18px;
-            white-space: nowrap;
-        }
-        
-        .logo-text {
-            font-size: 18px;
-            font-weight: 600;
-        }
-        
-        .nav-link {
-            font-size: 14px;
-        }
         
         /* 푸터 차트 아이콘 명시적 표시 */
         .footer-chart {
@@ -438,31 +426,9 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <nav class="nav-container">
-                <a href="../index.html" class="nav-logo">
-                    <span class="logo-text">Mrble</span>
-                </a>                
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="../index.html#about" class="nav-link">미블체험단</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="../pages/press.html" class="nav-link">마케팅정보</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="../pages/pricing.html" class="nav-link active">마케팅상품</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="https://www.mrblog.net" class="nav-link" target="_blank">미블홈페이지</a>
-                    </li>
-                </ul>
-                <div class="nav-spacer"></div>
-            </nav>
-        </div>
-    </header>
+    <!-- Common Header Container -->
+    <div id="header-container"></div>
+    <script src="../js/common-header.js"></script>
     
     <!-- 히어로 섹션 -->
     <section class="detail-hero">
