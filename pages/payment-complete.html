@@ -240,10 +240,16 @@
 
                 console.log('최종 customerInfo:', customerInfo);
 
-                // 주문 데이터 구성
+                // 주문 데이터 구성 - API가 기대하는 플랫 구조로 변경
                 const fullOrderData = {
                     orderNumber: orderData.orderid || orderData.orderNumber || 'ORD-' + Date.now(),
-                    customer: customerInfo,
+                    customer: {
+                        name: customerInfo.name,
+                        email: customerInfo.email,
+                        phone: customerInfo.phone,
+                        businessName: customerInfo.businessName,
+                        businessNumber: customerInfo.businessNumber
+                    },
                     packageInfo: {
                         name: orderData.goodname || '미블 체험단 서비스',
                         price: parseInt(orderData.price) || 0
@@ -251,6 +257,8 @@
                     amount: parseInt(orderData.price) || 0,
                     paymentMethod: 'payapp',
                     status: 'paid',
+                    goodname: orderData.goodname || '미블 체험단 서비스',  // PayApp 호환성
+                    price: parseInt(orderData.price) || 0,  // PayApp 호환성
                     createdAt: new Date().toISOString()
                 };
 

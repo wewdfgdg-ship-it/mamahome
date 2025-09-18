@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: rgb(41, 212, 193);
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgb(245, 245, 247);
+            border-radius: 8px;
+        }
+        .test-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .test-links a {
+            padding: 10px 15px;
+            background: white;
+            border: 1px solid rgb(189, 189, 189);
+            border-radius: 4px;
+            text-decoration: none;
+            color: rgb(32, 33, 31);
+            transition: all 0.3s ease;
+        }
+        .test-links a:hover {
+            background: rgb(41, 212, 193);
+            color: white;
+            border-color: rgb(41, 212, 193);
+        }
+        .status {
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 네비게이션 테스트 페이지</h1>
+    
+    <div class="test-section">
+        <h2>📍 현재 위치</h2>
+        <p>현재 파일: <code>C:\Users\tip12\Documents\vvv\test-navigation.html</code></p>
+    </div>
+
+    <div class="test-section">
+        <h2>🔗 페이지 네비게이션 테스트</h2>
+        <p>아래 링크들을 클릭하여 각 페이지로 이동이 정상적으로 되는지 확인하세요:</p>
+        <div class="test-links">
+            <a href="index.html">🏠 홈 (index.html)</a>
+            <a href="pages/about.html">📖 미블소개 (pages/about.html)</a>
+            <a href="pages/experience.html">🎯 체험단 (pages/experience.html)</a>
+            <a href="pages/press.html">📰 기자단 (pages/press.html)</a>
+            <a href="pages/pricing.html">💰 비용문의 (pages/pricing.html)</a>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>✅ 확인 사항</h2>
+        <div class="status success">
+            <strong>완료된 작업:</strong>
+            <ul>
+                <li>✓ about.html - 미블소개 페이지 (claude.md 규칙 적용)</li>
+                <li>✓ experience.html - 체험단 페이지 (claude.md 규칙 적용)</li>
+                <li>✓ press.html - 기자단 페이지 (claude.md 규칙 적용)</li>
+                <li>✓ pricing.html - 비용문의 페이지 (claude.md 규칙 적용)</li>
+                <li>✓ 모든 페이지에 동일한 헤더/푸터 적용</li>
+                <li>✓ 상대 경로를 사용한 네비게이션 링크</li>
+                <li>✓ CSS 변수 시스템 적용</li>
+                <li>✓ 그리드 시스템 (grid-2, grid-3, grid-4)</li>
+                <li>✓ 타이포그래피 클래스 (heading-1 ~ heading-5)</li>
+                <li>✓ 버튼 시스템 (btn-primary, btn-secondary, btn-outline)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🎨 디자인 시스템</h2>
+        <p>모든 페이지는 <code>claude.md</code>에 정의된 다음 규칙들을 따릅니다:</p>
+        <ul>
+            <li>색상: CSS 변수 (--color-primary-main, --color-bg-secondary 등)</li>
+            <li>간격: 변수 시스템 (--spacing-xs ~ --spacing-4xl)</li>
+            <li>섹션: section-large, section-medium, section-small</li>
+            <li>컨테이너: 최대 너비 1172px 중앙 정렬</li>
+        </ul>
+    </div>
+</body>
+</html>

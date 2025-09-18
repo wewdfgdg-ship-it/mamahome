@@ -54,18 +54,35 @@
     </div>
 
     <script>
-        // 페이앱에서 POST로 전달된 데이터 처리
-        // POST 데이터는 직접 읽을 수 없으므로 GET 파라미터로 변환하여 리다이렉트
+        // PayApp에서 전달된 파라미터 가져오기 (POST/GET 모두 처리)
+        const urlParams = new URLSearchParams(window.location.search);
 
-        // 3초 후 자동으로 payment-complete 페이지로 이동
+        // localStorage에서 checkout 데이터 가져오기
+        const checkoutData = localStorage.getItem('checkoutData');
+        let savedData = null;
+        try {
+            savedData = checkoutData ? JSON.parse(checkoutData) : null;
+        } catch(e) {
+            console.error('Checkout data parsing error:', e);
+        }
+
+        // 결제 완료 페이지로 리다이렉트 (1.5초 후)
         setTimeout(() => {
-            // GET 파라미터 생성
+            // 모든 PayApp 파라미터를 그대로 전달
             const params = new URLSearchParams();
-            params.append('state', 'success');
-            params.append('message', '결제가 완료되었습니다');
+
+            // PayApp에서 온 파라미터들 (있으면 전달)
+            params.append('state', urlParams.get('state') || 'success');
+            params.append('orderid', urlParams.get('orderid') || urlParams.get('mul_no') || 'ORD-' + Date.now());
+            params.append('goodname', urlParams.get('goodname') || savedData?.packageName || '미블 체험단');
+            params.append('price', urlParams.get('price') || urlParams.get('amt') || savedData?.packagePrice || '0');
+            params.append('buyer', urlParams.get('buyer') || urlParams.get('buyername') || savedData?.name || '');
+            params.append('buyerphone', urlParams.get('buyerphone') || urlParams.get('buyertel') || savedData?.phone || '');
+            params.append('buyeremail', urlParams.get('buyeremail') || savedData?.email || '');
+            params.append('message', urlParams.get('message') || '결제가 완료되었습니다');
             params.append('timestamp', new Date().toISOString());
 
-            // payment-complete.html로 리다이렉트
+            // payment-complete.html로 모든 데이터와 함께 리다이렉트
             window.location.href = 'payment-complete.html?' + params.toString();
         }, 1500);
     </script>

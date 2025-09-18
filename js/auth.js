@@ -44,12 +44,15 @@ const AuthManager = {
   // 회원가입
   async register(userData) {
     try {
-      const response = await fetch(`${this.getApiUrl()}/auth/register`, {
+      const response = await fetch(`${this.getApiUrl()}/auth`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(userData)
+        body: JSON.stringify({
+          action: 'register',
+          ...userData
+        })
       });
 
       const data = await response.json();
@@ -70,12 +73,16 @@ const AuthManager = {
   // 로그인
   async login(email, password, rememberMe = false) {
     try {
-      const response = await fetch(`${this.getApiUrl()}/auth/login`, {
+      const response = await fetch(`${this.getApiUrl()}/auth`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({
+          action: 'login',
+          email,
+          password
+        })
       });
 
       const data = await response.json();
@@ -99,12 +106,15 @@ const AuthManager = {
 
     // 서버에 로그아웃 요청
     try {
-      await fetch(`${this.getApiUrl()}/auth/logout`, {
+      await fetch(`${this.getApiUrl()}/auth`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ refreshToken })
+        body: JSON.stringify({
+          action: 'logout',
+          refreshToken
+        })
       });
     } catch (error) {
       console.error('Logout API error:', error);
@@ -123,12 +133,15 @@ const AuthManager = {
     if (!token) return false;
 
     try {
-      const response = await fetch(`${this.getApiUrl()}/auth/verify`, {
+      const response = await fetch(`${this.getApiUrl()}/auth`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
-        }
+        },
+        body: JSON.stringify({
+          action: 'verify'
+        })
       });
 
       const data = await response.json();
@@ -145,12 +158,15 @@ const AuthManager = {
     if (!refreshToken) return false;
 
     try {
-      const response = await fetch(`${this.getApiUrl()}/auth/refresh`, {
+      const response = await fetch(`${this.getApiUrl()}/auth`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ refreshToken })
+        body: JSON.stringify({
+          action: 'refresh',
+          refreshToken
+        })
       });
 
       const data = await response.json();

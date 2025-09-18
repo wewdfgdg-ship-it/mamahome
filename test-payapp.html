@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>페이앱 API 테스트</title>
+</head>
+<body>
+    <h1>페이앱 API 직접 테스트</h1>
+
+    <button onclick="testPayApp()">페이앱 테스트 결제 (1000원)</button>
+
+    <div id="result"></div>
+
+    <script>
+        function testPayApp() {
+            // 직접 페이앱 API URL 생성
+            const params = new URLSearchParams({
+                cmd: 'payrequest',  // 결제 요청
+                userid: 'ksbm',  // 페이앱 가맹점 ID
+                linkkey: 'QLo9WUgFwaqAYjAiv6z86e1DPJnCCRVaOgT+oqg6zaM=',  // 연동키
+                goodname: '테스트상품',
+                price: '1000',
+                recvphone: '01012345678',
+                buyer: '테스트구매자',
+                email: 'test@test.com',
+                returnurl: window.location.href,
+                smsuse: 'n'  // SMS 사용 안함
+            });
+
+            const payUrl = 'https://api.payapp.kr/oapi/apiLoad.html?' + params.toString();
+
+            console.log('페이앱 URL:', payUrl);
+            document.getElementById('result').innerHTML = '<pre>' + payUrl + '</pre>';
+
+            // 새 창에서 테스트
+            window.open(payUrl, '_blank');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SANGGONG - BUSINESS (Fixed)</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&family=Poppins:wght@400;500;600;700;800;900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styles with cache buster -->
+    <link rel="stylesheet" href="css/reset.css?v=1">
+    <link rel="stylesheet" href="css/variables.css?v=1">
+    <link rel="stylesheet" href="css/components.css?v=1">
+    <link rel="stylesheet" href="css/main.css?v=1">
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <span class="top-bar-text">1920w default</span>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav-container">
+                <div class="logo">
+                    <a href="#" class="logo-text">SANGGONG</a>
+                </div>                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">PORTFOLIO</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">ABOUT US</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">BUSINESS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">STORY</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">HIRING</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">CONTACT US</a>
+                    </li>
+                </ul>
+                
+                <div class="nav-actions">
+                    <a href="#" class="btn-ai-gallo">
+                        <span class="ai-icon">🤖</span>
+                        <span>AI갤로</span>
+                    </a>
+                    <a href="tel:02-6925-6865" class="nav-phone">02-6925-6865</a>                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Services Cards Section -->
+    <section class="services-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">우리의 전문 서비스</h2>
+                <p class="section-subtitle">
+                    디지털 혁신을 위한 통합 솔루션을 제공합니다
+                </p>
+            </div>
+            <div class="services-grid">
+                <!-- Card 1: Platform -->
+                <div class="service-card">
+                    <div class="card-icon-wrapper">
+                        <div class="card-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                                <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                                <line x1="3" y1="9" x2="21" y2="9" stroke="currentColor" stroke-width="2"/>
+                                <line x1="9" y1="21" x2="9" y2="9" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="card-title">플랫폼</h3>
+                    <p class="card-description">
+                        다양한 디바이스와 브라우저에서<br>
+                        완벽하게 작동하는 플랫폼 구축                    </p>
+                    <a href="#" class="card-link">
+                        <span>자세히 보기</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="js/main.js?v=1"></script>
+    
+    <!-- Debug Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('페이지 로드 완료');
+            console.log('스타일시트 개수:', document.styleSheets.length);
+            
+            // CSS 변수 체크
+            const root = document.documentElement;
+            const primaryColor = getComputedStyle(root).getPropertyValue('--color-primary-main');
+            console.log('Primary color 변수:', primaryColor || 'NOT LOADED');
+            
+            // Service cards 체크
+            const cards = document.querySelectorAll('.service-card');
+            console.log('Service cards found:', cards.length);
+        });
+    </script>
+</body>
+</html>
