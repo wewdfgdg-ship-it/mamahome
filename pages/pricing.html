@@ -54,7 +54,38 @@
                         <a href="https://www.mrblog.net" class="nav-link" target="_blank">미블홈페이지</a>
                     </li>
                 </ul>
-                <div class="nav-spacer"></div>
+
+                <div class="nav-actions" id="navActions">
+                    <a href="../login.html" class="btn-login" id="loginBtn" style="
+                        background: linear-gradient(135deg, rgb(41, 212, 193), rgb(36, 192, 174));
+                        color: white;
+                        padding: 6px 15px;
+                        border-radius: 20px;
+                        font-weight: 600;
+                        font-size: 14px;
+                        text-decoration: none;
+                        display: inline-block;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 3px 10px rgba(41, 212, 193, 0.25);
+                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 15px rgba(41, 212, 193, 0.35)'"
+                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 3px 10px rgba(41, 212, 193, 0.25)'">로그인</a>
+                    <a href="../dashboard.html" class="nav-link" id="mypageBtn" style="font-weight: 600; margin-left: 15px; display: none;">마이페이지</a>
+                    <button class="logout-btn" id="logoutBtn" style="
+                        background: transparent;
+                        border: 1px solid rgb(41, 212, 193);
+                        color: rgb(41, 212, 193);
+                        padding: 6px 15px;
+                        border-radius: 20px;
+                        font-weight: 600;
+                        font-size: 14px;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        display: none;
+                        margin-left: 10px;
+                    " onmouseover="this.style.background='rgb(41, 212, 193)'; this.style.color='white'"
+                       onmouseout="this.style.background='transparent'; this.style.color='rgb(41, 212, 193)'"
+                       onclick="logout()">로그아웃</button>
+                </div>
             </nav>
         </div>
     </header>
@@ -621,5 +652,52 @@
     
     <!-- JavaScript -->
     <script src="../js/main.js"></script>
+
+    <script>
+        // 로그인 상태 확인 및 UI 업데이트
+        function checkLoginStatus() {
+            const userInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
+            const userToken = localStorage.getItem('userToken') || sessionStorage.getItem('userToken');
+
+            const loginBtn = document.getElementById('loginBtn');
+            const mypageBtn = document.getElementById('mypageBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            if (userInfo && userToken) {
+                // 로그인된 상태
+                if (loginBtn) loginBtn.style.display = 'none';
+                if (mypageBtn) mypageBtn.style.display = 'inline-block';
+                if (logoutBtn) logoutBtn.style.display = 'inline-block';
+            } else {
+                // 로그인되지 않은 상태
+                if (loginBtn) loginBtn.style.display = 'inline-block';
+                if (mypageBtn) mypageBtn.style.display = 'none';
+                if (logoutBtn) logoutBtn.style.display = 'none';
+            }
+        }
+
+        // 로그아웃 함수
+        function logout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                // localStorage 및 sessionStorage 정리
+                localStorage.removeItem('userInfo');
+                localStorage.removeItem('userToken');
+                sessionStorage.removeItem('userInfo');
+                sessionStorage.removeItem('userToken');
+
+                // UI 업데이트
+                checkLoginStatus();
+
+                // 홈으로 리다이렉트
+                alert('로그아웃되었습니다.');
+                window.location.href = '../index.html';
+            }
+        }
+
+        // 페이지 로드 시 로그인 상태 확인
+        document.addEventListener('DOMContentLoaded', () => {
+            checkLoginStatus();
+        });
+    </script>
 </body>
 </html>
