@@ -2,7 +2,21 @@
   "name": "mamahome",
   "version": "1.0.0",
   "description": "Mrble 체험단 마케팅 서비스",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build required'",
+    "deploy": "vercel --prod"
+  },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.0"
+    "@supabase/supabase-js": "^2.39.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "vercel": "^32.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
