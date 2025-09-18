@@ -398,15 +398,20 @@
                 // 폼 필드에 데이터 설정
                 document.getElementById('email').value = user.email || '';
                 document.getElementById('name').value = user.name || '';
-                document.getElementById('phone').value = user.phone || '';
+
+                // 전화번호 포맷팅 후 설정
+                const phoneInput = document.getElementById('phone');
+                phoneInput.value = user.phone || '';
+                formatPhoneNumber(phoneInput);  // 자동 포맷팅 적용
+
                 document.getElementById('businessName').value = user.business_name || '';
                 document.getElementById('businessNumber').value = user.business_number || '';
 
-                // 원본 데이터 저장
+                // 원본 데이터 저장 (포맷팅된 전화번호 사용)
                 originalData = {
                     email: user.email || '',
                     name: user.name || '',
-                    phone: user.phone || '',
+                    phone: phoneInput.value,  // 포맷팅된 전화번호
                     business_name: user.business_name || '',
                     business_number: user.business_number || ''
                 };
@@ -578,23 +583,19 @@
             let value = input.value.replace(/[^0-9]/g, '');
             let formattedValue = '';
 
-            // 010으로 시작하지 않으면 010을 앞에 추가
-            if (value.length > 0 && !value.startsWith('010')) {
-                // 0으로 시작하지만 010이 아닌 경우 (예: 011, 016 등)
-                if (value.startsWith('0')) {
-                    // 기존 번호 유지
-                } else {
-                    // 010을 앞에 추가
-                    value = '010' + value;
-                }
-            }
-
-            if (value.length <= 3) {
+            // 11자리 숫자만 입력된 경우 자동 포맷팅
+            if (value.length === 11 && value.startsWith('010')) {
+                formattedValue = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7, 11);
+            } else if (value.length <= 3) {
                 formattedValue = value;
             } else if (value.length <= 7) {
                 formattedValue = value.slice(0, 3) + '-' + value.slice(3);
             } else if (value.length <= 11) {
-                formattedValue = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7);
+                formattedValue = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7, 11);
+            } else {
+                // 11자리 초과 시 11자리만 사용
+                value = value.slice(0, 11);
+                formattedValue = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7, 11);
             }
 
             input.value = formattedValue;
