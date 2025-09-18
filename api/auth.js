@@ -48,35 +48,54 @@ export default async function handler(req, res) {
     return;
   }
 
-  const path = req.url.split('?')[0];
-  const endpoint = path.split('/').pop();
+  // POST 요청의 경우 body에서 action 읽기
+  if (req.method === 'POST') {
+    const { action } = req.body || {};
 
-  try {
-    switch (endpoint) {
-      case 'register':
-        return await handleRegister(req, res);
+    try {
+      switch (action) {
+        case 'register':
+          return await handleRegister(req, res);
 
-      case 'login':
-        return await handleLogin(req, res);
+        case 'login':
+          return await handleLogin(req, res);
 
-      case 'verify':
-        return await handleVerify(req, res);
+        case 'verify':
+          return await handleVerify(req, res);
 
-      case 'refresh':
-        return await handleRefresh(req, res);
+        case 'refresh':
+          return await handleRefresh(req, res);
 
-      case 'me':
-        return await handleGetMe(req, res);
+        case 'logout':
+          return await handleLogout(req, res);
 
-      case 'logout':
-        return await handleLogout(req, res);
+        case 'health':
+          return res.status(200).json({ status: 'ok', supabase: !!supabase });
 
-      default:
-        res.status(404).json({ error: 'Endpoint not found' });
+        default:
+          res.status(404).json({ error: 'Action not found', receivedAction: action });
+      }
+    } catch (error) {
+      console.error('Auth API Error:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
-  } catch (error) {
-    console.error('Auth API Error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  }
+
+  // GET 요청의 경우
+  if (req.method === 'GET') {
+    try {
+      const path = req.url.split('?')[0];
+      const endpoint = path.split('/').pop();
+
+      if (endpoint === 'me') {
+        return await handleGetMe(req, res);
+      }
+
+      res.status(404).json({ error: 'Endpoint not found' });
+    } catch (error) {
+      console.error('Auth API Error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
   }
 }
 
