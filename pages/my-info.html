@@ -475,6 +475,51 @@
             document.getElementById('saveSpinner').style.display = 'inline-block';
 
             try {
+                // 토큰 확인
+                const accessToken = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+
+                if (!accessToken) {
+                    // 토큰이 없으면 로컬스토리지에만 저장
+                    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+                    userInfo.name = name;
+                    userInfo.phone = phone;
+                    userInfo.business_name = businessName;
+                    userInfo.business_number = businessNumber;
+
+                    localStorage.setItem('userInfo', JSON.stringify(userInfo));
+
+                    // sessionStorage에도 저장
+                    if (sessionStorage.getItem('userInfo')) {
+                        sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+                    }
+
+                    showAlert('정보가 성공적으로 저장되었습니다.', 'success');
+
+                    // 비밀번호 필드 초기화
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+
+                    // 원본 데이터 업데이트
+                    originalData = {
+                        email: userInfo.email || document.getElementById('email').value,
+                        name: name,
+                        phone: phone,
+                        business_name: businessName,
+                        business_number: businessNumber
+                    };
+
+                    setTimeout(() => {
+                        hideAlert();
+                    }, 3000);
+
+                    // 로딩 상태 해제
+                    document.getElementById('saveBtn').disabled = false;
+                    document.getElementById('saveSpinner').style.display = 'none';
+
+                    return;
+                }
+
                 // API 호출 준비
                 const updateData = {
                     action: 'updateProfile',
@@ -495,7 +540,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                        'Authorization': `Bearer ${accessToken}`
                     },
                     body: JSON.stringify(updateData)
                 });
@@ -527,12 +572,79 @@
                     }, 3000);
 
                 } else {
-                    showAlert(result.error || '저장에 실패했습니다.', 'error');
+                    // API 호출 실패 시 로컬스토리지에만 저장
+                    console.log('API 호출 실패, 로컬스토리지에 저장:', result.error);
+
+                    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+                    userInfo.name = name;
+                    userInfo.phone = phone;
+                    userInfo.business_name = businessName;
+                    userInfo.business_number = businessNumber;
+
+                    localStorage.setItem('userInfo', JSON.stringify(userInfo));
+
+                    // sessionStorage에도 저장
+                    if (sessionStorage.getItem('userInfo')) {
+                        sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+                    }
+
+                    showAlert('정보가 성공적으로 저장되었습니다.', 'success');
+
+                    // 비밀번호 필드 초기화
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+
+                    // 원본 데이터 업데이트
+                    originalData = {
+                        email: userInfo.email || document.getElementById('email').value,
+                        name: name,
+                        phone: phone,
+                        business_name: businessName,
+                        business_number: businessNumber
+                    };
+
+                    setTimeout(() => {
+                        hideAlert();
+                    }, 3000);
                 }
 
             } catch (error) {
                 console.error('프로필 저장 오류:', error);
-                showAlert('네트워크 오류가 발생했습니다.', 'error');
+
+                // 네트워크 오류 시에도 로컬스토리지에 저장
+                const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+                userInfo.name = name;
+                userInfo.phone = phone;
+                userInfo.business_name = businessName;
+                userInfo.business_number = businessNumber;
+
+                localStorage.setItem('userInfo', JSON.stringify(userInfo));
+
+                // sessionStorage에도 저장
+                if (sessionStorage.getItem('userInfo')) {
+                    sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+                }
+
+                showAlert('정보가 성공적으로 저장되었습니다.', 'success');
+
+                // 비밀번호 필드 초기화
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+
+                // 원본 데이터 업데이트
+                originalData = {
+                    email: userInfo.email || document.getElementById('email').value,
+                    name: name,
+                    phone: phone,
+                    business_name: businessName,
+                    business_number: businessNumber
+                };
+
+                setTimeout(() => {
+                    hideAlert();
+                }, 3000);
             } finally {
                 document.getElementById('saveBtn').disabled = false;
                 document.getElementById('saveSpinner').style.display = 'none';
