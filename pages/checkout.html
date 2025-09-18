@@ -1229,19 +1229,19 @@
                     PayApp.setParam('openpaytype', payType);  // 결제 수단
                     PayApp.setParam('var1', paymentData.package.people.toString());
                     PayApp.setParam('var2', paymentData.package.discountRate.toString());
-                    // returnurl 설정 - payment-complete.html로 직접 리다이렉트
+                    // returnurl 설정 - POST 처리를 위해 payment-redirect API로
                     if (window.location.hostname.includes('vercel.app')) {
-                        // Vercel 환경 - payment-complete로 직접
-                        PayApp.setParam('returnurl', 'https://mamahome-five.vercel.app/pages/payment-complete.html');
+                        // Vercel 환경 - payment-redirect API로 POST 처리
+                        PayApp.setParam('returnurl', 'https://mamahome-five.vercel.app/api/payment-redirect');
                     } else if (window.location.hostname.includes('github.io')) {
-                        // GitHub Pages 환경 - payapp-success.html을 거쳐서 payment-complete.html로
-                        PayApp.setParam('returnurl', 'https://wewdfgdg-ship-it.github.io/mamahome/pages/payapp-success.html');
+                        // GitHub Pages 환경 - Vercel API로
+                        PayApp.setParam('returnurl', 'https://mamahome-five.vercel.app/api/payment-redirect');
                     } else if (window.location.protocol === 'file:') {
                         // 로컬 테스트 환경
-                        PayApp.setParam('returnurl', window.location.origin + '/pages/payment-complete.html');
+                        PayApp.setParam('returnurl', 'https://mamahome-five.vercel.app/api/payment-redirect');
                     } else {
-                        // 기타 환경 - payment-complete로 직접
-                        PayApp.setParam('returnurl', window.location.origin + '/pages/payment-complete.html');
+                        // 기타 환경 - API로
+                        PayApp.setParam('returnurl', 'https://mamahome-five.vercel.app/api/payment-redirect');
                     }
                     // feedbackurl 제거 - 에러 70080 방지 (페이앱이 접속할 수 없는 URL일 때)
                     // PayApp.setParam('feedbackurl', CONFIG.feedbackurl)

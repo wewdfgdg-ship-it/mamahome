@@ -1,32 +1,36 @@
-/* 공통 헤더 스타일 */
+/* 🎨 상공(SANGGONG) 테마 - 공통 헤더 스타일 */
+
+/* 테마 변수 import */
+@import url('theme-variables.css');
+
 .unified-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: var(--header-bg);
+  backdrop-filter: var(--header-backdrop);
+  -webkit-backdrop-filter: var(--header-backdrop);
+  border-bottom: 1px solid var(--header-border);
   z-index: 1000;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Noto Sans KR', 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-primary);
   font-size: 16px;
   line-height: 1.5;
-  height: 60px;
+  height: var(--header-height);
 }
 
 .header-spacer {
-  height: 60px;
+  height: var(--header-height);
 }
 
 .nav-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 var(--spacing-md);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 60px;
+  height: var(--header-height);
 }
 
 /* 브랜드 로고 */
@@ -35,16 +39,17 @@
 }
 
 .brand-link {
+  font-family: var(--font-secondary);
   font-size: 20px;
   font-weight: 700;
-  color: #333;
+  color: var(--color-text-primary);
   text-decoration: none;
   letter-spacing: -0.5px;
-  transition: color 0.3s ease;
+  transition: var(--transition-default);
 }
 
 .brand-link:hover {
-  color: #0066cc;
+  color: var(--color-primary-main);
 }
 
 /* 네비게이션 메뉴 */
@@ -53,7 +58,7 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 30px;
+  gap: var(--spacing-lg);
   flex-grow: 1;
   justify-content: center;
 }
@@ -63,24 +68,24 @@
 }
 
 .nav-link {
-  color: #333;
+  color: var(--color-text-primary);
   text-decoration: none;
   font-size: 16px;
   font-weight: 500;
-  padding: 5px 10px;
-  border-radius: 6px;
-  transition: all 0.3s ease;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  transition: var(--transition-default);
   position: relative;
 }
 
 .nav-link:hover {
-  color: #0066cc;
-  background: rgba(0, 102, 204, 0.05);
+  color: var(--color-primary-main);
+  background: rgba(41, 212, 193, 0.05);
 }
 
 .nav-link.active {
-  color: #0066cc;
-  background: rgba(0, 102, 204, 0.1);
+  color: var(--color-primary-main);
+  background: rgba(41, 212, 193, 0.1);
 }
 
 .nav-link.active::after {
@@ -91,34 +96,62 @@
   transform: translateX(-50%);
   width: 30px;
   height: 3px;
-  background: #0066cc;
-  border-radius: 3px;
+  background: var(--color-primary-main);
+  border-radius: var(--radius-sm);
 }
 
 /* 사용자 액션 버튼 */
 .nav-actions {
   display: flex;
-  gap: 15px;
+  gap: var(--spacing-sm);
   align-items: center;
   flex-shrink: 0;
 }
 
 .nav-action-link {
-  color: #333;
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
-  padding: 6px 16px;
-  border-radius: 20px;
-  background: rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-full);
+  transition: var(--transition-default);
   white-space: nowrap;
 }
 
-.nav-action-link:hover {
-  background: rgba(0, 102, 204, 0.1);
-  color: #0066cc;
-  transform: translateY(-1px);
+/* 로그인 버튼 - 상공 테마 그라디언트 */
+.nav-action-primary {
+  background: linear-gradient(135deg, var(--color-primary-main), rgb(36, 192, 174));
+  color: var(--color-text-light);
+  box-shadow: 0 3px 10px rgba(41, 212, 193, 0.25);
+}
+
+/* 마이페이지 버튼 */
+.nav-action-secondary {
+  background: transparent;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+/* 로그아웃 버튼 */
+.nav-action-outline {
+  background: transparent;
+  border: 1px solid var(--color-primary-main);
+  color: var(--color-primary-main);
+}
+
+/* 호버 효과 */
+.nav-action-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(41, 212, 193, 0.35);
+}
+
+.nav-action-secondary:hover {
+  color: var(--color-primary-main);
+}
+
+.nav-action-outline:hover {
+  background: var(--color-primary-main);
+  color: var(--color-text-light);
 }
 
 /* 모바일 메뉴 토글 버튼 */
@@ -138,9 +171,9 @@
 .mobile-menu-toggle span {
   width: 100%;
   height: 3px;
-  background: #333;
+  background: var(--color-text-primary);
   border-radius: 2px;
-  transition: all 0.3s ease;
+  transition: var(--transition-default);
 }
 
 .mobile-menu-toggle.active span:nth-child(1) {
@@ -159,16 +192,16 @@
 .mobile-menu {
   display: none;
   position: fixed;
-  top: 60px;
+  top: var(--header-height);
   left: 0;
   right: 0;
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--header-bg);
+  backdrop-filter: var(--header-backdrop);
+  -webkit-backdrop-filter: var(--header-backdrop);
   transform: translateY(-100%);
   transition: transform 0.3s ease;
   z-index: 999;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
 }
 
 .mobile-menu.active {
@@ -177,7 +210,7 @@
 
 .mobile-menu-list {
   list-style: none;
-  padding: 20px;
+  padding: var(--spacing-md);
   margin: 0;
 }
 
@@ -187,25 +220,25 @@
 
 .mobile-menu-link {
   display: block;
-  padding: 15px 10px;
-  color: #333;
+  padding: var(--spacing-sm) var(--spacing-xs);
+  color: var(--color-text-primary);
   text-decoration: none;
   font-size: 16px;
   font-weight: 500;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-default);
 }
 
 .mobile-menu-link:hover {
-  background: rgba(0, 102, 204, 0.05);
-  color: #0066cc;
-  padding-left: 20px;
+  background: rgba(41, 212, 193, 0.05);
+  color: var(--color-primary-main);
+  padding-left: var(--spacing-md);
 }
 
 .mobile-menu-divider {
   height: 1px;
-  background: rgba(0, 0, 0, 0.1);
-  margin: 10px 0;
+  background: var(--header-border);
+  margin: var(--spacing-xs) 0;
 }
 
 /* 반응형 디자인 */
@@ -227,7 +260,7 @@
   }
 
   .nav-container {
-    padding: 0 15px;
+    padding: 0 var(--spacing-sm);
   }
 
   .brand-link {
@@ -238,16 +271,16 @@
 /* 태블릿 */
 @media (min-width: 769px) and (max-width: 1024px) {
   .nav-menu {
-    gap: 20px;
+    gap: var(--spacing-md);
   }
 
   .nav-link {
     font-size: 15px;
-    padding: 4px 8px;
+    padding: var(--spacing-xs) var(--spacing-xs);
   }
 
   .nav-container {
-    padding: 0 15px;
+    padding: 0 var(--spacing-sm);
   }
 }
 

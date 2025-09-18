@@ -1,0 +1,73 @@
+/* 🎨 상공(SANGGONG) 테마 시스템 - CSS 변수 정의 */
+
+:root {
+    /* Primary Colors - 주요 브랜드 색상 */
+    --color-primary-main: rgb(41, 212, 193);  /* 민트 그린 - CTA, 강조 */
+    --color-primary-dark: rgb(46, 46, 47);    /* 다크 그레이 - 헤더, 제목 */
+    --color-primary-light: rgb(102, 102, 102); /* 라이트 그레이 - 보조 */
+
+    /* Background Colors - 배경색 */
+    --color-bg-primary: rgb(255, 255, 255);    /* 흰색 - 메인 배경 */
+    --color-bg-secondary: rgb(0, 0, 0);        /* 검정 - 다크 섹션 */
+    --color-bg-overlay: rgba(0, 0, 0, 0.8);    /* 오버레이 */
+    --color-bg-light: rgb(248, 249, 250);      /* 밝은 회색 배경 */
+
+    /* Text Colors - 텍스트 색상 */
+    --color-text-primary: rgb(32, 33, 31);     /* 메인 텍스트 */
+    --color-text-secondary: rgb(153, 153, 153); /* 보조 텍스트 */
+    --color-text-light: rgb(255, 255, 255);    /* 밝은 배경용 텍스트 */
+    --color-text-muted: rgb(189, 189, 189);    /* 비활성 텍스트 */
+
+    /* Accent Colors - 강조 색상 */
+    --color-accent-highlight: rgb(253, 249, 207); /* 하이라이트 */
+    --color-accent-hover: rgb(41, 212, 193);     /* 호버 효과 */
+
+    /* Font Families */
+    --font-primary: 'Noto Sans KR', sans-serif;    /* 한글 본문 */
+    --font-secondary: 'Poppins', sans-serif;       /* 영문 제목 */
+    --font-tertiary: 'Montserrat', sans-serif;     /* 영문 보조 */
+
+    /* Spacing - 간격 시스템 */
+    --spacing-xs: 8px;    /* 최소 간격 */
+    --spacing-sm: 16px;   /* 작은 간격 */
+    --spacing-md: 24px;   /* 중간 간격 */
+    --spacing-lg: 32px;   /* 큰 간격 */
+    --spacing-xl: 48px;   /* 특대 간격 */
+    --spacing-2xl: 64px;  /* 섹션 간격 (소) */
+    --spacing-3xl: 100px; /* 섹션 간격 (중) */
+    --spacing-4xl: 200px; /* 섹션 간격 (대) */
+
+    /* Transitions - 트랜지션 */
+    --transition-default: all 0.3s ease;
+    --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Border Radius - 모서리 둥글기 */
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-full: 9999px;
+
+    /* Shadows - 그림자 */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+    --shadow-xl: 0 16px 64px rgba(0, 0, 0, 0.16);
+
+    /* Header Specific */
+    --header-height: 60px;
+    --header-bg: rgba(255, 255, 255, 0.98);
+    --header-border: rgba(0, 0, 0, 0.1);
+    --header-backdrop: blur(10px);
+}
+
+/* 다크 모드 변수 (선택사항) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-bg-primary: rgb(30, 30, 30);
+        --color-bg-secondary: rgb(0, 0, 0);
+        --color-text-primary: rgb(240, 240, 240);
+        --color-text-secondary: rgb(180, 180, 180);
+        --header-bg: rgba(30, 30, 30, 0.98);
+        --header-border: rgba(255, 255, 255, 0.1);
+    }
+}

@@ -23,7 +23,7 @@ function loadHeader() {
     return currentPath.includes(cleanPath.split('#')[0]);
   };
 
-  // 헤더 HTML
+  // 헤더 HTML - 상공(SANGGONG) 테마 적용
   const headerHTML = `
     <nav class="unified-header">
       <div class="nav-container">
@@ -47,9 +47,9 @@ function loadHeader() {
         </ul>
 
         <div class="nav-actions">
-          <a href="${adjustPath('/login.html')}" class="nav-action-link" id="login-link">로그인</a>
-          <a href="${adjustPath('/dashboard.html')}" class="nav-action-link" id="dashboard-link" style="display: none;">마이페이지</a>
-          <a href="#" onclick="logout()" class="nav-action-link" id="logout-link" style="display: none;">로그아웃</a>
+          <a href="${adjustPath('/login.html')}" class="nav-action-link nav-action-primary" id="login-link">로그인</a>
+          <a href="${adjustPath('/dashboard.html')}" class="nav-action-link nav-action-secondary" id="dashboard-link" style="display: none;">마이페이지</a>
+          <a href="#" onclick="logout()" class="nav-action-link nav-action-outline" id="logout-link" style="display: none;">로그아웃</a>
         </div>
 
         <!-- 모바일 메뉴 토글 -->
