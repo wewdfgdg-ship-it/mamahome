@@ -189,7 +189,12 @@ async function handleRegister(req, res) {
 
     if (insertError) {
       console.error('User creation error:', insertError);
-      return res.status(500).json({ error: '회원가입 중 오류가 발생했습니다.' });
+      // 개발 중 디버깅을 위해 상세 오류 표시
+      return res.status(500).json({
+        error: '회원가입 중 오류가 발생했습니다.',
+        details: insertError.message || insertError,
+        hint: insertError.hint || '테이블 컬럼을 확인해주세요'
+      });
     }
 
     // JWT 토큰 생성
