@@ -72,6 +72,10 @@
     <link rel="preload" href="../css/main.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <link rel="stylesheet" href="../css/components.css">
     <link rel="stylesheet" href="../css/responsive.css">
+
+    <!-- Auth Manager -->
+    <script src="../js/auth.js"></script>
+
     <noscript>
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/reset.css">
@@ -1451,6 +1455,69 @@
             console.log('페이지 초기화 시작');
             // 지연 없이 바로 실행
             initializeDefaultPackage();
+
+            // 로그인한 사용자 정보 자동 입력
+            autoFillUserInfo();
+        }
+
+        // 로그인한 사용자 정보를 자동으로 채우는 함수
+        function autoFillUserInfo() {
+            // AuthManager를 통해 사용자 정보 확인
+            if (typeof AuthManager !== 'undefined' && AuthManager.isLoggedIn()) {
+                const userInfo = AuthManager.getUserInfo();
+                console.log('로그인한 사용자 정보:', userInfo);
+
+                if (userInfo) {
+                    // 이름 자동 입력
+                    if (userInfo.name) {
+                        const nameInput = document.getElementById('name');
+                        if (nameInput) {
+                            nameInput.value = userInfo.name;
+                            nameInput.style.borderColor = '';
+                        }
+                    }
+
+                    // 이메일 자동 입력
+                    if (userInfo.email) {
+                        const emailInput = document.getElementById('email');
+                        if (emailInput) {
+                            emailInput.value = userInfo.email;
+                            emailInput.style.borderColor = '';
+                        }
+                    }
+
+                    // 전화번호 자동 입력
+                    if (userInfo.phone) {
+                        const phoneInput = document.getElementById('phone');
+                        if (phoneInput) {
+                            phoneInput.value = userInfo.phone;
+                            phoneInput.style.borderColor = '';
+                        }
+                    }
+
+                    // 업체명 자동 입력
+                    if (userInfo.businessName) {
+                        const businessNameInput = document.getElementById('businessName');
+                        if (businessNameInput) {
+                            businessNameInput.value = userInfo.businessName;
+                            businessNameInput.style.borderColor = '';
+                        }
+                    }
+
+                    // 사업자번호 자동 입력
+                    if (userInfo.businessNumber) {
+                        const businessNumberInput = document.getElementById('businessNumber');
+                        if (businessNumberInput) {
+                            businessNumberInput.value = userInfo.businessNumber;
+                            businessNumberInput.style.borderColor = '';
+                        }
+                    }
+
+                    console.log('✅ 사용자 정보 자동 입력 완료');
+                }
+            } else {
+                console.log('로그인되지 않은 사용자 또는 AuthManager 사용 불가');
+            }
         }
         
         // 입력 필드 실시간 유효성 검사
