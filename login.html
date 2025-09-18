@@ -58,13 +58,9 @@
             flex-direction: column;
         }
 
-        /* Navigation */
+        /* Navigation - 로그인 페이지에서 숨김 */
         .navigation {
-            background: var(--color-bg-primary);
-            border-bottom: 1px solid rgba(189, 189, 189, 0.3);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            display: none;
         }
 
         .nav-container {
@@ -332,28 +328,15 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navigation">
-        <div class="nav-container">
-            <a href="/" class="nav-logo">미블(Mrble)</a>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="/" class="nav-link">홈</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/pages/checkout.html" class="nav-link">서비스 신청</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/login.html" class="nav-link">로그인</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
 
     <!-- Login Container -->
     <div class="login-container">
         <div class="login-box">
-            <h1 class="heading-1">로그인</h1>
+            <h1 class="heading-1">
+                <a href="/" style="text-decoration: none; color: var(--color-primary-main); font-family: var(--font-secondary); font-size: 42px; font-weight: 700; transition: var(--transition-fast);"
+                   onmouseover="this.style.transform='scale(1.05)'"
+                   onmouseout="this.style.transform='scale(1)'">Mrble</a>
+            </h1>
             <p class="text-body">미블 체험단 서비스에 오신 것을 환영합니다</p>
 
             <!-- Error/Success Messages -->
@@ -377,23 +360,26 @@
                         <input type="checkbox" id="rememberMe">
                         <label for="rememberMe">로그인 상태 유지</label>
                     </div>
-                    <a href="#" class="forgot-link">비밀번호 찾기</a>
+                    <div>
+                        <a href="#" class="forgot-link">아이디 찾기</a>
+                        <span style="color: var(--color-text-muted); margin: 0 8px;">|</span>
+                        <a href="#" class="forgot-link">비밀번호 찾기</a>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-primary">로그인</button>
             </form>
 
-            <div class="divider">
-                <span>또는</span>
-            </div>
-
-            <a href="/pages/checkout.html" class="btn btn-secondary">회원가입 없이 주문하기</a>
+            <!-- 회원가입 없이 주문하기 버튼 제거 -->
 
             <p class="text-body" style="margin-top: var(--spacing-lg); font-size: 14px;">
-                아직 계정이 없으신가요? <a href="#" class="forgot-link">회원가입</a>
+                아직 계정이 없으신가요? <a href="/pages/register.html" class="forgot-link">회원가입</a>
             </p>
         </div>
     </div>
+
+    <!-- 인증 헬퍼 함수 로드 -->
+    <script src="js/auth.js"></script>
 
     <script>
         // 로그인 폼 처리
@@ -414,37 +400,38 @@
                 return;
             }
 
-            // 임시 로그인 처리 (실제로는 API 호출 필요)
-            // 테스트 계정: test@mrble.com / password123
-            if (email === 'test@mrble.com' && password === 'password123') {
-                // 로그인 성공
-                showSuccess('로그인 성공! 잠시만 기다려주세요...');
+            // 로그인 버튼 비활성화
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.disabled = true;
+            submitButton.textContent = '로그인 중...';
 
-                // 사용자 정보를 localStorage에 저장
-                const userInfo = {
-                    email: email,
-                    name: '테스트 사용자',
-                    isLoggedIn: true,
-                    loginTime: new Date().toISOString()
-                };
+            try {
+                // API를 통한 로그인
+                const result = await AuthManager.login(email, password, rememberMe);
 
-                if (rememberMe) {
-                    // 30일간 유지
-                    localStorage.setItem('userInfo', JSON.stringify(userInfo));
-                    localStorage.setItem('userToken', 'user-token-' + btoa(email + Date.now()));
+                if (result.success) {
+                    // 로그인 성공
+                    showSuccess('로그인 성공! 잠시만 기다려주세요...');
+
+                    // 대시보드로 리다이렉트 또는 이전 페이지로
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirect = urlParams.get('redirect') || '/dashboard.html';
+
+                    setTimeout(() => {
+                        window.location.href = redirect;
+                    }, 1500);
                 } else {
-                    // 세션만 유지
-                    sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
-                    sessionStorage.setItem('userToken', 'user-token-' + btoa(email + Date.now()));
+                    // 로그인 실패
+                    showError(result.error || '이메일 또는 비밀번호가 올바르지 않습니다.');
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalText;
                 }
-
-                // 대시보드로 리다이렉트
-                setTimeout(() => {
-                    window.location.href = '/dashboard.html';
-                }, 1500);
-            } else {
-                // 로그인 실패
-                showError('이메일 또는 비밀번호가 올바르지 않습니다.');
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
             }
         });
 
@@ -464,10 +451,19 @@
 
         // 페이지 로드 시 이미 로그인되어 있는지 확인
         window.addEventListener('DOMContentLoaded', () => {
-            const userInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
-            if (userInfo) {
+            // AuthManager를 사용하여 로그인 상태 확인
+            if (AuthManager.isLoggedIn()) {
                 // 이미 로그인되어 있으면 대시보드로 리다이렉트
-                window.location.href = '/dashboard.html';
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirect = urlParams.get('redirect') || '/dashboard.html';
+                window.location.href = redirect;
+            }
+        });
+
+        // 엔터 키로 폼 제출 가능하도록
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
             }
         });
     </script>
