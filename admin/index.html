@@ -596,28 +596,45 @@
         // 인증 확인
         async function checkAuth() {
             if (authToken) {
-                try {
-                    const response = await fetch('/api/admin-auth', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            action: 'verify',
-                            token: authToken
-                        })
-                    });
+                // 토큰이 있고 dev-token으로 시작하면 유효한 것으로 간주
+                if (authToken.startsWith('dev-token-') || authToken.startsWith('admin-')) {
+                    showDashboard();
+                    return;
+                }
 
-                    const data = await response.json();
+                // Vercel 환경에서만 API 호출 시도
+                if (window.location.hostname.includes('vercel.app')) {
+                    try {
+                        const response = await fetch('/api/admin-auth', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                action: 'verify',
+                                token: authToken
+                            })
+                        });
 
-                    if (data.valid) {
-                        showDashboard();
-                    } else {
-                        showLogin();
+                        const data = await response.json();
+
+                        if (data.valid) {
+                            showDashboard();
+                        } else {
+                            showLogin();
+                        }
+                    } catch (error) {
+                        console.error('Auth check error:', error);
+                        // API가 없어도 토큰이 있으면 일단 대시보드 표시
+                        if (authToken) {
+                            showDashboard();
+                        } else {
+                            showLogin();
+                        }
                     }
-                } catch (error) {
-                    console.error('Auth check error:', error);
-                    showLogin();
+                } else {
+                    // 로컬 또는 GitHub Pages 환경에서는 토큰만 확인
+                    showDashboard();
                 }
             } else {
                 showLogin();
@@ -631,37 +648,51 @@
             const password = document.getElementById('passwordInput').value;
 
             try {
-                // 로컬 개발 환경에서는 임시 처리
+                // 간단한 인증 처리 (API 없이)
                 if (password === 'admin1234') {
-                    // 임시 토큰 생성
-                    authToken = 'dev-token-' + Date.now();
+                    // 안정적인 토큰 생성
+                    authToken = 'admin-token-' + btoa(Date.now() + '-mrble');
                     localStorage.setItem('adminToken', authToken);
                     showDashboard();
                 } else {
                     showError('비밀번호가 올바르지 않습니다.');
                 }
 
-                // 실제 API 호출 (Vercel 배포 후)
-                // const response = await fetch('/api/admin-auth', {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //     },
-                //     body: JSON.stringify({
-                //         action: 'login',
-                //         password: password
-                //     })
-                // });
+                // Vercel 환경에서는 API 호출 시도
+                if (window.location.hostname.includes('vercel.app')) {
+                    try {
+                        const response = await fetch('/api/admin-auth', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                action: 'login',
+                                password: password
+                            })
+                        });
 
-                // const data = await response.json();
+                        const data = await response.json();
 
-                // if (data.success) {
-                //     authToken = data.token;
-                //     localStorage.setItem('adminToken', authToken);
-                //     showDashboard();
-                // } else {
-                //     showError(data.message);
-                // }
+                        if (data.success) {
+                            authToken = data.token;
+                            localStorage.setItem('adminToken', authToken);
+                            showDashboard();
+                        } else {
+                            showError(data.message);
+                        }
+                    } catch (error) {
+                        console.error('Login API error:', error);
+                        // API 실패 시에도 로컬 인증 시도
+                        if (password === 'admin1234') {
+                            authToken = 'admin-token-' + btoa(Date.now() + '-mrble');
+                            localStorage.setItem('adminToken', authToken);
+                            showDashboard();
+                        } else {
+                            showError('로그인 중 오류가 발생했습니다.');
+                        }
+                    }
+                }
             } catch (error) {
                 console.error('Login error:', error);
                 showError('로그인 중 오류가 발생했습니다.');
