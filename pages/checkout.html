@@ -521,6 +521,9 @@
     <!-- Common Header Container -->
     <div id="header-container"></div>
     <script src="../js/common-header.js"></script>
+
+    <!-- AuthManager 로드 (사용자 정보 자동 입력을 위해 필요) -->
+    <script src="../js/auth.js"></script>
     
     <div class="checkout-page">
         <div class="container">
@@ -1480,64 +1483,52 @@
                     }
                 }
 
-                        // 이름 자동 입력
-                        if (userInfo.name) {
-                            const nameInput = document.getElementById('name');
-                            if (nameInput) {
-                                nameInput.value = userInfo.name;
-                                nameInput.style.borderColor = '';
-                            }
-                        }
-
-                        // 이메일 자동 입력
-                        if (userInfo.email) {
-                            const emailInput = document.getElementById('email');
-                            if (emailInput) {
-                                emailInput.value = userInfo.email;
-                                emailInput.style.borderColor = '';
-                            }
-                        }
-
-                        // 전화번호 자동 입력
-                        if (userInfo.phone) {
-                            const phoneInput = document.getElementById('phone');
-                            if (phoneInput) {
-                                phoneInput.value = userInfo.phone;
-                                phoneInput.style.borderColor = '';
-                            }
-                        }
-
-                        // 업체명 자동 입력 (company 필드)
-                        if (userInfo.businessName || userInfo.business_name) {
-                            const companyInput = document.getElementById('company');
-                            if (companyInput) {
-                                companyInput.value = userInfo.businessName || userInfo.business_name;
-                                companyInput.style.borderColor = '';
-                            }
-                        }
-
-                        // 사업자번호 자동 입력 (business-number 필드)
-                        if (userInfo.businessNumber || userInfo.business_number) {
-                            const businessNumberInput = document.getElementById('business-number');
-                            if (businessNumberInput) {
-                                businessNumberInput.value = userInfo.businessNumber || userInfo.business_number;
-                                businessNumberInput.style.borderColor = '';
-                            }
-                        }
-
-                        console.log('✅ 사용자 정보 자동 입력 완료');
-                    }
-                } catch (error) {
-                    console.error('사용자 정보 가져오기 오류:', error);
-                    // 로컬 스토리지의 정보라도 사용
-                    const localUserInfo = AuthManager.getUserInfo();
-                    if (localUserInfo) {
-                        // 위의 자동 입력 로직 재사용
-                        fillFormWithUserData(localUserInfo);
+                // 이름 자동 입력
+                if (userInfo.name) {
+                    const nameInput = document.getElementById('name');
+                    if (nameInput) {
+                        nameInput.value = userInfo.name;
+                        nameInput.style.borderColor = '';
                     }
                 }
-            } else {
-                console.log('로그인되지 않은 사용자 또는 AuthManager 사용 불가');
+
+                // 이메일 자동 입력
+                if (userInfo.email) {
+                    const emailInput = document.getElementById('email');
+                    if (emailInput) {
+                        emailInput.value = userInfo.email;
+                        emailInput.style.borderColor = '';
+                    }
+                }
+
+                // 전화번호 자동 입력
+                if (userInfo.phone) {
+                    const phoneInput = document.getElementById('phone');
+                    if (phoneInput) {
+                        phoneInput.value = userInfo.phone;
+                        phoneInput.style.borderColor = '';
+                    }
+                }
+
+                // 업체명 자동 입력 (company 필드)
+                if (userInfo.businessName || userInfo.business_name) {
+                    const companyInput = document.getElementById('company');
+                    if (companyInput) {
+                        companyInput.value = userInfo.businessName || userInfo.business_name;
+                        companyInput.style.borderColor = '';
+                    }
+                }
+
+                // 사업자번호 자동 입력 (business-number 필드)
+                if (userInfo.businessNumber || userInfo.business_number) {
+                    const businessNumberInput = document.getElementById('business-number');
+                    if (businessNumberInput) {
+                        businessNumberInput.value = userInfo.businessNumber || userInfo.business_number;
+                        businessNumberInput.style.borderColor = '';
+                    }
+                }
+
+                console.log('✅ 사용자 정보 자동 입력 완료');
             }
         }
 

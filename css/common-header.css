@@ -40,11 +40,11 @@
 
 .brand-link {
   font-family: var(--font-secondary);
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 18px; /* 로고 크기 통일 */
+  font-weight: 600; /* 무게 조정 */
   color: var(--color-text-primary);
   text-decoration: none;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
   transition: var(--transition-default);
 }
 
@@ -70,7 +70,8 @@
 .nav-link {
   color: var(--color-text-primary);
   text-decoration: none;
-  font-size: 16px;
+  font-family: var(--font-primary); /* 한글 폰트 명시 */
+  font-size: 14px; /* 메뉴 폰트 크기 통일 */
   font-weight: 500;
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-sm);
@@ -110,10 +111,11 @@
 
 .nav-action-link {
   text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--radius-full);
+  font-family: var(--font-primary); /* 한글 폰트 명시 */
+  font-size: 14px; /* 버튼 폰트 크기 통일 */
+  font-weight: 600; /* 버튼 폰트 무게 통일 */
+  padding: 6px 15px; /* 패딩 통일 */
+  border-radius: 20px; /* 둥글기 통일 */
   transition: var(--transition-default);
   white-space: nowrap;
 }
@@ -123,13 +125,17 @@
   background: linear-gradient(135deg, var(--color-primary-main), rgb(36, 192, 174));
   color: var(--color-text-light);
   box-shadow: 0 3px 10px rgba(41, 212, 193, 0.25);
+  font-size: 14px;
+  font-weight: 600;
 }
 
 /* 마이페이지 버튼 */
 .nav-action-secondary {
   background: transparent;
   color: var(--color-text-primary);
+  font-size: 14px;
   font-weight: 600;
+  margin-left: 15px;
 }
 
 /* 로그아웃 버튼 */
@@ -137,6 +143,9 @@
   background: transparent;
   border: 1px solid var(--color-primary-main);
   color: var(--color-primary-main);
+  font-size: 14px;
+  font-weight: 600;
+  margin-left: 10px;
 }
 
 /* 호버 효과 */
