@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - 미블(Mrble)</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            /* Primary Colors - 주요 브랜드 색상 */
+            --color-primary-main: rgb(41, 212, 193);  /* 민트 그린 - CTA, 강조 */
+            --color-primary-dark: rgb(46, 46, 47);    /* 다크 그레이 - 헤더, 제목 */
+            --color-primary-light: rgb(102, 102, 102); /* 라이트 그레이 - 보조 */
+
+            /* Background Colors - 배경색 */
+            --color-bg-primary: rgb(255, 255, 255);    /* 흰색 - 메인 배경 */
+            --color-bg-secondary: rgb(0, 0, 0);        /* 검정 - 다크 섹션 */
+            --color-bg-overlay: rgba(0, 0, 0, 0.8);    /* 오버레이 */
+
+            /* Text Colors - 텍스트 색상 */
+            --color-text-primary: rgb(32, 33, 31);     /* 메인 텍스트 */
+            --color-text-secondary: rgb(153, 153, 153); /* 보조 텍스트 */
+            --color-text-light: rgb(255, 255, 255);    /* 밝은 배경용 텍스트 */
+            --color-text-muted: rgb(189, 189, 189);    /* 비활성 텍스트 */
+
+            /* Accent Colors - 강조 색상 */
+            --color-accent-highlight: rgb(253, 249, 207); /* 하이라이트 */
+            --color-accent-hover: rgb(41, 212, 193);     /* 호버 효과 */
+
+            /* Font Families */
+            --font-primary: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-secondary: 'Poppins', sans-serif;
+            --font-tertiary: 'Montserrat', sans-serif;
+
+            /* Spacing */
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 32px;
+            --spacing-xl: 48px;
+            --spacing-2xl: 64px;
+            --spacing-3xl: 100px;
+            --spacing-4xl: 200px;
+
+            /* Transitions */
+            --transition-default: all 0.3s ease;
+            --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.5s ease-in-out;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-primary);
+            background: linear-gradient(135deg, rgba(41, 212, 193, 0.1), rgba(255, 255, 255, 0.9));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation */
+        .navigation {
+            background: var(--color-bg-primary);
+            border-bottom: 1px solid rgba(189, 189, 189, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1172px;
+            margin: 0 auto;
+            padding: var(--spacing-sm) var(--spacing-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-primary-main);
+            text-decoration: none;
+            font-family: var(--font-secondary);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: var(--spacing-lg);
+            align-items: center;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-link {
+            color: var(--color-text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition-fast);
+            padding: var(--spacing-xs) var(--spacing-sm);
+        }
+
+        .nav-link:hover {
+            color: var(--color-primary-main);
+        }
+
+        /* Login Container */
+        .login-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-xl) var(--spacing-md);
+        }
+
+        .login-box {
+            background: var(--color-bg-primary);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            max-width: 480px;
+            width: 100%;
+            padding: var(--spacing-2xl) var(--spacing-xl);
+        }
+
+        /* Headings */
+        .heading-1 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-sm);
+            text-align: center;
+            font-family: var(--font-secondary);
+        }
+
+        .text-body {
+            font-size: 16px;
+            color: var(--color-text-secondary);
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            line-height: 1.6;
+        }
+
+        /* Form Elements */
+        .form {
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px var(--spacing-sm);
+            border: 1px solid var(--color-text-muted);
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: var(--font-primary);
+            transition: var(--transition-fast);
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary-main);
+            box-shadow: 0 0 0 3px rgba(41, 212, 193, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .form-help {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin-top: var(--spacing-xs);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 14px var(--spacing-lg);
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition-default);
+            text-decoration: none;
+            text-align: center;
+            font-family: var(--font-primary);
+        }
+
+        .btn-primary {
+            background: var(--color-primary-main);
+            color: var(--color-text-light);
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(41, 212, 193, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-primary-main);
+            border: 2px solid var(--color-primary-main);
+            width: 100%;
+            margin-top: var(--spacing-sm);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-primary-main);
+            color: var(--color-text-light);
+        }
+
+        /* Divider */
+        .divider {
+            position: relative;
+            text-align: center;
+            margin: var(--spacing-lg) 0;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--color-text-muted);
+        }
+
+        .divider span {
+            background: var(--color-bg-primary);
+            padding: 0 var(--spacing-sm);
+            position: relative;
+            color: var(--color-text-secondary);
+            font-size: 14px;
+        }
+
+        /* Remember Me & Forgot */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .checkbox-wrapper input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper label {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            font-size: 14px;
+            color: var(--color-primary-main);
+            text-decoration: none;
+            transition: var(--transition-fast);
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Error Message */
+        .error-message {
+            background: rgba(255, 59, 48, 0.1);
+            border: 1px solid rgba(255, 59, 48, 0.3);
+            color: rgb(255, 59, 48);
+            padding: var(--spacing-sm);
+            border-radius: 8px;
+            margin-bottom: var(--spacing-md);
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: rgba(52, 199, 89, 0.1);
+            border: 1px solid rgba(52, 199, 89, 0.3);
+            color: rgb(52, 199, 89);
+            padding: var(--spacing-sm);
+            border-radius: 8px;
+            margin-bottom: var(--spacing-md);
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .login-box {
+                padding: var(--spacing-xl) var(--spacing-md);
+            }
+
+            .heading-1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navigation">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">미블(Mrble)</a>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">홈</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/pages/checkout.html" class="nav-link">서비스 신청</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/login.html" class="nav-link">로그인</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-box">
+            <h1 class="heading-1">로그인</h1>
+            <p class="text-body">미블 체험단 서비스에 오신 것을 환영합니다</p>
+
+            <!-- Error/Success Messages -->
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+
+            <!-- Login Form -->
+            <form class="form" id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">이메일</label>
+                    <input type="email" class="form-input" id="email" placeholder="이메일을 입력하세요" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">비밀번호</label>
+                    <input type="password" class="form-input" id="password" placeholder="비밀번호를 입력하세요" required>
+                </div>
+
+                <div class="form-options">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="rememberMe">
+                        <label for="rememberMe">로그인 상태 유지</label>
+                    </div>
+                    <a href="#" class="forgot-link">비밀번호 찾기</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary">로그인</button>
+            </form>
+
+            <div class="divider">
+                <span>또는</span>
+            </div>
+
+            <a href="/pages/checkout.html" class="btn btn-secondary">회원가입 없이 주문하기</a>
+
+            <p class="text-body" style="margin-top: var(--spacing-lg); font-size: 14px;">
+                아직 계정이 없으신가요? <a href="#" class="forgot-link">회원가입</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 로그인 폼 처리
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            // 에러/성공 메시지 초기화
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('successMessage').classList.remove('show');
+
+            // 간단한 유효성 검사
+            if (!email || !password) {
+                showError('이메일과 비밀번호를 입력해주세요.');
+                return;
+            }
+
+            // 임시 로그인 처리 (실제로는 API 호출 필요)
+            // 테스트 계정: test@mrble.com / password123
+            if (email === 'test@mrble.com' && password === 'password123') {
+                // 로그인 성공
+                showSuccess('로그인 성공! 잠시만 기다려주세요...');
+
+                // 사용자 정보를 localStorage에 저장
+                const userInfo = {
+                    email: email,
+                    name: '테스트 사용자',
+                    isLoggedIn: true,
+                    loginTime: new Date().toISOString()
+                };
+
+                if (rememberMe) {
+                    // 30일간 유지
+                    localStorage.setItem('userInfo', JSON.stringify(userInfo));
+                    localStorage.setItem('userToken', 'user-token-' + btoa(email + Date.now()));
+                } else {
+                    // 세션만 유지
+                    sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+                    sessionStorage.setItem('userToken', 'user-token-' + btoa(email + Date.now()));
+                }
+
+                // 대시보드로 리다이렉트
+                setTimeout(() => {
+                    window.location.href = '/dashboard.html';
+                }, 1500);
+            } else {
+                // 로그인 실패
+                showError('이메일 또는 비밀번호가 올바르지 않습니다.');
+            }
+        });
+
+        // 에러 메시지 표시
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+        }
+
+        // 성공 메시지 표시
+        function showSuccess(message) {
+            const successElement = document.getElementById('successMessage');
+            successElement.textContent = message;
+            successElement.classList.add('show');
+        }
+
+        // 페이지 로드 시 이미 로그인되어 있는지 확인
+        window.addEventListener('DOMContentLoaded', () => {
+            const userInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
+            if (userInfo) {
+                // 이미 로그인되어 있으면 대시보드로 리다이렉트
+                window.location.href = '/dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html>
