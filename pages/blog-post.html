@@ -4,14 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loading... - Mrble</title>
-    
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&family=Poppins:wght@400;500;600;700;800;900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- CSS -->
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/reset.css">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/components.css">
     <link rel="stylesheet" href="../css/responsive.css">
-    
+
+    <!-- Common Header CSS -->
+    <link rel="stylesheet" href="../css/common-header.css">
+
     <style>
         .blog-post-container {
             max-width: 800px;
@@ -157,30 +165,9 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <nav class="nav-container">
-                <a href="../index.html" class="nav-logo">
-                    <span class="logo-text">Mrble</span>
-                </a>                
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="../index.html#about" class="nav-link">미블체험단</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="../pages/press.html" class="nav-link active">마케팅정보</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="../pages/pricing.html" class="nav-link">마케팅상품</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="https://www.mrblog.net" class="nav-link" target="_blank">미블홈페이지</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    <!-- Common Header Container -->
+    <div id="header-container"></div>
+    <script src="../js/common-header.js"></script>
     
     <!-- Blog Post Content -->
     <div class="blog-post-container">

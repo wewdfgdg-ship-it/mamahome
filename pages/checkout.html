@@ -8,7 +8,10 @@
     <!-- 폰트 로드 (비동기 로드 및 최적화) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&family=Poppins:wght@400;500;600;700;800;900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Common Header CSS -->
+    <link rel="stylesheet" href="../css/common-header.css">
     
     <!-- 페이앱 설정 -->
     <script>
@@ -515,31 +518,9 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <nav class="nav-container">
-                <a href="../index.html" class="nav-logo">
-                    <span class="logo-text">Mrble</span>
-                </a>                
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="../index.html#about" class="nav-link">미블체험단</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="../pages/press.html" class="nav-link">마케팅정보</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="../pages/pricing.html" class="nav-link">마케팅상품</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="https://www.mrblog.net" class="nav-link" target="_blank">미블홈페이지</a>
-                    </li>
-                </ul>
-                <div class="nav-spacer"></div>
-            </nav>
-        </div>
-    </header>
+    <!-- Common Header Container -->
+    <div id="header-container"></div>
+    <script src="../js/common-header.js"></script>
     
     <div class="checkout-page">
         <div class="container">
@@ -1462,24 +1443,42 @@
 
         // 로그인한 사용자 정보를 자동으로 채우는 함수
         async function autoFillUserInfo() {
-            // AuthManager를 통해 사용자 정보 확인
-            if (typeof AuthManager !== 'undefined' && AuthManager.isLoggedIn()) {
+            let userInfo = null;
+
+            // 먼저 마이페이지에서 전달된 데이터 확인
+            const checkoutUserData = localStorage.getItem('checkoutUserData');
+            if (checkoutUserData) {
+                try {
+                    userInfo = JSON.parse(checkoutUserData);
+                    console.log('마이페이지에서 전달된 사용자 정보:', userInfo);
+                    // 사용 후 삭제 (보안상)
+                    localStorage.removeItem('checkoutUserData');
+                } catch (e) {
+                    console.error('checkoutUserData 파싱 오류:', e);
+                }
+            }
+
+            // checkoutUserData가 없으면 AuthManager를 통해 사용자 정보 확인
+            if (!userInfo && typeof AuthManager !== 'undefined' && AuthManager.isLoggedIn()) {
                 try {
                     // 서버에서 최신 사용자 정보 가져오기
                     const currentUser = await AuthManager.getCurrentUser();
-                    let userInfo = currentUser || AuthManager.getUserInfo();
+                    userInfo = currentUser || AuthManager.getUserInfo();
+                    console.log('AuthManager에서 가져온 사용자 정보:', userInfo);
+                } catch (e) {
+                    console.error('사용자 정보 가져오기 오류:', e);
+                }
+            }
 
-                    console.log('로그인한 사용자 정보:', userInfo);
-
-                    if (userInfo) {
-                        // JSON 문자열인 경우 파싱
-                        if (typeof userInfo === 'string') {
-                            try {
-                                userInfo = JSON.parse(userInfo);
-                            } catch (e) {
-                                console.error('사용자 정보 파싱 오류:', e);
-                            }
-                        }
+            if (userInfo) {
+                // JSON 문자열인 경우 파싱
+                if (typeof userInfo === 'string') {
+                    try {
+                        userInfo = JSON.parse(userInfo);
+                    } catch (e) {
+                        console.error('사용자 정보 파싱 오류:', e);
+                    }
+                }
 
                         // 이름 자동 입력
                         if (userInfo.name) {
@@ -1508,18 +1507,18 @@
                             }
                         }
 
-                        // 업체명 자동 입력
+                        // 업체명 자동 입력 (company 필드)
                         if (userInfo.businessName || userInfo.business_name) {
-                            const businessNameInput = document.getElementById('businessName');
-                            if (businessNameInput) {
-                                businessNameInput.value = userInfo.businessName || userInfo.business_name;
-                                businessNameInput.style.borderColor = '';
+                            const companyInput = document.getElementById('company');
+                            if (companyInput) {
+                                companyInput.value = userInfo.businessName || userInfo.business_name;
+                                companyInput.style.borderColor = '';
                             }
                         }
 
-                        // 사업자번호 자동 입력
+                        // 사업자번호 자동 입력 (business-number 필드)
                         if (userInfo.businessNumber || userInfo.business_number) {
-                            const businessNumberInput = document.getElementById('businessNumber');
+                            const businessNumberInput = document.getElementById('business-number');
                             if (businessNumberInput) {
                                 businessNumberInput.value = userInfo.businessNumber || userInfo.business_number;
                                 businessNumberInput.style.borderColor = '';
@@ -1571,17 +1570,17 @@
                 if (phoneInput) phoneInput.value = userInfo.phone;
             }
 
-            // 업체명 자동 입력
+            // 업체명 자동 입력 (company 필드)
             if (userInfo.businessName || userInfo.business_name) {
-                const businessNameInput = document.getElementById('businessName');
-                if (businessNameInput) {
-                    businessNameInput.value = userInfo.businessName || userInfo.business_name;
+                const companyInput = document.getElementById('company');
+                if (companyInput) {
+                    companyInput.value = userInfo.businessName || userInfo.business_name;
                 }
             }
 
-            // 사업자번호 자동 입력
+            // 사업자번호 자동 입력 (business-number 필드)
             if (userInfo.businessNumber || userInfo.business_number) {
-                const businessNumberInput = document.getElementById('businessNumber');
+                const businessNumberInput = document.getElementById('business-number');
                 if (businessNumberInput) {
                     businessNumberInput.value = userInfo.businessNumber || userInfo.business_number;
                 }

@@ -559,7 +559,7 @@
                             <div class="empty-state-message">
                                 미블 체험단 서비스를 이용해보세요!
                             </div>
-                            <a href="/pages/checkout.html" class="action-btn">서비스 신청하기</a>
+                            <a href="/pages/checkout.html" class="action-btn" onclick="prepareCheckout(event)">서비스 신청하기</a>
                         </div>
                     `;
                 } else {
@@ -602,14 +602,31 @@
 
                 // API에서도 주문 내역 가져오기 시도
                 try {
+                    // 로그인한 사용자 정보 가져오기
+                    let userInfo = null;
+                    let userEmail = '';
+
+                    if (typeof AuthManager !== 'undefined' && AuthManager.isLoggedIn()) {
+                        userInfo = AuthManager.getUserInfo();
+                        if (userInfo) {
+                            if (typeof userInfo === 'string') {
+                                try {
+                                    userInfo = JSON.parse(userInfo);
+                                } catch (e) {
+                                    console.error('사용자 정보 파싱 오류:', e);
+                                }
+                            }
+                            userEmail = userInfo.email || '';
+                        }
+                    }
+
                     const response = await fetch('https://mamahome-five.vercel.app/api/orders');
                     const data = await response.json();
 
-                    if (data.orders && data.orders.length > 0) {
-                        // API 데이터가 있으면 업데이트
-                        const userEmail = document.getElementById('userEmail').textContent;
+                    if (data.orders && data.orders.length > 0 && userEmail) {
+                        // API 데이터가 있으면 해당 사용자의 주문만 필터링
                         const userOrders = data.orders.filter(order =>
-                            order.customer_email === userEmail || !userEmail.includes('@')
+                            order.customer_email === userEmail
                         );
 
                         if (userOrders.length > 0) {
@@ -682,6 +699,41 @@
         }
 
         // 로그아웃
+        // 서비스 신청 시 사용자 정보 준비
+        async function prepareCheckout(event) {
+            event.preventDefault();
+
+            // 현재 로그인한 사용자 정보 가져오기
+            if (typeof AuthManager !== 'undefined' && AuthManager.isLoggedIn()) {
+                const currentUser = await AuthManager.getCurrentUser();
+                let userInfo = currentUser || AuthManager.getUserInfo();
+
+                // 문자열인 경우 파싱
+                if (typeof userInfo === 'string') {
+                    try {
+                        userInfo = JSON.parse(userInfo);
+                    } catch (e) {
+                        console.error('Failed to parse user info:', e);
+                    }
+                }
+
+                // checkout 페이지에서 사용할 수 있도록 저장
+                if (userInfo) {
+                    const checkoutData = {
+                        name: userInfo.name || '',
+                        email: userInfo.email || '',
+                        phone: userInfo.phone || '',
+                        business_name: userInfo.business_name || '',
+                        business_number: userInfo.business_number || ''
+                    };
+                    localStorage.setItem('checkoutUserData', JSON.stringify(checkoutData));
+                }
+            }
+
+            // checkout 페이지로 이동
+            window.location.href = '/pages/checkout.html';
+        }
+
         function logout() {
             if (confirm('로그아웃 하시겠습니까?')) {
                 // localStorage 및 sessionStorage 정리
