@@ -481,6 +481,8 @@
                 if (!accessToken) {
                     // 토큰이 없으면 로컬스토리지에만 저장
                     const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+                    // 이메일은 변경하지 않고 유지
+                    userInfo.email = userInfo.email || document.getElementById('email').value;
                     userInfo.name = name;
                     userInfo.phone = phone;
                     userInfo.business_name = businessName;
@@ -490,7 +492,13 @@
 
                     // sessionStorage에도 저장
                     if (sessionStorage.getItem('userInfo')) {
-                        sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+                        const sessionUserInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
+                        sessionUserInfo.email = sessionUserInfo.email || userInfo.email;
+                        sessionUserInfo.name = name;
+                        sessionUserInfo.phone = phone;
+                        sessionUserInfo.business_name = businessName;
+                        sessionUserInfo.business_number = businessNumber;
+                        sessionStorage.setItem('userInfo', JSON.stringify(sessionUserInfo));
                     }
 
                     showAlert('정보가 성공적으로 저장되었습니다.', 'success');
@@ -550,6 +558,8 @@
                 if (response.ok && result.success) {
                     // 로컬 스토리지 업데이트
                     const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+                    // 이메일은 변경하지 않고 유지
+                    userInfo.email = userInfo.email || document.getElementById('email').value;
                     userInfo.name = name;
                     userInfo.phone = phone;
                     userInfo.business_name = businessName;
@@ -576,6 +586,8 @@
                     console.log('API 호출 실패, 로컬스토리지에 저장:', result.error);
 
                     const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+                    // 이메일은 변경하지 않고 유지
+                    userInfo.email = userInfo.email || document.getElementById('email').value;
                     userInfo.name = name;
                     userInfo.phone = phone;
                     userInfo.business_name = businessName;
@@ -585,7 +597,13 @@
 
                     // sessionStorage에도 저장
                     if (sessionStorage.getItem('userInfo')) {
-                        sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+                        const sessionUserInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
+                        sessionUserInfo.email = sessionUserInfo.email || userInfo.email;
+                        sessionUserInfo.name = name;
+                        sessionUserInfo.phone = phone;
+                        sessionUserInfo.business_name = businessName;
+                        sessionUserInfo.business_number = businessNumber;
+                        sessionStorage.setItem('userInfo', JSON.stringify(sessionUserInfo));
                     }
 
                     showAlert('정보가 성공적으로 저장되었습니다.', 'success');
@@ -614,6 +632,8 @@
 
                 // 네트워크 오류 시에도 로컬스토리지에 저장
                 const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+                // 이메일은 변경하지 않고 유지
+                userInfo.email = userInfo.email || document.getElementById('email').value;
                 userInfo.name = name;
                 userInfo.phone = phone;
                 userInfo.business_name = businessName;
