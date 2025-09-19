@@ -17,6 +17,9 @@
     },
     "api/payment-redirect.js": {
       "maxDuration": 10
+    },
+    "api/payapp-proxy.js": {
+      "maxDuration": 10
     }
   },
   "rewrites": [
