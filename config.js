@@ -14,8 +14,8 @@ const PAYAPP_CONFIG = {
     feedbackurl: '',
 
     // 결제 완료 후 사용자가 리다이렉트되는 URL
-    returnurl: ''  // 빈 값 = 현재 도메인 사용
-    
+    returnurl: '',  // 빈 값 = 현재 도메인 사용
+
     // 개발/운영 환경 설정
     environment: 'production'
 };

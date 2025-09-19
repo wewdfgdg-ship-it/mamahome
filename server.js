@@ -18,6 +18,9 @@ const DATABASE_ID = '26cbdffa-378b-80b2-a2c7-ce91a1126bd7';
 app.use(cors());
 app.use(express.json());
 
+// 정적 파일 서빙 (CSS, JS, 이미지 등)
+app.use(express.static('.'));
+
 // Notion 콘텐츠를 HTML로 변환하는 함수
 function notionBlocksToHtml(blocks) {
     let html = '';
