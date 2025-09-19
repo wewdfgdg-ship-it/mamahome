@@ -138,7 +138,12 @@ function PayappPayment(config) {
             formData.append('openpaytype', payType);
             
             // 프록시 서버로 요청 (Vercel Function)
-            fetch('/api/payapp-proxy', {
+            // 현재 환경에 따라 API 경로 조정
+            const apiBaseUrl = window.location.hostname === 'localhost'
+                ? 'https://mamahome-five.vercel.app'
+                : '';
+
+            fetch(`${apiBaseUrl}/api/payapp-proxy`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
