@@ -37,6 +37,14 @@
     {
       "source": "/admin/",
       "destination": "/admin/index.html"
+    },
+    {
+      "source": "/myinfo",
+      "destination": "/pages/my-info.html"
+    },
+    {
+      "source": "/myinfo.html",
+      "destination": "/pages/my-info.html"
     }
   ],
   "headers": [
