@@ -20,6 +20,9 @@
     },
     "api/payapp-proxy.js": {
       "maxDuration": 10
+    },
+    "api/check-env.js": {
+      "maxDuration": 10
     }
   },
   "rewrites": [

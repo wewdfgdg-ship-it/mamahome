@@ -7,6 +7,14 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
+// 디버깅 로그 추가
+console.log('=== Supabase Environment Check ===');
+console.log('SUPABASE_URL exists:', !!supabaseUrl);
+console.log('SUPABASE_ANON_KEY exists:', !!supabaseKey);
+if (supabaseUrl) {
+  console.log('SUPABASE_URL starts with:', supabaseUrl.substring(0, 30) + '...');
+}
+
 // 한국 시간으로 변환하는 헬퍼 함수
 function toKST(date) {
   const kstDate = new Date(date);
@@ -17,6 +25,7 @@ function toKST(date) {
 let supabase = null;
 
 if (supabaseUrl && supabaseKey) {
+  console.log('Initializing Supabase client...');
   supabase = createClient(supabaseUrl, supabaseKey, {
     db: {
       schema: 'public'
@@ -27,6 +36,9 @@ if (supabaseUrl && supabaseKey) {
       }
     }
   });
+  console.log('Supabase client initialized successfully');
+} else {
+  console.log('WARNING: Supabase not configured - environment variables missing');
 }
 
 export default async function handler(req, res) {
@@ -73,10 +85,17 @@ export default async function handler(req, res) {
 
 // 주문 생성
 async function createOrder(req, res) {
+  console.log('=== createOrder function called ===');
+  console.log('Request body:', JSON.stringify(req.body, null, 2));
+
   const orderData = req.body;
 
   // 유효성 검사
   if (!orderData.orderNumber || !orderData.customer || !orderData.amount) {
+    console.log('Validation failed - missing fields:');
+    console.log('orderNumber:', !!orderData.orderNumber);
+    console.log('customer:', !!orderData.customer);
+    console.log('amount:', !!orderData.amount);
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
@@ -103,8 +122,11 @@ async function createOrder(req, res) {
     notes: ensureUTF8(orderData.notes)
   };
 
+  console.log('Prepared order data for DB:', JSON.stringify(newOrder, null, 2));
+
   // Supabase에 저장
   if (supabase) {
+    console.log('Attempting to save to Supabase...');
     try {
       const { data, error } = await supabase
         .from('orders')
@@ -112,25 +134,37 @@ async function createOrder(req, res) {
         .select();
 
       if (error) {
-        console.error('Supabase error:', error);
-        return res.status(500).json({ error: error.message });
+        console.error('Supabase INSERT error:', error);
+        console.error('Error details:', JSON.stringify(error, null, 2));
+        return res.status(500).json({
+          error: error.message,
+          details: error.details || 'No additional details',
+          hint: error.hint || 'No hint available'
+        });
       }
 
+      console.log('Order saved successfully:', data);
       return res.status(201).json({
         success: true,
         order: data[0],
         message: '주문이 성공적으로 저장되었습니다.'
       });
     } catch (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ error: 'Database error' });
+      console.error('Database exception:', err);
+      console.error('Exception details:', JSON.stringify(err, null, 2));
+      return res.status(500).json({
+        error: 'Database error',
+        details: err.message
+      });
     }
   } else {
     // Supabase 연결 안됨 (로컬 테스트용)
+    console.log('WARNING: Supabase not connected - returning mock response');
     res.status(201).json({
       success: true,
       order: { ...newOrder, id: Date.now() },
-      message: '주문이 임시 저장되었습니다 (DB 연결 안됨).'
+      message: '주문이 임시 저장되었습니다 (DB 연결 안됨).',
+      warning: 'Database not connected - this is a mock response'
     });
   }
 }
