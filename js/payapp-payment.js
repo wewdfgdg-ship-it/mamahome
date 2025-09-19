@@ -1,7 +1,10 @@
 // 페이앱 결제 처리 모듈
 // REST API 방식 구현
 
-function PayappPayment(config) {
+(function() {
+    'use strict';
+
+    function PayappPayment(config) {
     this.config = config;
     this.apiUrl = 'https://api.payapp.kr/oapi/apiLoad.html';
     
@@ -483,5 +486,11 @@ function PayappPayment(config) {
     };
 }
 
-// 전역 객체로 노출
-window.PayappPayment = PayappPayment;
+    // 전역 객체로 노출
+    window.PayappPayment = PayappPayment;
+
+    // 디버깅용 로그
+    console.log('PayappPayment 모듈 정의됨:', typeof PayappPayment);
+    console.log('window.PayappPayment 설정됨:', typeof window.PayappPayment);
+
+})();
