@@ -7,7 +7,6 @@
 
     <!-- Common Header CSS -->
     <link rel="stylesheet" href="css/common-header.css">
-    <link rel="stylesheet" href="css/style.css">
 
     <!-- 인증 헬퍼 로드 -->
     <script src="js/auth.js"></script>
@@ -532,20 +531,16 @@
                 try {
                     const user = JSON.parse(userInfo);
 
-                    // 네비게이션 바에 사용자 정보 표시
-                    if (user.email) {
-                        document.getElementById('userEmailNav').textContent = user.email;
-                        document.getElementById('userEmail').textContent = user.email;
-
-                        // 아바타에 이니셜 표시
-                        const initial = user.name ? user.name.charAt(0).toUpperCase() :
-                                       user.email.charAt(0).toUpperCase();
-                        document.getElementById('userAvatar').textContent = initial;
+                    // 대시보드 페이지의 사용자 이메일 표시 (공통 헤더는 자체적으로 처리됨)
+                    const userEmailElement = document.getElementById('userEmail');
+                    if (user.email && userEmailElement) {
+                        userEmailElement.textContent = user.email;
                     }
 
                     // 환영 메시지 업데이트
-                    if (user.name) {
-                        document.querySelector('.welcome-message').textContent = `${user.name}님, 환영합니다! 👋`;
+                    const welcomeMessageElement = document.querySelector('.welcome-message');
+                    if (user.name && welcomeMessageElement) {
+                        welcomeMessageElement.textContent = `${user.name}님, 환영합니다! 👋`;
                     }
                 } catch (error) {
                     console.error('사용자 정보 파싱 오류:', error);
@@ -580,8 +575,10 @@
                     const userData = JSON.parse(checkoutData);
                     if (userData.email) {
                         userEmail = userData.email;
-                        document.getElementById('userEmail').textContent = userEmail;
-                        document.getElementById('userEmailNav').textContent = userEmail;
+                        const userEmailElement = document.getElementById('userEmail');
+                        if (userEmailElement) {
+                            userEmailElement.textContent = userEmail;
+                        }
                     }
                 }
 
