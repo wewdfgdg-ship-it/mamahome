@@ -39,9 +39,18 @@
     <script>
         // PayApp SDK 초기화 상태 추적
         window.payAppReady = false;
-        
+        window.paymentModuleReady = false;
+        let initRetryCount = 0;
+        const maxRetries = 10;
+
         // PayApp SDK 초기화 함수
         function initPayApp() {
+            // 재시도 제한 체크
+            if (initRetryCount >= maxRetries) {
+                console.error('PayappPayment 모듈 로드 실패 (최대 재시도 횟수 초과)');
+                return;
+            }
+
             // PayApp SDK 초기화는 현재 사용하지 않음
             // PayappPayment 모듈만 사용
             console.log('PayApp SDK 초기화 건너뜀 - PayappPayment 모듈 사용');
@@ -52,9 +61,10 @@
                 console.log('✅ PayappPayment 모듈 로드 완료');
                 window.paymentModuleReady = true;
             } else {
-                console.warn('⏳ PayappPayment 모듈 로드 대기 중...');
+                initRetryCount++;
+                console.warn(`⏳ PayappPayment 모듈 로드 대기 중... (시도 ${initRetryCount}/${maxRetries})`);
                 // 재시도
-                setTimeout(initPayApp, 100);
+                setTimeout(initPayApp, 500); // 100ms → 500ms로 증가
             }
         }
         
@@ -1586,25 +1596,30 @@
             } else {
                 // PayApp SDK가 로드되지 않은 경우
                 console.log('⚠️ PayApp SDK가 준비되지 않음');
-                
-                // SDK 로드 재시도
-                if (!window.payAppReady) {
+
+                // 모듈이 이미 로드되어 있는지 확인
+                if (window.paymentModuleReady && typeof PayappPayment === 'function') {
+                    console.log('PayappPayment 모듈은 이미 로드됨. 바로 사용');
+                    useFormFallback();
+                } else if (initRetryCount < maxRetries) {
+                    // SDK 로드 재시도 (최대 재시도 횟수 제한)
                     console.log('SDK 로드 재시도 중...');
                     initPayApp();
-                    
+
                     // 1초 후 다시 시도
                     setTimeout(() => {
                         if (window.paymentModuleReady && typeof PayappPayment === 'function') {
                             console.log('PayappPayment 모듈 로드 성공! 결제 진행');
-                            useFormFallback(); // 바로 폼 전송 방식 사용
+                            useFormFallback();
                         } else {
                             console.log('PayappPayment 모듈 로드 실패');
                             alert('결제 모듈을 로드할 수 없습니다. 페이지를 새로고침 해주세요.');
-                            window.location.reload();
                         }
                     }, 1000);
                 } else {
-                    useFormFallback();
+                    // 최대 재시도 횟수 초과
+                    console.error('PayappPayment 모듈 로드 실패 (재시도 초과)');
+                    alert('결제 시스템을 초기화할 수 없습니다. 페이지를 새로고침 해주세요.');
                 }
             }
             
