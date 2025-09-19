@@ -152,10 +152,28 @@ function PayappPayment(config) {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return response.json();
+                // 응답이 텍스트인지 JSON인지 확인
+                return response.text();
             })
-            .then(data => {
-                console.log('페이앱 API 응답:', data);
+            .then(responseText => {
+                console.log('페이앱 API 응답 원본:', responseText);
+
+                // URL 인코딩된 응답 파싱
+                let data = {};
+                if (responseText.includes('=')) {
+                    // URL 파라미터 형식 파싱
+                    const params = new URLSearchParams(responseText);
+                    data = Object.fromEntries(params);
+                    console.log('파싱된 페이앱 응답:', data);
+                } else {
+                    // JSON 형식 시도
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (e) {
+                        console.error('응답 파싱 실패:', e);
+                        data = { state: 0, errorMessage: '응답 파싱 실패' };
+                    }
+                }
                 
                 if (data.state === '1' && data.payurl) {
                     // payurl 디코딩 (이미 프록시에서 처리됨)
@@ -271,10 +289,28 @@ function PayappPayment(config) {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return response.json();
+                // 응답이 텍스트인지 JSON인지 확인
+                return response.text();
             })
-            .then(data => {
-                console.log('페이앱 API 응답:', data);
+            .then(responseText => {
+                console.log('페이앱 API 응답 원본:', responseText);
+
+                // URL 인코딩된 응답 파싱
+                let data = {};
+                if (responseText.includes('=')) {
+                    // URL 파라미터 형식 파싱
+                    const params = new URLSearchParams(responseText);
+                    data = Object.fromEntries(params);
+                    console.log('파싱된 페이앱 응답:', data);
+                } else {
+                    // JSON 형식 시도
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (e) {
+                        console.error('응답 파싱 실패:', e);
+                        data = { state: 0, errorMessage: '응답 파싱 실패' };
+                    }
+                }
                 
                 if (data.state === '1' && data.payurl) {
                     // 결제 URL 받기 성공 - 새 창에서 열기
