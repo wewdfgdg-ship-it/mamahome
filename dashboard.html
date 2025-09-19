@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이페이지 - 미블(Mrble)</title>
+
+    <!-- Common Header CSS -->
+    <link rel="stylesheet" href="css/common-header.css">
     <link rel="stylesheet" href="css/style.css">
+
     <!-- 인증 헬퍼 로드 -->
     <script src="js/auth.js"></script>
     <style>
@@ -12,6 +16,7 @@
             min-height: 100vh;
             background: linear-gradient(135deg, rgba(41, 212, 193, 0.05), rgba(255, 255, 255, 0.9));
             padding: var(--spacing-large) var(--spacing-medium);
+            padding-top: 80px; /* 헤더 공간 확보 */
         }
 
         .dashboard-container {
@@ -400,33 +405,9 @@
     </style>
 </head>
 <body>
-    <!-- 네비게이션 - SANGGONG 테마 적용 -->
-    <nav class="navigation">
-        <div class="nav-container">
-            <!-- 왼쪽: 로고 -->
-            <div class="nav-left">
-                <a href="/" class="nav-logo">미블(Mrble)</a>
-            </div>
-
-            <!-- 오른쪽: 메뉴 + 사용자 정보 + 버튼 -->
-            <div class="nav-right">
-                <ul class="nav-menu">
-                </ul>
-
-                <!-- 사용자 정보 -->
-                <div class="user-info">
-                    <div class="user-avatar" id="userAvatar" onclick="goToMyInfo()" style="cursor: pointer;" title="내 정보">U</div>
-                    <span class="user-email" id="userEmailNav" onclick="goToMyInfo()" style="cursor: pointer;" title="내 정보">사용자</span>
-                </div>
-
-                <!-- 내 정보 버튼 추가 -->
-                <button class="info-btn" onclick="goToMyInfo()" style="display: inline-block !important; margin-right: 10px; background: rgb(41, 212, 193); color: white; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 14px; min-width: 80px; height: 36px;">내 정보</button>
-
-                <!-- 로그아웃 버튼 -->
-                <button class="logout-btn" onclick="logout()">로그아웃</button>
-            </div>
-        </div>
-    </nav>
+    <!-- Common Header Container -->
+    <div id="header-container"></div>
+    <script src="js/common-header.js"></script>
 
     <!-- 대시보드 -->
     <div class="dashboard">
