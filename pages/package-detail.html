@@ -342,29 +342,30 @@
             right: 0;
             background: var(--color-bg-primary);
             border-top: 1px solid rgba(0,0,0,0.1);
-            padding: var(--spacing-md) 0;
+            padding: 10px 0; /* 높이 20% 감소 (기존 var(--spacing-md)는 약 12-16px) */
             z-index: 1000;
             box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
         }
-        
+
         .sticky-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: var(--spacing-xl);
+            height: 100%;
         }
-        
+
         .sticky-info {
             display: flex;
             align-items: center;
             gap: var(--spacing-lg);
         }
-        
+
         .sticky-title {
             font-weight: 600;
             color: var(--color-text-primary);
         }
-        
+
         .sticky-price {
             font-size: 24px;
             font-weight: 700;
@@ -690,7 +691,7 @@
                     <span class="sticky-title">블로그 체험단</span>
                     <span class="sticky-price">30,000원~</span>
                 </div>
-                <button class="btn btn-primary btn-large" onclick="goToCheckout()" style="background: var(--color-primary-main); color: var(--color-text-light); font-size: 16px; padding: 14px 36px; font-weight: 700; border: none; border-radius: var(--radius-md); box-shadow: 0 4px 12px rgba(41, 212, 193, 0.3); cursor: pointer; transition: var(--transition-default); margin-right: var(--spacing-3xl);">지금 구매하기</button>
+                <button class="btn btn-primary btn-large" onclick="goToCheckout()" style="background: var(--color-primary-main); color: var(--color-text-light); font-size: 16px; padding: 12px 32px; font-weight: 700; border: none; border-radius: var(--radius-md); box-shadow: 0 4px 12px rgba(41, 212, 193, 0.3); cursor: pointer; transition: var(--transition-default);">지금 구매하기</button>
             </div>
         </div>
     </div>
