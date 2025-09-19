@@ -1214,20 +1214,20 @@
                     PayApp.setParam('cmd', 'payrequest');  // 명령어 추가
                     PayApp.setParam('userid', CONFIG.userid);  // userid 명시적 설정
                     PayApp.setParam('linkkey', CONFIG.linkkey);  // linkkey 필수
-                    PayApp.setParam('goodname', `미블 체험단 ${paymentData.package.people}명`);
+                    PayApp.setParam('goodname', paymentData.customer.company || '매장명 미입력');  // 매장명이 goodname에 들어가야 함
                     PayApp.setParam('price', paymentData.package.total.toString());
                     PayApp.setParam('recvphone', paymentData.customer.phone.replace(/-/g, ''));
                     PayApp.setParam('email', paymentData.customer.email || '');
                     PayApp.setParam('buyer', paymentData.customer.name);
                     PayApp.setParam('buyerphone', paymentData.customer.phone);
                     PayApp.setParam('buyeremail', paymentData.customer.email);
-                    PayApp.setParam('memo', `블로그 체험단 ${paymentData.package.people}명 패키지`);
+                    PayApp.setParam('memo', `미블 체험단 ${paymentData.package.people}명 패키지`);  // 패키지 정보는 memo에
                     PayApp.setParam('smsuse', 'n');  // SMS 사용 안함
                     PayApp.setParam('redirectpay', '1');  // 바로 결제창으로
                     PayApp.setParam('skip_cstpage', 'y');  // 고객 정보 입력 페이지 스킵
                     PayApp.setParam('openpaytype', payType);  // 결제 수단
-                    PayApp.setParam('var1', paymentData.package.people.toString());
-                    PayApp.setParam('var2', paymentData.package.discountRate.toString());
+                    PayApp.setParam('var1', paymentData.customer.company || '매장명 미입력');  // var1에 매장명
+                    PayApp.setParam('var2', `미블체험단 ${paymentData.package.people}명`);
                     // returnurl 설정 - POST 처리를 위해 payment-redirect API로
                     if (window.location.hostname.includes('vercel.app')) {
                         // Vercel 환경 - payment-redirect API로 POST 처리
