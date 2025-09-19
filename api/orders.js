@@ -16,10 +16,23 @@ if (supabaseUrl) {
 }
 
 // 한국 시간으로 변환하는 헬퍼 함수
-function toKST(date) {
-  const kstDate = new Date(date);
-  kstDate.setHours(kstDate.getHours() + 9); // UTC + 9 = KST
-  return kstDate.toISOString();
+function toKST(dateString) {
+  if (!dateString) return null;
+
+  const date = new Date(dateString);
+  // UTC에서 KST로 변환 (UTC + 9시간)
+  const kstOffset = 9 * 60 * 60 * 1000; // 9시간을 밀리초로
+  const kstDate = new Date(date.getTime() + kstOffset);
+
+  // 한국 시간 형식으로 포맷 (YYYY-MM-DD HH:mm:ss)
+  const year = kstDate.getUTCFullYear();
+  const month = String(kstDate.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(kstDate.getUTCDate()).padStart(2, '0');
+  const hours = String(kstDate.getUTCHours()).padStart(2, '0');
+  const minutes = String(kstDate.getUTCMinutes()).padStart(2, '0');
+  const seconds = String(kstDate.getUTCSeconds()).padStart(2, '0');
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
 let supabase = null;
