@@ -1299,17 +1299,24 @@
                 if (window.PayappPayment) {
                     const paymentModule = new PayappPayment(CONFIG);
                     
-                    paymentModule.requestPayment({
-                        goodname: paymentData.customer.company || '미블 체험단 서비스',
+                    // PayApp으로 전달할 데이터 (goodname은 매장명이어야 함)
+                    const payappParams = {
+                        goodname: paymentData.customer.company || '매장명 미입력',  // 매장명/회사명
                         price: paymentData.package.total,
                         recvphone: paymentData.customer.phone,
                         buyer: paymentData.customer.name,
                         email: paymentData.customer.email,
-                        memo: `블로그 체험단 ${paymentData.package.people}명 패키지`,
-                        var1: paymentData.package.people,
-                        var2: paymentData.package.discountRate,
+                        memo: `미블 체험단 ${paymentData.package.people}명 패키지`,  // 패키지 정보는 memo에
+                        var1: paymentData.customer.company || '',  // var1에도 매장명 저장
+                        var2: `${paymentData.package.people}명`,    // var2에 인원수
                         paymentMethod: paymentData.paymentMethod
-                    }, (result) => {
+                    };
+
+                    console.log('🔥 PayApp 전달 데이터:', payappParams);
+                    console.log('goodname(매장명):', payappParams.goodname);
+                    console.log('memo(패키지정보):', payappParams.memo);
+
+                    paymentModule.requestPayment(payappParams, (result) => {
                         if (result.state === 'SUCCESS' || result.state === 'PROCESSING') {
                             console.log('결제 처리:', result.message);
                         } else if (result.state === 'ERROR') {
@@ -1331,18 +1338,18 @@
                         cmd: 'payrequest',
                         userid: CONFIG.userid,
                         linkkey: CONFIG.linkkey,
-                        goodname: paymentData.customer.company || '미블 체험단 서비스',
+                        goodname: paymentData.customer.company || '매장명 미입력',  // 매장명이 goodname에 들어가야 함
                         price: paymentData.package.total.toString(),
                         recvphone: paymentData.customer.phone.replace(/-/g, ''),
                         buyer: paymentData.customer.name,
                         email: paymentData.customer.email,
-                        memo: `블로그 체험단 ${paymentData.package.people}명 패키지`,
+                        memo: `미블 체험단 ${paymentData.package.people}명 패키지`,  // 패키지 정보는 memo에
                         smsuse: 'n',
                         redirectpay: '1',
                         skip_cstpage: 'y',
                         reqaddr: '0',
-                        var1: paymentData.package.people.toString(),
-                        var2: paymentData.package.discountRate.toString(),
+                        var1: paymentData.customer.company || '',  // var1에도 매장명
+                        var2: `${paymentData.package.people}명`,   // var2에 인원수
                         // feedbackurl 제거 - 콜백 서버 없을 때 에러 70080 방지
                         returnurl: window.location.origin + '/pages/payment-complete.html'
                     };
