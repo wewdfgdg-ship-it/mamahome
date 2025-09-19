@@ -145,7 +145,15 @@ function PayappPayment(config) {
                 },
                 body: JSON.stringify(Object.fromEntries(formData))
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('프록시 응답 상태:', response.status);
+                console.log('프록시 응답 헤더:', response.headers);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 console.log('페이앱 API 응답:', data);
                 
@@ -191,10 +199,19 @@ function PayappPayment(config) {
             })
             .catch(error => {
                 console.error('프록시 서버 호출 오류:', error);
-                alert('결제 시스템 연결에 실패했습니다.\n고객센터에 문의해주세요.');
+                console.error('에러 상세:', error.message);
+                console.error('에러 스택:', error.stack);
+
+                // 네트워크 에러인지 확인
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    alert('네트워크 연결 오류가 발생했습니다.\n인터넷 연결을 확인해주세요.');
+                } else {
+                    alert('결제 시스템 연결에 실패했습니다.\n잠시 후 다시 시도해주세요.');
+                }
+
                 callback({
                     state: 'ERROR',
-                    message: '결제 시스템 연결 실패'
+                    message: '결제 시스템 연결 실패: ' + error.message
                 });
             });
             
@@ -247,7 +264,15 @@ function PayappPayment(config) {
                 },
                 body: JSON.stringify(Object.fromEntries(formData))
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('프록시 응답 상태:', response.status);
+                console.log('프록시 응답 헤더:', response.headers);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 console.log('페이앱 API 응답:', data);
                 
