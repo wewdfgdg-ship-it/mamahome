@@ -1147,7 +1147,18 @@
                     total: selectedPackage.price + Math.round(selectedPackage.price * 0.1)
                 },
                 customer: {
-                    company: document.getElementById('store-name') ? document.getElementById('store-name').value : '', // 서비스 정보의 매장명
+                    // store-name이 있으면 우선 사용, 없으면 company 필드 사용
+                    company: (function() {
+                        const storeName = document.getElementById('store-name');
+                        const company = document.getElementById('company');
+
+                        if (storeName && storeName.value.trim()) {
+                            return storeName.value.trim();
+                        } else if (company && company.value.trim()) {
+                            return company.value.trim();
+                        }
+                        return '';
+                    })(),
                     name: document.getElementById('name').value,
                     phone: document.getElementById('phone').value,
                     email: document.getElementById('email').value,
@@ -1289,7 +1300,7 @@
                     const paymentModule = new PayappPayment(CONFIG);
                     
                     paymentModule.requestPayment({
-                        goodname: paymentData.customer.company || '미입력',
+                        goodname: paymentData.customer.company || '미블 체험단 서비스',
                         price: paymentData.package.total,
                         recvphone: paymentData.customer.phone,
                         buyer: paymentData.customer.name,
@@ -1320,7 +1331,7 @@
                         cmd: 'payrequest',
                         userid: CONFIG.userid,
                         linkkey: CONFIG.linkkey,
-                        goodname: paymentData.customer.company || '미입력',
+                        goodname: paymentData.customer.company || '미블 체험단 서비스',
                         price: paymentData.package.total.toString(),
                         recvphone: paymentData.customer.phone.replace(/-/g, ''),
                         buyer: paymentData.customer.name,

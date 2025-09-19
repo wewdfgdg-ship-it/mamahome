@@ -13,7 +13,7 @@ function PayappPayment(config) {
         // 필수 파라미터 검증
         if (!params.goodname || !params.price || !params.recvphone) {
             console.error('필수 파라미터 누락:', {
-                goodname: params.goodname,
+                goodname: params.goodname || '미블 체험단 서비스',
                 price: params.price,
                 recvphone: params.recvphone
             });
@@ -29,7 +29,7 @@ function PayappPayment(config) {
             cmd: 'payrequest',
             userid: this.config.userid,
             linkkey: this.config.linkkey,
-            goodname: params.goodname,
+            goodname: params.goodname || '미블 체험단 서비스',
             price: params.price.toString(),
             recvphone: params.recvphone.replace(/-/g, ''),
             memo: params.memo || '',
@@ -299,7 +299,7 @@ function PayappPayment(config) {
                     cmd: 'payrequest',
                     userid: this.config.userid,
                     linkkey: this.config.linkkey,
-                    goodname: params.goodname,
+                    goodname: params.goodname || '미블 체험단 서비스',
                     price: params.price.toString(),
                     recvphone: params.recvphone.replace(/-/g, ''),
                     buyer: params.buyer || '',
@@ -383,7 +383,7 @@ function PayappPayment(config) {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    goodname: params.goodname,
+                    goodname: params.goodname || '미블 체험단 서비스',
                     price: params.price,
                     recvphone: params.recvphone,
                     buyer: params.buyer,

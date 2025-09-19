@@ -9,8 +9,15 @@
       "env": {
         "GOOGLE_API_KEY": "${GOOGLE_API_KEY}",
         "NB_MCP_OUT": "C:\\Users\\tip12\\Documents\\banana\\_out"
-      },
-      "cwd": "C:\\Users\\tip12\\Documents\\banana"
+      }
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "@context-toolkit/mcp"
+      ],
+      "env": {}
     }
   }
 }
