@@ -363,7 +363,7 @@
             <!-- 동영상 -->
             <div style="max-width: 1200px; margin: 0 auto;">
                 <video controls playsinline style="width: 100%; height: auto; display: block; border-radius: 12px;">
-                    <source src="http://storage.mrblog.net/files/files/kY9d9bUnoa2VKW2JBjn9En1qpHeIT9j93FqBk9N0.mp4" type="video/mp4">
+                    <source src="https://storage.mrblog.net/files/files/kY9d9bUnoa2VKW2JBjn9En1qpHeIT9j93FqBk9N0.mp4" type="video/mp4">
                     브라우저가 동영상을 지원하지 않습니다.
                 </video>
             </div>
@@ -943,8 +943,9 @@ window.addEventListener('scroll', () => {
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
         const sectionHeight = section.clientHeight;
-        const headerHeight = document.querySelector('.header').offsetHeight;
-        
+        const headerElement = document.querySelector('.header');
+        const headerHeight = headerElement ? headerElement.offsetHeight : 0;  // null 체크 추가
+
         if (window.scrollY >= (sectionTop - headerHeight - 100)) {
             current = section.getAttribute('id');
         }

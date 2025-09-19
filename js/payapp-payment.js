@@ -137,10 +137,13 @@ function PayappPayment(config) {
             }
             formData.append('openpaytype', payType);
             
-            // 프록시 서버로 요청
-            fetch('/api/payapp-proxy.php', {
+            // 프록시 서버로 요청 (Vercel Function)
+            fetch('/api/payapp-proxy', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(Object.fromEntries(formData))
             })
             .then(response => response.json())
             .then(data => {
@@ -236,10 +239,13 @@ function PayappPayment(config) {
             
             console.log('페이앱 API POST 요청 시작');
             
-            // CORS 문제로 인해 서버 프록시 사용
-            fetch('/api/payapp-proxy.php', {
+            // CORS 문제로 인해 서버 프록시 사용 (Vercel Function)
+            fetch('/api/payapp-proxy', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(Object.fromEntries(formData))
             })
             .then(response => response.json())
             .then(data => {
