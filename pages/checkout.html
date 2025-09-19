@@ -1517,7 +1517,8 @@
             }
             
             // PayApp SDK가 준비되었는지 확인
-            if (window.payAppReady && typeof PayApp !== 'undefined') {
+            // SDK는 새 창을 여는 문제가 있으므로 폼 방식 우선 사용
+            if (false && window.payAppReady && typeof PayApp !== 'undefined') {
                 console.log('✅ PayApp SDK 사용 가능');
                 
                 try {
@@ -1544,6 +1545,7 @@
                     PayApp.setParam('openpaytype', payType);  // 결제 수단
                     PayApp.setParam('var1', paymentData.customer.company || '매장명 미입력');  // var1에 매장명
                     PayApp.setParam('var2', `미블체험단 ${paymentData.package.people}명`);
+                    PayApp.setParam('target', '_self');  // 현재 창에서 열기
                     // returnurl 설정 - POST 처리를 위해 payment-redirect API로
                     if (window.location.hostname.includes('vercel.app')) {
                         // Vercel 환경 - payment-redirect API로 POST 처리
