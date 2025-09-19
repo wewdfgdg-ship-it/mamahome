@@ -180,32 +180,18 @@ function PayappPayment(config) {
                     const payUrl = data.payurl;
                     console.log('결제 URL:', payUrl);
                     
-                    // 새창에서 결제 페이지 열기
-                    const payWindow = window.open(payUrl, 'payapp_payment', 'width=800,height=700,scrollbars=yes,resizable=yes');
-                    
-                    if (payWindow) {
-                        // 결제창 모니터링
-                        const checkInterval = setInterval(() => {
-                            if (payWindow.closed) {
-                                clearInterval(checkInterval);
-                                callback({
-                                    state: 'PROCESSING',
-                                    message: '결제창이 닫혔습니다.'
-                                });
-                            }
-                        }, 1000);
-                        
-                        callback({
-                            state: 'PROCESSING', 
-                            message: '페이앱 결제 페이지가 열렸습니다.\n결제를 진행해주세요.'
-                        });
-                    } else {
-                        alert('팝업이 차단되었습니다.\n팝업을 허용한 후 다시 시도해주세요.');
-                        callback({
-                            state: 'ERROR',
-                            message: '팝업이 차단되었습니다.'
-                        });
-                    }
+                    // 현재 창에서 결제 페이지로 이동
+                    console.log('현재 창에서 결제 페이지로 이동합니다.');
+
+                    callback({
+                        state: 'PROCESSING',
+                        message: '페이앱 결제 페이지로 이동합니다.\n결제를 진행해주세요.'
+                    });
+
+                    // 현재 창에서 결제 URL로 이동
+                    setTimeout(() => {
+                        window.location.href = payUrl;
+                    }, 500);
                 } else {
                     // API 오류
                     alert('결제 요청 실패: ' + (data.errorMessage || '알 수 없는 오류'));
@@ -313,30 +299,22 @@ function PayappPayment(config) {
                 }
                 
                 if (data.state === '1' && data.payurl) {
-                    // 결제 URL 받기 성공 - 새 창에서 열기
-                    const payWindow = window.open(data.payurl, 'payapp_payment', 'width=720,height=800,scrollbars=yes');
-                    
-                    if (payWindow) {
-                        // 결제창 상태 확인
-                        const checkInterval = setInterval(() => {
-                            if (payWindow.closed) {
-                                clearInterval(checkInterval);
-                                console.log('결제창이 닫혔습니다');
-                                callback({
-                                    state: 'PROCESSING',
-                                    message: '결제창이 닫혔습니다. 결제 상태를 확인 중입니다.'
-                                });
-                            }
-                        }, 1000);
-                        
-                        callback({
-                            state: 'PROCESSING',
-                            message: '페이앱 결제 페이지가 열렸습니다.\n결제를 진행해주세요.'
-                        });
-                    } else {
-                        alert('팝업이 차단되었습니다.\n팝업을 허용한 후 다시 시도해주세요.');
-                        callback({
-                            state: 'ERROR',
+                    // 결제 URL 받기 성공 - 현재 창에서 이동
+                    console.log('현재 창에서 결제 페이지로 이동합니다.');
+
+                    callback({
+                        state: 'PROCESSING',
+                        message: '페이앱 결제 페이지로 이동합니다.\n결제를 진행해주세요.'
+                    });
+
+                    // 현재 창에서 결제 URL로 이동
+                    setTimeout(() => {
+                        window.location.href = data.payurl;
+                    }, 500);
+                } else if (false) {
+                    // 이 코드는 실행되지 않음 (팝업 차단 관련 코드 제거)
+                    callback({
+                        state: 'ERROR',
                             message: '팝업이 차단되었습니다.'
                         });
                     }
