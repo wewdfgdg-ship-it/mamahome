@@ -476,43 +476,358 @@
         /* 반응형 */
         @media (max-width: 1024px) {
             .checkout-container {
-                grid-template-columns: 1fr;
+                display: flex;
+                flex-direction: column;
+                gap: var(--spacing-lg);
             }
-            
+
+            .checkout-main {
+                order: 1;
+            }
+
             .checkout-sidebar {
                 position: static;
-                order: -1;
+                order: 2; /* 태블릿에서는 아래로 */
+                width: 100%;
             }
-            
+
             .payment-methods {
                 grid-template-columns: repeat(2, 1fr);
             }
-            
+
             .package-options {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
-        
+
         @media (max-width: 767px) {
-            .checkout-steps {
-                flex-direction: column;
-                align-items: center;
+            .checkout-page {
+                padding-top: 80px; /* 모바일에서 헤더 공간 조정 */
+                padding-bottom: var(--spacing-xl);
+                overflow-x: hidden; /* 가로 스크롤 방지 */
             }
-            
+
+            .container {
+                max-width: 100%;
+                padding-left: 16px;
+                padding-right: 16px;
+                overflow-x: hidden;
+            }
+
+            .checkout-container {
+                display: flex;
+                flex-direction: column;
+                gap: var(--spacing-md);
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .checkout-main {
+                order: 1; /* 먼저 표시 */
+                padding: var(--spacing-md);
+                border-radius: var(--radius-md);
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+            .checkout-steps {
+                margin-bottom: var(--spacing-lg);
+                gap: var(--spacing-sm);
+                padding: 0 var(--spacing-sm);
+            }
+
+            .step {
+                gap: var(--spacing-xs);
+            }
+
+            .step-number {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+
+            .step-label {
+                font-size: 12px;
+            }
+
             .step-arrow {
                 display: none;
             }
-            
+
+            .checkout-sidebar {
+                order: 2; /* 모바일에서 맨 아래로 */
+                margin-top: var(--spacing-lg);
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .order-summary {
+                padding: var(--spacing-md);
+                border-radius: var(--radius-md);
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+            .section-title {
+                font-size: 18px;
+                margin-bottom: var(--spacing-md);
+            }
+
             .form-row {
                 grid-template-columns: 1fr;
+                gap: var(--spacing-sm);
             }
-            
+
+            .form-group {
+                margin-bottom: var(--spacing-sm);
+            }
+
+            .form-label {
+                font-size: 13px;
+                margin-bottom: 4px;
+            }
+
+            .form-input,
+            .form-select,
+            .form-textarea {
+                padding: 12px;
+                font-size: 16px; /* iOS 자동 줌 방지 */
+            }
+
+            .package-options {
+                display: flex;
+                flex-direction: column;
+                gap: var(--spacing-md);
+                width: 100%;
+            }
+
+            .package-option {
+                width: 100%;
+                min-height: 180px;
+                padding: var(--spacing-lg);
+                margin: 0;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+            }
+
+            .package-option.selected {
+                transform: none; /* 모바일에서는 확대 효과 제거 */
+                border-width: 3px;
+            }
+
+            .package-people {
+                font-size: 36px;
+                margin-bottom: var(--spacing-sm);
+            }
+
+            .package-price-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: var(--spacing-sm);
+            }
+
+            .discounted-price {
+                font-size: 28px !important;
+                font-weight: 700;
+            }
+
+            .package-badge {
+                font-size: 11px;
+                padding: 4px 8px;
+                top: var(--spacing-sm);
+                right: var(--spacing-sm);
+            }
+
+            .per-person {
+                font-size: 14px !important;
+            }
+
             .payment-methods {
                 grid-template-columns: 1fr;
+                gap: var(--spacing-xs);
             }
-            
+
+            .payment-method {
+                padding: var(--spacing-sm);
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: flex-start;
+                gap: var(--spacing-sm);
+            }
+
+            .payment-icon {
+                font-size: 20px;
+                margin-bottom: 0;
+            }
+
+            .payment-name {
+                font-size: 14px;
+            }
+
+            .summary-title {
+                font-size: 16px;
+            }
+
+            .summary-label,
+            .summary-value {
+                font-size: 13px;
+            }
+
+            .total-label {
+                font-size: 14px;
+            }
+
+            .total-value {
+                font-size: 20px;
+            }
+
+            .btn-large {
+                font-size: 16px !important;
+                padding: 14px 20px !important;
+            }
+
+            .agreement-section {
+                padding: var(--spacing-sm);
+                margin-top: var(--spacing-md);
+            }
+
+            .checkbox-label {
+                font-size: 13px;
+            }
+
+            .checkbox-label input[type="checkbox"] {
+                width: 16px;
+                height: 16px;
+            }
+
+            .security-badges {
+                justify-content: center;
+                gap: var(--spacing-sm);
+                font-size: 11px;
+            }
+
+            /* 모바일에서 주문 요약 고정 버튼 스타일 */
+            .mobile-order-summary-toggle {
+                display: none;
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
+                background: var(--color-primary-main);
+                color: var(--color-bg-primary);
+                border-radius: 50%;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 100;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                cursor: pointer;
+                transition: transform 0.2s ease;
+            }
+
+            .mobile-order-summary-toggle:active {
+                transform: scale(0.95);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .checkout-page {
+                padding-top: 70px;
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .container {
+                padding-left: 12px;
+                padding-right: 12px;
+                max-width: 100%;
+            }
+
             .checkout-main {
-                padding: var(--spacing-md);
+                padding: 12px;
+                border-radius: 12px;
+            }
+
+            .checkout-sidebar {
+                padding: 0 12px;
+            }
+
+            .order-summary {
+                padding: 12px;
+                border-radius: 12px;
+            }
+
+            .section-title {
+                font-size: 16px;
+                padding-bottom: 6px;
+                margin-bottom: 12px;
+            }
+
+            .package-option {
+                min-height: 160px;
+                padding: 16px;
+            }
+
+            .package-people {
+                font-size: 32px;
+            }
+
+            .discounted-price {
+                font-size: 24px !important;
+            }
+
+            .original-price {
+                font-size: 13px !important;
+            }
+
+            .per-person {
+                font-size: 13px !important;
+            }
+
+            .form-hint {
+                font-size: 11px !important;
+            }
+
+            .form-input,
+            .form-select {
+                font-size: 16px; /* iOS 줌 방지 */
+                padding: 10px;
+            }
+
+            .btn-large {
+                font-size: 15px !important;
+                padding: 12px 16px !important;
+            }
+
+            .summary-label,
+            .summary-value {
+                font-size: 12px;
+            }
+
+            .total-label {
+                font-size: 13px;
+            }
+
+            .total-value {
+                font-size: 18px;
+            }
+
+            .checkbox-label {
+                font-size: 12px;
+            }
+
+            .security-badges {
+                font-size: 10px;
             }
         }
     </style>
@@ -697,7 +1012,8 @@
                             -->
                         </div>
                     </section>
-                    
+
+
                 </div>
                 
                 <!-- 주문 요약 사이드바 -->
@@ -762,17 +1078,6 @@
                             💳 결제하기
                         </button>
                         
-                        <div class="security-badges">
-                            <div class="security-badge">
-                                <span class="security-icon">🔒</span>
-                                <span>SSL 보안결제</span>
-                            </div>
-                            <div class="security-badge">
-                                <span class="security-icon">✓</span>
-                                <span>PG사 인증</span>
-                            </div>
-                        </div>
-                        
                         <!-- 약관 동의 -->
                         <div class="agreement-section" style="margin-top: var(--spacing-lg); padding-top: var(--spacing-lg); border-top: 1px solid var(--color-border);">
                             <div class="checkbox-group agreement-all" style="margin-bottom: var(--spacing-sm); padding-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-border);">
@@ -798,6 +1103,17 @@
                                     <input type="checkbox" class="agree-item">
                                     <span style="font-size: 14px;">(선택) 마케팅 정보 수신 동의</span>
                                 </label>
+                            </div>
+                        </div>
+
+                        <div class="security-badges">
+                            <div class="security-badge">
+                                <span class="security-icon">🔒</span>
+                                <span>SSL 보안결제</span>
+                            </div>
+                            <div class="security-badge">
+                                <span class="security-icon">✓</span>
+                                <span>PG사 인증</span>
                             </div>
                         </div>
                     </div>
