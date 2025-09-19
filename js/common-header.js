@@ -25,6 +25,8 @@ function loadHeader() {
 
   // 대시보드 페이지인지 확인
   const isDashboard = currentPath.includes('/dashboard');
+  // 상담 페이지인지 확인
+  const isChat = currentPath.includes('/chat');
 
   // 헤더 HTML - 상공(SANGGONG) 테마 적용
   const headerHTML = `
@@ -50,8 +52,8 @@ function loadHeader() {
         </ul>
 
         <div class="nav-actions">
-          ${isDashboard ? `
-            <!-- 대시보드 페이지 전용 버튼 -->
+          ${isDashboard || isChat ? `
+            <!-- 대시보드/상담 페이지 전용 버튼 -->
             <a href="${adjustPath('/myinfo.html')}" class="nav-action-link nav-action-primary">내 정보</a>
             <a href="#" onclick="logout()" class="nav-action-link nav-action-outline">로그아웃</a>
           ` : `
@@ -77,15 +79,17 @@ function loadHeader() {
     <!-- 모바일 메뉴 -->
     <div class="mobile-menu" id="mobileMenu">
       <ul class="mobile-menu-list">
-        <li><a href="${adjustPath('/index.html')}#about" class="mobile-menu-link">미블체험단</a></li>
-        <li><a href="${adjustPath('pages/press.html')}" class="mobile-menu-link">마케팅정보</a></li>
-        <li><a href="${adjustPath('pages/pricing.html')}" class="mobile-menu-link">마케팅상품</a></li>
-        <li><a href="https://www.mrblog.net" class="mobile-menu-link" target="_blank">미블홈페이지</a></li>
+        ${!isDashboard && !isChat ? `
+          <li><a href="${adjustPath('/index.html')}#about" class="mobile-menu-link">미블체험단</a></li>
+          <li><a href="${adjustPath('pages/press.html')}" class="mobile-menu-link">마케팅정보</a></li>
+          <li><a href="${adjustPath('pages/pricing.html')}" class="mobile-menu-link">마케팅상품</a></li>
+          <li><a href="https://www.mrblog.net" class="mobile-menu-link" target="_blank">미블홈페이지</a></li>
+        ` : ''}
         ${isDashboard ? `
           <li><a href="${adjustPath('/chat.html')}" class="mobile-menu-link">상담</a></li>
         ` : ''}
         <li class="mobile-menu-divider"></li>
-        ${isDashboard ? `
+        ${isDashboard || isChat ? `
           <li><a href="${adjustPath('/myinfo.html')}" class="mobile-menu-link">내 정보</a></li>
           <li><a href="#" onclick="logout()" class="mobile-menu-link">로그아웃</a></li>
         ` : `

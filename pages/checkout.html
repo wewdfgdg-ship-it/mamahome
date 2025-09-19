@@ -1642,9 +1642,29 @@
                         }
                     });
                 } else {
-                    // PayappPayment 모듈도 없는 경우 - 직접 폼 전송
-                    console.log('직접 폼 전송 방식 사용');
-                    
+                    // PayappPayment 모듈도 없는 경우 - PayappPayment 모듈 강제 사용
+                    console.log('PayappPayment 모듈 강제 사용');
+
+                    // PayappPayment 모듈을 강제로 사용
+                    if (window.PayappPayment) {
+                        window.PayappPayment.processPayment(paymentParams, (result) => {
+                            if (result.state === 'SUCCESS') {
+                                console.log('결제 성공:', result);
+                            } else if (result.state === 'PROCESSING') {
+                                console.log('결제 진행 중:', result.message);
+                            } else if (result.state === 'ERROR') {
+                                alert('결제 처리 실패: ' + result.message);
+                            }
+                        });
+                        return; // 폼 전송 방지
+                    }
+
+                    // PayappPayment도 없으면 알림
+                    alert('결제 모듈을 로드할 수 없습니다. 페이지를 새로고침 해주세요.');
+                    return;
+
+                    // 아래 폼 전송 코드는 사용하지 않음 (직접 API 호출 방지)
+                    /*
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action = 'https://api.payapp.kr/oapi/apiLoad.html';
@@ -1694,6 +1714,7 @@
                     form.submit();
 
                     console.log('✅ 결제 페이지로 이동 중...');
+                    */
                 }
             }
         }
