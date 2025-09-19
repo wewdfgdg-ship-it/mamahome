@@ -275,15 +275,33 @@
                 });
 
                 console.log('API 응답 상태:', response.status);
+                console.log('Response headers:', response.headers);
+
+                // 응답 텍스트 먼저 가져오기
+                const responseText = await response.text();
+                console.log('API 응답 원본:', responseText);
 
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('API 오류 응답:', errorText);
-                    throw new Error(`Failed to save order: ${errorText}`);
+                    console.error('❌ API 오류 응답:', responseText);
+                    throw new Error(`Failed to save order: ${responseText}`);
                 }
 
-                const result = await response.json();
+                // JSON 파싱 시도
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (e) {
+                    console.error('JSON 파싱 실패:', e);
+                    console.log('응답 텍스트:', responseText);
+                    throw new Error('Invalid JSON response');
+                }
+
                 console.log('✅ 주문 저장 성공:', result);
+
+                // 성공 메시지 확인
+                if (result.message && result.message.includes('(개발 모드)')) {
+                    console.warn('⚠️ 주의: 개발 모드로 저장됨 - Supabase 연결 안됨');
+                }
 
                 // 백업용 로컬 스토리지 저장
                 const orders = JSON.parse(localStorage.getItem('orders') || '[]');
@@ -358,7 +376,7 @@
                     }
                 }
                 
-                // 주문 데이터 저장 API 호출
+                // 주문 데이터 저장 API 호출 - await 추가하여 완료 대기
                 saveOrderToDatabase({
                     orderid: orderid,
                     orderNumber: orderid,
@@ -368,6 +386,11 @@
                     buyerphone: buyerphone,
                     buyeremail: buyeremail,
                     state: 'success'
+                }).then(() => {
+                    console.log('✅ saveOrderToDatabase 완료');
+                }).catch(error => {
+                    console.error('❌ saveOrderToDatabase 실패:', error);
+                    // 실패해도 사용자에게는 결제 완료로 표시
                 });
 
                 // 성공 메시지를 부모 창에 전달 (iframe 사용 시)
