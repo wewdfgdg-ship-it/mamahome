@@ -7,8 +7,8 @@ function PayappPayment(config) {
     
     // 결제 요청
     this.requestPayment = function(params, callback) {
-        console.log('페이앱 REST API 결제 요청 시작');
-        console.log('받은 파라미터:', params);
+        // console.log('페이앱 REST API 결제 요청 시작');
+        // console.log('받은 파라미터:', params);
         
         // 필수 파라미터 검증
         if (!params.goodname || !params.price || !params.recvphone) {
@@ -42,7 +42,7 @@ function PayappPayment(config) {
             buyer: params.buyer || ''
         };
         
-        console.log('API 파라미터:', apiParams);
+        // console.log('API 파라미터:', apiParams);
         
         // linkkey가 없으면 오류
         if (!this.config.linkkey) {
@@ -53,7 +53,7 @@ function PayappPayment(config) {
         
         // 개발 모드에서만 테스트 결제 처리
         if (this.config.environment === 'development') {
-            console.log('🔧 개발/테스트 모드 결제');
+            // console.log('🔧 개발/테스트 모드 결제');
             
             // 테스트 결제 확인 다이얼로그
             const confirmMessage = `[테스트 결제]\n\n` +
@@ -84,14 +84,14 @@ function PayappPayment(config) {
         }
         
         // 실제 페이앱 결제 (운영 모드)
-        console.log('📡 실제 페이앱 결제 진행');
+        // console.log('📡 실제 페이앱 결제 진행');
         
         // POST 방식으로 페이앱 API 호출하여 결제 URL 받기
         const paymentMethod = 'direct';  // 'direct' 방식으로 바로 결제창 열기
         
         if (paymentMethod === 'direct') {
             // 프록시 서버를 통해 payurl 받아서 새창 열기
-            console.log('페이앱 API 호출하여 payurl 받기');
+            // console.log('페이앱 API 호출하여 payurl 받기');
             
             // FormData 생성
             const formData = new FormData();
@@ -146,8 +146,8 @@ function PayappPayment(config) {
                 body: JSON.stringify(Object.fromEntries(formData))
             })
             .then(response => {
-                console.log('프록시 응답 상태:', response.status);
-                console.log('프록시 응답 헤더:', response.headers);
+                // console.log('프록시 응답 상태:', response.status);
+                // console.log('프록시 응답 헤더:', response.headers);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -156,7 +156,7 @@ function PayappPayment(config) {
                 return response.text();
             })
             .then(responseText => {
-                console.log('페이앱 API 응답 원본:', responseText);
+                // console.log('페이앱 API 응답 원본:', responseText);
 
                 // URL 인코딩된 응답 파싱
                 let data = {};
@@ -164,7 +164,7 @@ function PayappPayment(config) {
                     // URL 파라미터 형식 파싱
                     const params = new URLSearchParams(responseText);
                     data = Object.fromEntries(params);
-                    console.log('파싱된 페이앱 응답:', data);
+                    // console.log('파싱된 페이앱 응답:', data);
                 } else {
                     // JSON 형식 시도
                     try {
@@ -178,10 +178,10 @@ function PayappPayment(config) {
                 if (data.state === '1' && data.payurl) {
                     // payurl 디코딩 (이미 프록시에서 처리됨)
                     const payUrl = data.payurl;
-                    console.log('결제 URL:', payUrl);
+                    // console.log('결제 URL:', payUrl);
                     
                     // 현재 창에서 결제 페이지로 이동
-                    console.log('현재 창에서 결제 페이지로 이동합니다.');
+                    // console.log('현재 창에서 결제 페이지로 이동합니다.');
 
                     callback({
                         state: 'PROCESSING',
@@ -194,6 +194,7 @@ function PayappPayment(config) {
                     }, 500);
                 } else {
                     // API 오류
+                    console.error('PayApp API 오류:', data);
                     alert('결제 요청 실패: ' + (data.errorMessage || '알 수 없는 오류'));
                     callback({
                         state: 'ERROR',
@@ -258,7 +259,7 @@ function PayappPayment(config) {
             formData.append('openpaytype', payType);  // 선택된 결제 수단
             formData.append('shopname', 'Meble');  // 상점명
             
-            console.log('페이앱 API POST 요청 시작');
+            // console.log('페이앱 API POST 요청 시작');
             
             // CORS 문제로 인해 서버 프록시 사용 (Vercel Function)
             fetch('/api/payapp-proxy', {
@@ -269,8 +270,8 @@ function PayappPayment(config) {
                 body: JSON.stringify(Object.fromEntries(formData))
             })
             .then(response => {
-                console.log('프록시 응답 상태:', response.status);
-                console.log('프록시 응답 헤더:', response.headers);
+                // console.log('프록시 응답 상태:', response.status);
+                // console.log('프록시 응답 헤더:', response.headers);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -279,7 +280,7 @@ function PayappPayment(config) {
                 return response.text();
             })
             .then(responseText => {
-                console.log('페이앱 API 응답 원본:', responseText);
+                // console.log('페이앱 API 응답 원본:', responseText);
 
                 // URL 인코딩된 응답 파싱
                 let data = {};
@@ -287,7 +288,7 @@ function PayappPayment(config) {
                     // URL 파라미터 형식 파싱
                     const params = new URLSearchParams(responseText);
                     data = Object.fromEntries(params);
-                    console.log('파싱된 페이앱 응답:', data);
+                    // console.log('파싱된 페이앱 응답:', data);
                 } else {
                     // JSON 형식 시도
                     try {
@@ -300,7 +301,7 @@ function PayappPayment(config) {
                 
                 if (data.state === '1' && data.payurl) {
                     // 결제 URL 받기 성공 - 현재 창에서 이동
-                    console.log('현재 창에서 결제 페이지로 이동합니다.');
+                    // console.log('현재 창에서 결제 페이지로 이동합니다.');
 
                     callback({
                         state: 'PROCESSING',
@@ -330,7 +331,7 @@ function PayappPayment(config) {
                 console.error('페이앱 API 호출 오류:', error);
                 
                 // 프록시 서버가 없는 경우 직접 페이앱 페이지로 이동
-                console.log('프록시 서버 연결 실패, 직접 결제 페이지로 이동 시도');
+                // console.log('프록시 서버 연결 실패, 직접 결제 페이지로 이동 시도');
                 
                 // 폼 생성하여 POST 전송  
                 const form = document.createElement('form');
