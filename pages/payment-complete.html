@@ -199,6 +199,9 @@
     <script>
         // URL 파라미터 파싱
         const urlParams = new URLSearchParams(window.location.search);
+        console.log('📍 payment-complete.html 로드됨');
+        console.log('📍 현재 URL:', window.location.href);
+        console.log('📍 URL 파라미터:', window.location.search);
 
         // 주문 데이터를 백엔드 API로 저장
         async function saveOrderToDatabase(orderData) {
@@ -308,7 +311,9 @@
 
                 if (!response.ok) {
                     console.error('❌ API 오류 응답:', responseText);
-                    throw new Error(`Failed to save order: ${responseText}`);
+                    console.error('❌ 응답 상태 코드:', response.status);
+                    console.error('❌ 응답 상태 텍스트:', response.statusText);
+                    throw new Error(`Failed to save order: ${response.status} - ${responseText}`);
                 }
 
                 // JSON 파싱 시도
@@ -402,6 +407,16 @@
                 }
                 
                 // 주문 데이터 저장 API 호출 - await 추가하여 완료 대기
+                console.log('🔵 결제 완료 - 데이터 저장 시작');
+                console.log('🔵 전달받은 데이터:', {
+                    orderid: orderid,
+                    goodname: goodname,
+                    price: price,
+                    buyer: buyer,
+                    buyerphone: buyerphone,
+                    buyeremail: buyeremail
+                });
+
                 saveOrderToDatabase({
                     orderid: orderid,
                     orderNumber: orderid,
