@@ -11,8 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&family=Poppins:wght@400;500;600;700;800;900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Common Header CSS -->
-    <link rel="stylesheet" href="/css/common-header.css">
-    
+    <link rel="stylesheet" href="../css/common-header.css">
+
     <!-- 페이앱 설정 -->
     <script>
         // config.js 파일이 없을 때를 위한 기본 설정
@@ -27,13 +27,13 @@
             window.CONFIG = CONFIG;
         }
     </script>
-    <script src="/config.js"></script>
-    
+    <script src="../config.js"></script>
+
     <!-- 페이앱 라이트 SDK -->
     <script src="https://lite.payapp.kr/public/api/payapp-lite.js" defer></script>
 
     <!-- 페이앱 커스텀 결제 모듈 (defer 제거하여 즉시 로드) -->
-    <script src="/js/payapp-payment.js"></script>
+    <script src="../js/payapp-payment.js"></script>
 
     <!-- 페이앱 초기화 -->
     <script>
@@ -61,19 +61,19 @@
     </script>
     
     <!-- CSS 최적화: preload 사용 -->
-    <link rel="preload" href="/css/variables.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="/css/reset.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="/css/main.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="preload" href="../css/variables.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="../css/reset.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="../css/main.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/responsive.css">
 
     <!-- Auth Manager -->
-    <script src="/js/auth.js"></script>
+    <script src="../js/auth.js"></script>
 
     <noscript>
-        <link rel="stylesheet" href="/css/variables.css">
-        <link rel="stylesheet" href="/css/reset.css">
-        <link rel="stylesheet" href="/css/main.css">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/reset.css">
+        <link rel="stylesheet" href="../css/main.css">
     </noscript>
     
     <style>
@@ -826,10 +826,10 @@
 <body>
     <!-- Common Header Container -->
     <div id="header-container"></div>
-    <script src="/js/common-header.js"></script>
+    <script src="../js/common-header.js"></script>
 
     <!-- AuthManager 로드 (사용자 정보 자동 입력을 위해 필요) -->
-    <script src="/js/auth.js"></script>
+    <script src="../js/auth.js"></script>
     
     <div class="checkout-page">
         <div class="container">
