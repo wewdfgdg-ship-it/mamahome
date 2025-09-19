@@ -23,6 +23,9 @@ function loadHeader() {
     return currentPath.includes(cleanPath.split('#')[0]);
   };
 
+  // 대시보드 페이지인지 확인
+  const isDashboard = currentPath.includes('/dashboard');
+
   // 헤더 HTML - 상공(SANGGONG) 테마 적용
   const headerHTML = `
     <nav class="unified-header">
@@ -47,9 +50,16 @@ function loadHeader() {
         </ul>
 
         <div class="nav-actions">
-          <a href="${adjustPath('/login.html')}" class="nav-action-link nav-action-primary" id="login-link">로그인</a>
-          <a href="${adjustPath('/dashboard.html')}" class="nav-action-link nav-action-secondary" id="dashboard-link" style="display: none;">마이페이지</a>
-          <a href="#" onclick="logout()" class="nav-action-link nav-action-outline" id="logout-link" style="display: none;">로그아웃</a>
+          ${isDashboard ? `
+            <!-- 대시보드 페이지 전용 버튼 -->
+            <a href="${adjustPath('/myinfo.html')}" class="nav-action-link nav-action-primary">내 정보</a>
+            <a href="#" onclick="logout()" class="nav-action-link nav-action-outline">로그아웃</a>
+          ` : `
+            <!-- 일반 페이지 버튼 -->
+            <a href="${adjustPath('/login.html')}" class="nav-action-link nav-action-primary" id="login-link">로그인</a>
+            <a href="${adjustPath('/dashboard.html')}" class="nav-action-link nav-action-secondary" id="dashboard-link" style="display: none;">마이페이지</a>
+            <a href="#" onclick="logout()" class="nav-action-link nav-action-outline" id="logout-link" style="display: none;">로그아웃</a>
+          `}
         </div>
 
         <!-- 모바일 메뉴 토글 -->
@@ -71,10 +81,18 @@ function loadHeader() {
         <li><a href="${adjustPath('pages/press.html')}" class="mobile-menu-link">마케팅정보</a></li>
         <li><a href="${adjustPath('pages/pricing.html')}" class="mobile-menu-link">마케팅상품</a></li>
         <li><a href="https://www.mrblog.net" class="mobile-menu-link" target="_blank">미블홈페이지</a></li>
+        ${isDashboard ? `
+          <li><a href="${adjustPath('/chat.html')}" class="mobile-menu-link">상담</a></li>
+        ` : ''}
         <li class="mobile-menu-divider"></li>
-        <li><a href="${adjustPath('/login.html')}" class="mobile-menu-link" id="mobile-login">로그인</a></li>
-        <li><a href="${adjustPath('/dashboard.html')}" class="mobile-menu-link" id="mobile-dashboard" style="display: none;">마이페이지</a></li>
-        <li><a href="#" onclick="logout()" class="mobile-menu-link" id="mobile-logout" style="display: none;">로그아웃</a></li>
+        ${isDashboard ? `
+          <li><a href="${adjustPath('/myinfo.html')}" class="mobile-menu-link">내 정보</a></li>
+          <li><a href="#" onclick="logout()" class="mobile-menu-link">로그아웃</a></li>
+        ` : `
+          <li><a href="${adjustPath('/login.html')}" class="mobile-menu-link" id="mobile-login">로그인</a></li>
+          <li><a href="${adjustPath('/dashboard.html')}" class="mobile-menu-link" id="mobile-dashboard" style="display: none;">마이페이지</a></li>
+          <li><a href="#" onclick="logout()" class="mobile-menu-link" id="mobile-logout" style="display: none;">로그아웃</a></li>
+        `}
       </ul>
     </div>
   `;
@@ -110,6 +128,12 @@ function toggleMobileMenu() {
 
 // 로그인 상태 확인 함수
 function checkAuthStatus() {
+  // 대시보드 페이지는 이미 로그인된 사용자만 접근 가능하므로 스킵
+  const currentPath = window.location.pathname;
+  if (currentPath.includes('/dashboard')) {
+    return;
+  }
+
   // 새로운 토큰 시스템 확인 (accessToken)
   const accessToken = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
   const userInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
