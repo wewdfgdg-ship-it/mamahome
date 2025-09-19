@@ -1361,32 +1361,21 @@
                     else if (paymentData.paymentMethod === '토스페이') params.openpaytype = 'tosspay';
                     else params.openpaytype = 'card';
                     
-                    // 새창 열기
-                    const payWindow = window.open('', 'payapp_window', 'width=720,height=800,scrollbars=yes,resizable=yes');
-                    
-                    if (payWindow) {
-                        // input 필드 생성
-                        for (const [key, value] of Object.entries(params)) {
-                            const input = document.createElement('input');
-                            input.type = 'hidden';
-                            input.name = key;
-                            input.value = value;
-                            form.appendChild(input);
-                        }
-                        
-                        // 폼 제출
-                        document.body.appendChild(form);
-                        form.submit();
-                        
-                        // 폼 제거
-                        setTimeout(() => {
-                            document.body.removeChild(form);
-                        }, 100);
-                        
-                        console.log('✅ 결제창 열기 성공');
-                    } else {
-                        alert('팝업이 차단되었습니다. 팝업을 허용한 후 다시 시도해주세요.');
+                    // 현재 창에서 결제 진행 (새창 열지 않음)
+                    // input 필드 생성
+                    for (const [key, value] of Object.entries(params)) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = value;
+                        form.appendChild(input);
                     }
+
+                    // 폼 제출 (현재 창에서)
+                    document.body.appendChild(form);
+                    form.submit();
+
+                    console.log('✅ 결제 페이지로 이동 중...');
                 }
             }
         }
