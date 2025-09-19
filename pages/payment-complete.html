@@ -220,8 +220,8 @@
                             name: parsed.name || orderData.buyer || '',
                             email: parsed.email || orderData.buyeremail || '',
                             phone: parsed.phone || orderData.buyerphone || '',
-                            businessName: parsed.businessName || '',
-                            businessNumber: parsed.businessNumber || ''
+                            businessName: parsed.businessName || parsed.company || '',
+                            businessNumber: parsed.businessNumber || parsed.businessType || ''
                         };
                     } catch (e) {
                         console.error('Checkout data parsing error:', e);
@@ -240,6 +240,34 @@
 
                 console.log('최종 customerInfo:', customerInfo);
 
+                // localStorage에서 패키지 정보 가져오기
+                let packageInfo = {
+                    name: '미블 체험단 서비스',
+                    price: 0
+                };
+
+                if (checkoutData) {
+                    try {
+                        const parsed = JSON.parse(checkoutData);
+                        if (parsed.packageName) {
+                            packageInfo.name = parsed.packageName;
+                        }
+                        if (parsed.packagePrice) {
+                            packageInfo.price = parseInt(parsed.packagePrice);
+                        }
+                    } catch (e) {
+                        console.error('Package info parsing error:', e);
+                    }
+                }
+
+                // PayApp에서 온 정보로 보완
+                if (orderData.goodname) {
+                    packageInfo.name = orderData.goodname;
+                }
+                if (orderData.price) {
+                    packageInfo.price = parseInt(orderData.price);
+                }
+
                 // 주문 데이터 구성 - API가 기대하는 플랫 구조로 변경
                 const fullOrderData = {
                     orderNumber: orderData.orderid || orderData.orderNumber || 'ORD-' + Date.now(),
@@ -250,15 +278,12 @@
                         businessName: customerInfo.businessName,
                         businessNumber: customerInfo.businessNumber
                     },
-                    packageInfo: {
-                        name: orderData.goodname || '미블 체험단 서비스',
-                        price: parseInt(orderData.price) || 0
-                    },
-                    amount: parseInt(orderData.price) || 0,
+                    packageInfo: packageInfo,
+                    amount: packageInfo.price,
                     paymentMethod: 'payapp',
                     status: 'paid',
-                    goodname: orderData.goodname || '미블 체험단 서비스',  // PayApp 호환성
-                    price: parseInt(orderData.price) || 0,  // PayApp 호환성
+                    goodname: packageInfo.name,  // PayApp 호환성
+                    price: packageInfo.price,  // PayApp 호환성
                     createdAt: new Date().toISOString()
                 };
 
