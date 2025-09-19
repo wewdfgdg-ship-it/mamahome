@@ -533,17 +533,44 @@
 
                     // 대시보드 페이지의 사용자 이메일 표시 (공통 헤더는 자체적으로 처리됨)
                     const userEmailElement = document.getElementById('userEmail');
-                    if (user.email && userEmailElement) {
-                        userEmailElement.textContent = user.email;
+                    if (userEmailElement) {
+                        if (user.email) {
+                            userEmailElement.textContent = user.email;
+                        } else {
+                            userEmailElement.textContent = '게스트';
+                        }
                     }
 
                     // 환영 메시지 업데이트
                     const welcomeMessageElement = document.querySelector('.welcome-message');
-                    if (user.name && welcomeMessageElement) {
-                        welcomeMessageElement.textContent = `${user.name}님, 환영합니다! 👋`;
+                    if (welcomeMessageElement) {
+                        if (user.name) {
+                            welcomeMessageElement.textContent = `${user.name}님, 환영합니다! 👋`;
+                        } else {
+                            welcomeMessageElement.textContent = '환영합니다! 👋';
+                        }
                     }
                 } catch (error) {
                     console.error('사용자 정보 파싱 오류:', error);
+                    // 에러 발생 시 기본값 설정
+                    const userEmailElement = document.getElementById('userEmail');
+                    if (userEmailElement) {
+                        userEmailElement.textContent = '게스트';
+                    }
+                    const welcomeMessageElement = document.querySelector('.welcome-message');
+                    if (welcomeMessageElement) {
+                        welcomeMessageElement.textContent = '환영합니다! 👋';
+                    }
+                }
+            } else {
+                // userInfo가 없을 때 기본값 설정
+                const userEmailElement = document.getElementById('userEmail');
+                if (userEmailElement) {
+                    userEmailElement.textContent = '게스트';
+                }
+                const welcomeMessageElement = document.querySelector('.welcome-message');
+                if (welcomeMessageElement) {
+                    welcomeMessageElement.textContent = '환영합니다! 👋';
                 }
             }
         }
