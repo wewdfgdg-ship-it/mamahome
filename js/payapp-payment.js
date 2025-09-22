@@ -99,28 +99,36 @@
             // FormData 생성
             const formData = new FormData();
             formData.append('cmd', 'payrequest');
-            formData.append('userid', this.config.userid);
-            formData.append('linkkey', this.config.linkkey);
-            formData.append('goodname', params.goodname);
-            formData.append('price', params.price.toString());
-            formData.append('recvphone', params.recvphone.replace(/-/g, ''));
+            formData.append('userid', this.config.userid);  // 필수
+            // linkkey는 API 문서에 없지만 실제로는 필요할 수 있음
+            if (this.config.linkkey) {
+                formData.append('linkkey', this.config.linkkey);
+            }
+            formData.append('goodname', params.goodname);  // 필수
+            formData.append('price', params.price.toString());  // 필수
+            formData.append('recvphone', params.recvphone.replace(/-/g, ''));  // 필수
             formData.append('buyer', params.buyer || '');
             formData.append('email', params.email || '');
-            formData.append('memo', params.memo || '');
-            // feedbackurl이 있을 때만 추가 (없으면 에러 70080 방지)
-            if (this.config.feedbackurl) {
+
+            // memo는 URI 주소를 포함할 수 없음
+            if (params.memo && !params.memo.includes('http://') && !params.memo.includes('https://')) {
+                formData.append('memo', params.memo);
+            }
+
+            // feedbackurl은 http://가 포함된 URL이어야 함
+            if (this.config.feedbackurl && this.config.feedbackurl.includes('http')) {
                 formData.append('feedbackurl', this.config.feedbackurl);
             }
-            // 로컬 테스트 환경을 위한 동적 URL 생성
+
+            // returnurl 설정
             let returnUrl = this.config.returnurl;
             if (!returnUrl && window.location.protocol !== 'file:') {
-                // http:// 또는 https:// 프로토콜의 경우만 returnurl 설정
                 returnUrl = window.location.origin + '/pages/payment-complete.html';
             }
-            // file:// 프로토콜이면 returnurl을 설정하지 않음 (페이앱 기본 페이지 사용)
             if (returnUrl) {
                 formData.append('returnurl', returnUrl);
             }
+
             formData.append('var1', params.var1 || '');
             formData.append('var2', params.var2 || '');
             formData.append('reqaddr', '0');
@@ -129,6 +137,8 @@
             // 모바일 감지 및 설정
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             if (isMobile) {
+                // 모바일 앱 연동 시 appurl 필수 (카드사 스키마 처리용)
+                formData.append('appurl', window.location.origin + '/pages/mobile-payment-handler.html');
                 formData.append('device_type', 'MOBILE');
                 formData.append('mobile_view', 'Y');
             }
