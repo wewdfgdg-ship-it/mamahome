@@ -1769,11 +1769,31 @@
                         document.head.appendChild(style);
                     }
 
-                    // 1초 후 결제 페이지로 이동 (로딩 표시 후)
+                    // 바로 결제 페이지로 이동 시도
                     setTimeout(() => {
-                        // 현재 창에서 바로 이동 (모바일에서 더 안정적)
                         window.location.href = mobilePayUrl;
                     }, 1000);
+
+                    // 5초 후에도 페이지가 변경되지 않았다면 (연결 실패로 간주)
+                    setTimeout(() => {
+                        // 아직 같은 페이지에 있다면
+                        if (window.location.href.includes('checkout.html')) {
+                            const loading = document.getElementById('payment-loading');
+                            if (loading) document.body.removeChild(loading);
+
+                            if (confirm('PayApp 서버 연결이 지연되고 있습니다.\n다른 결제 방법을 선택하시겠습니까?')) {
+                                const errorParams = new URLSearchParams({
+                                    goodname: payappParams.goodname,
+                                    price: payappParams.price,
+                                    buyer: payappParams.buyer,
+                                    email: payappParams.email,
+                                    phone: payappParams.recvphone,
+                                    error: 'connection_timeout'
+                                });
+                                window.location.href = `/pages/mobile-payment-handler.html?${errorParams.toString()}`;
+                            }
+                        }
+                    }, 5000);
 
                     return; // 여기서 종료
                 }
