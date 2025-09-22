@@ -103,12 +103,24 @@ async function createOrder(req, res) {
 
   const orderData = req.body;
 
-  // 유효성 검사
-  if (!orderData.orderNumber || !orderData.customer || !orderData.amount) {
+  // 유효성 검사 - 두 가지 형식 모두 지원
+  const orderNumber = orderData.orderNumber || orderData.order_number;
+  const customer = orderData.customer || {
+    name: orderData.customer_name,
+    email: orderData.customer_email,
+    phone: orderData.customer_phone,
+    businessName: orderData.business_name,
+    businessNumber: orderData.business_number
+  };
+  const amount = orderData.amount || orderData.package_price;
+
+  if (!orderNumber || (!customer && !orderData.customer_name) || !amount) {
     console.log('Validation failed - missing fields:');
-    console.log('orderNumber:', !!orderData.orderNumber);
-    console.log('customer:', !!orderData.customer);
-    console.log('amount:', !!orderData.amount);
+    console.log('orderNumber:', !!orderNumber);
+    console.log('customer:', !!customer);
+    console.log('customer_name:', !!orderData.customer_name);
+    console.log('amount:', !!amount);
+    console.log('Full request body:', JSON.stringify(orderData, null, 2));
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
@@ -119,19 +131,19 @@ async function createOrder(req, res) {
     return String(str);
   };
 
-  // 주문 데이터 구성 (UTF-8 인코딩 보장)
+  // 주문 데이터 구성 (UTF-8 인코딩 보장) - 두 가지 형식 모두 지원
   const newOrder = {
-    order_number: ensureUTF8(orderData.orderNumber),
-    customer_name: ensureUTF8(orderData.customer?.name) || '고객',
-    customer_email: ensureUTF8(orderData.customer?.email) || '',
-    customer_phone: ensureUTF8(orderData.customer?.phone) || '',
-    business_name: ensureUTF8(orderData.customer?.businessName),
-    business_number: ensureUTF8(orderData.customer?.businessNumber),
-    package_name: ensureUTF8(orderData.packageInfo?.name || orderData.goodname) || '미블 체험단',
-    package_price: orderData.packageInfo?.price || orderData.price || orderData.amount,
-    amount: orderData.amount,
-    payment_method: ensureUTF8(orderData.paymentMethod) || 'payapp',
-    status: ensureUTF8(orderData.status) || 'pending',
+    order_number: ensureUTF8(orderNumber),
+    customer_name: ensureUTF8(customer?.name || orderData.customer_name) || '고객',
+    customer_email: ensureUTF8(customer?.email || orderData.customer_email) || '',
+    customer_phone: ensureUTF8(customer?.phone || orderData.customer_phone) || '',
+    business_name: ensureUTF8(customer?.businessName || orderData.business_name),
+    business_number: ensureUTF8(customer?.businessNumber || orderData.business_number),
+    package_name: ensureUTF8(orderData.packageInfo?.name || orderData.package_name || orderData.goodname) || '미블 체험단',
+    package_price: orderData.packageInfo?.price || orderData.package_price || orderData.price || amount,
+    amount: amount,
+    payment_method: ensureUTF8(orderData.paymentMethod || orderData.payment_method) || 'payapp',
+    status: ensureUTF8(orderData.status) || 'paid',
     notes: ensureUTF8(orderData.notes)
   };
 

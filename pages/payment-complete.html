@@ -323,6 +323,11 @@
                     createdAt: new Date().toISOString()
                 };
 
+                // 이메일이 없으면 경고
+                if (!customerInfo.email) {
+                    console.warn('⚠️ 경고: 고객 이메일이 없습니다. 로그인 정보:', loggedInUserEmail);
+                }
+
                 // Vercel API로 주문 저장
                 console.log('API 호출 중 - 주문 데이터:', fullOrderData);
                 console.log('API URL: https://mamahome-five.vercel.app/api/orders');
@@ -347,6 +352,15 @@
                     console.error('❌ API 오류 응답:', responseText);
                     console.error('❌ 응답 상태 코드:', response.status);
                     console.error('❌ 응답 상태 텍스트:', response.statusText);
+                    console.error('❌ 전송한 데이터:', JSON.stringify(fullOrderData, null, 2));
+
+                    // 400 에러인 경우 필드 검증 실패
+                    if (response.status === 400) {
+                        console.error('❌ 필수 필드 누락 - orderNumber:', !!fullOrderData.order_number);
+                        console.error('❌ 필수 필드 누락 - customer_email:', fullOrderData.customer_email);
+                        console.error('❌ 필수 필드 누락 - amount:', fullOrderData.amount);
+                    }
+
                     throw new Error(`Failed to save order: ${response.status} - ${responseText}`);
                 }
 
