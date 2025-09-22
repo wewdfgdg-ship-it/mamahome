@@ -406,7 +406,13 @@
                 console.log('주문이 저장되었습니다.');
 
             } catch (error) {
-                console.error('주문 저장 실패:', error);
+                console.error('❌ 주문 저장 실패:', error);
+                console.error('❌ 에러 상세:', error.message);
+                console.error('❌ 스택 트레이스:', error.stack);
+
+                // 알림창으로 에러 표시 (디버깅용)
+                alert(`주문 저장 실패: ${error.message}\n\n관리자에게 문의하세요.`);
+
                 // 실패해도 사용자 경험을 해치지 않도록 에러는 콘솔에만 표시
             }
         }

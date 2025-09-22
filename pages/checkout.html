@@ -1624,6 +1624,22 @@
             
             console.log('Payment Data:', paymentData);
 
+            // 로그인한 사용자 정보도 다시 저장 (payment-complete에서 사용)
+            const currentUserInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
+            if (currentUserInfo) {
+                try {
+                    const user = JSON.parse(currentUserInfo);
+                    console.log('🔵 로그인된 사용자:', user.email);
+
+                    // userInfo를 다시 저장하여 payment-complete에서 확실히 사용할 수 있도록
+                    localStorage.setItem('userInfo', currentUserInfo);
+                } catch (e) {
+                    console.error('UserInfo 파싱 오류:', e);
+                }
+            } else {
+                console.warn('⚠️ 로그인 정보가 없습니다');
+            }
+
             // 결제 정보를 로컬 스토리지에 저장 (payment-complete에서 사용)
             localStorage.setItem('checkoutData', JSON.stringify({
                 name: paymentData.customer.name,
