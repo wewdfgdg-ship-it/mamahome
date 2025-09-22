@@ -86,9 +86,18 @@
                 }
                 requestData.openpaytype = payType;
 
-                // PC에서 결제 시 모바일 앱 호출 방지
-                requestData.device_type = 'PC';
-                requestData.skip_app_scheme = 'Y';
+                // 디바이스 타입 감지 및 설정
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+                if (isMobile) {
+                    // 모바일 디바이스
+                    requestData.device_type = 'MOBILE';
+                    requestData.mobile_view = 'Y';  // 모바일 뷰 최적화
+                } else {
+                    // PC에서 결제 시
+                    requestData.device_type = 'PC';
+                    requestData.skip_app_scheme = 'Y';  // 모바일 앱 호출 방지
+                }
 
                 console.log('프록시 서버로 결제 요청:', requestData);
 
