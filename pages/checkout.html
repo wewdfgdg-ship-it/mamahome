@@ -1733,25 +1733,22 @@
                     `;
                     document.body.appendChild(loadingDiv);
 
-                    // 모바일에서는 바로 웹 결제 페이지로 이동 (앱 스킴 오류 방지)
-                    // PayApp의 모바일 웹 결제는 카드사 앱 없이도 결제 가능
+                    // PayApp 공식 문서에 따른 올바른 파라미터 사용
                     const mobilePayUrl = `https://pay.payapp.kr/pay/pay.php?` +
                         `userid=mamahome&` +
                         `linkkey=61eebef6f37f02f0af24a8dd27eed9bd&` +
-                        `goodname=${encodeURIComponent(payappParams.goodname)}&` +
+                        `shopname=${encodeURIComponent(payappParams.goodname)}&` +  // shopname 필수
+                        `goodname=${encodeURIComponent(payappParams.memo || '미블 체험단 서비스')}&` +  // 상품명
                         `price=${payappParams.price}&` +
+                        `recvphone=${encodeURIComponent(payappParams.recvphone)}&` +  // recvphone 필수
                         `buyer=${encodeURIComponent(payappParams.buyer)}&` +
                         `buyeremail=${encodeURIComponent(payappParams.email)}&` +
-                        `buyerphone=${encodeURIComponent(payappParams.recvphone)}&` +
                         `returnurl=${encodeURIComponent(window.location.origin + '/pages/payment-complete.html')}&` +
                         `feedbackurl=${encodeURIComponent(window.location.origin + '/api/payapp-webhook')}&` +
                         `var1=${encodeURIComponent(payappParams.var1)}&` +
                         `var2=${encodeURIComponent(payappParams.var2)}&` +
                         `smsuse=n&` +
-                        `redirectpay=1&` +  // 리다이렉트 방식 사용
-                        `skip_app=Y&` +     // 앱 스킴 건너뛰기
-                        `web_only=Y&` +     // 웹 결제만 사용
-                        `openpaytype=`;     // 결제 방식 선택 가능하게 (카드/계좌이체 등)
+                        `openpaytype=card`;  // 카드 결제로 지정
 
                     // 결제 정보를 세션 스토리지에도 저장 (백업)
                     sessionStorage.setItem('pendingPayment', JSON.stringify(payappParams));

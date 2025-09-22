@@ -35,26 +35,24 @@ const MobilePaymentHelper = {
         return false;
     },
 
-    // PayApp 모바일 결제 URL 생성
+    // PayApp 모바일 결제 URL 생성 (공식 문서 기반)
     generatePayAppUrl(params) {
         const baseUrl = 'https://pay.payapp.kr/pay/pay.php';
         const config = {
             userid: 'mamahome',
             linkkey: '61eebef6f37f02f0af24a8dd27eed9bd',
-            goodname: params.goodname || '미블 체험단',
+            shopname: params.shopname || params.goodname || '미블 체험단',  // shopname 필수
+            goodname: params.goodname || '미블 체험단 서비스',  // 상품명
             price: params.price || 0,
+            recvphone: params.phone || params.buyerphone || '',  // recvphone 필수
             buyer: params.buyer || '',
             buyeremail: params.email || '',
-            buyerphone: params.phone || '',
             returnurl: params.returnurl || window.location.origin + '/pages/payment-complete.html',
             feedbackurl: params.feedbackurl || window.location.origin + '/api/payapp-webhook',
             var1: params.var1 || '',
             var2: params.var2 || '',
             smsuse: 'n',
-            redirectpay: '1', // 리다이렉트 방식 (모바일 필수)
-            skip_app: 'Y',    // 앱 스킴 건너뛰기
-            web_only: 'Y',    // 웹 결제만 사용
-            openpaytype: params.payType || ''  // 빈값으로 설정하여 모든 결제수단 가능
+            openpaytype: params.payType || 'card'  // 기본값 카드
         };
 
         const queryString = Object.keys(config)

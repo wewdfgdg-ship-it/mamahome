@@ -300,48 +300,44 @@
             }, 3000);
         }
 
-        // 웹에서 결제
+        // 웹에서 결제 (공식 문서 기반)
         function payWithWeb() {
             showLoading();
 
-            // PayApp의 웹 결제 페이지로 이동 (앱 스킴 없이)
+            // PayApp의 웹 결제 페이지로 이동
             const payappUrl = `https://pay.payapp.kr/pay/pay.php?` +
                 `userid=mamahome&` +
                 `linkkey=61eebef6f37f02f0af24a8dd27eed9bd&` +
-                `goodname=${encodeURIComponent(paymentData.goodname)}&` +
+                `shopname=${encodeURIComponent(paymentData.goodname)}&` +  // shopname 필수
+                `goodname=${encodeURIComponent('미블 체험단 서비스')}&` +  // 상품명
                 `price=${paymentData.price}&` +
+                `recvphone=${encodeURIComponent(paymentData.phone)}&` +  // recvphone 필수
                 `buyer=${encodeURIComponent(paymentData.buyer)}&` +
                 `buyeremail=${encodeURIComponent(paymentData.email)}&` +
-                `buyerphone=${encodeURIComponent(paymentData.phone)}&` +
                 `returnurl=${encodeURIComponent(window.location.origin + '/pages/payment-complete.html')}&` +
                 `smsuse=n&` +
-                `redirectpay=1&` +
-                `skip_app=Y&` +
-                `web_only=Y&` +
-                `openpaytype=`;  // 모든 결제수단 허용
+                `openpaytype=card`;  // 카드 결제
 
             window.location.href = payappUrl;
         }
 
-        // 다른 결제 수단
+        // 다른 결제 수단 (계좌이체)
         function payWithOther() {
             showLoading();
 
-            // 계좌이체 옵션으로 PayApp 실행 (앱 스킴 없이)
+            // 계좌이체 옵션으로 PayApp 실행
             const payappUrl = `https://pay.payapp.kr/pay/pay.php?` +
                 `userid=mamahome&` +
                 `linkkey=61eebef6f37f02f0af24a8dd27eed9bd&` +
-                `goodname=${encodeURIComponent(paymentData.goodname)}&` +
+                `shopname=${encodeURIComponent(paymentData.goodname)}&` +  // shopname 필수
+                `goodname=${encodeURIComponent('미블 체험단 서비스')}&` +  // 상품명
                 `price=${paymentData.price}&` +
+                `recvphone=${encodeURIComponent(paymentData.phone)}&` +  // recvphone 필수
                 `buyer=${encodeURIComponent(paymentData.buyer)}&` +
                 `buyeremail=${encodeURIComponent(paymentData.email)}&` +
-                `buyerphone=${encodeURIComponent(paymentData.phone)}&` +
                 `returnurl=${encodeURIComponent(window.location.origin + '/pages/payment-complete.html')}&` +
                 `smsuse=n&` +
-                `redirectpay=1&` +
-                `skip_app=Y&` +
-                `web_only=Y&` +
-                `openpaytype=bank`;  // 계좌이체 선택
+                `openpaytype=bank`;  // 계좌이체
 
             window.location.href = payappUrl;
         }
