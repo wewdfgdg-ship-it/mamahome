@@ -44,9 +44,14 @@ const MobilePaymentHelper = {
     // PayApp 모바일 결제 URL 생성 (공식 문서 기반)
     generatePayAppUrl(params) {
         const baseUrl = 'https://pay.payapp.kr/pay/pay.php';
+
+        // CONFIG 객체가 있으면 사용, 없으면 기본값
+        const userid = (typeof CONFIG !== 'undefined' && CONFIG.userid) ? CONFIG.userid : 'ksbm';
+        const linkkey = (typeof CONFIG !== 'undefined' && CONFIG.linkkey) ? CONFIG.linkkey : 'QLo9WUgFwaqAYjAiv6z86e1DPJnCCRVaOgT+oqg6zaM=';
+
         const config = {
-            userid: 'mamahome',
-            linkkey: '61eebef6f37f02f0af24a8dd27eed9bd',
+            userid: userid,
+            linkkey: linkkey,
             shopname: params.shopname || params.goodname || '미블 체험단',  // shopname 필수
             goodname: params.goodname || '미블 체험단 서비스',  // 상품명
             price: params.price || 0,

@@ -198,6 +198,8 @@
             100% { transform: rotate(360deg); }
         }
     </style>
+    <!-- PayApp 설정 파일 -->
+    <script src="../config.js"></script>
 </head>
 <body>
     <div class="container">
@@ -305,9 +307,13 @@
             showLoading();
 
             // PayApp의 웹 결제 페이지로 이동
+            // config.js의 설정 사용 (없으면 기본값)
+            const userid = (typeof CONFIG !== 'undefined' && CONFIG.userid) ? CONFIG.userid : 'ksbm';
+            const linkkey = (typeof CONFIG !== 'undefined' && CONFIG.linkkey) ? CONFIG.linkkey : 'QLo9WUgFwaqAYjAiv6z86e1DPJnCCRVaOgT+oqg6zaM=';
+
             const payappUrl = `https://pay.payapp.kr/pay/pay.php?` +
-                `userid=mamahome&` +
-                `linkkey=61eebef6f37f02f0af24a8dd27eed9bd&` +
+                `userid=${userid}&` +
+                `linkkey=${encodeURIComponent(linkkey)}&` +
                 `shopname=${encodeURIComponent(paymentData.goodname)}&` +  // shopname 필수
                 `goodname=${encodeURIComponent('미블 체험단 서비스')}&` +  // 상품명
                 `price=${paymentData.price}&` +
@@ -326,9 +332,13 @@
             showLoading();
 
             // 계좌이체 옵션으로 PayApp 실행
+            // config.js의 설정 사용 (없으면 기본값)
+            const userid = (typeof CONFIG !== 'undefined' && CONFIG.userid) ? CONFIG.userid : 'ksbm';
+            const linkkey = (typeof CONFIG !== 'undefined' && CONFIG.linkkey) ? CONFIG.linkkey : 'QLo9WUgFwaqAYjAiv6z86e1DPJnCCRVaOgT+oqg6zaM=';
+
             const payappUrl = `https://pay.payapp.kr/pay/pay.php?` +
-                `userid=mamahome&` +
-                `linkkey=61eebef6f37f02f0af24a8dd27eed9bd&` +
+                `userid=${userid}&` +
+                `linkkey=${encodeURIComponent(linkkey)}&` +
                 `shopname=${encodeURIComponent(paymentData.goodname)}&` +  // shopname 필수
                 `goodname=${encodeURIComponent('미블 체험단 서비스')}&` +  // 상품명
                 `price=${paymentData.price}&` +

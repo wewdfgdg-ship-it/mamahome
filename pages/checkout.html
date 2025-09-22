@@ -1720,95 +1720,9 @@
                 console.log('  - iOS 디바이스:', isIOS);
                 console.log('  - Android 디바이스:', isAndroid);
 
-                // 모바일에서 특별 처리 - 웹 결제 우선 권장
-                if (isMobile) {
-                    console.log('📱 모바일 결제 감지 - 웹 결제 방식 사용');
-
-                    // 결제 진행 중 표시
-                    const loadingDiv = document.createElement('div');
-                    loadingDiv.id = 'payment-loading';
-                    loadingDiv.style.cssText = `
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        background: rgba(0,0,0,0.5);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        z-index: 9999;
-                    `;
-                    loadingDiv.innerHTML = `
-                        <div style="background: white; padding: 30px; border-radius: 12px; text-align: center;">
-                            <div style="width: 50px; height: 50px; border: 4px solid #e0e0e0; border-top: 4px solid rgb(41, 212, 193); border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
-                            <h3 style="margin: 0 0 10px;">결제 페이지 연결 중...</h3>
-                            <p style="margin: 0; color: #666;">잠시만 기다려주세요</p>
-                        </div>
-                    `;
-                    document.body.appendChild(loadingDiv);
-
-                    // PayApp 공식 문서에 따른 올바른 파라미터 사용
-                    const mobilePayUrl = `https://pay.payapp.kr/pay/pay.php?` +
-                        `userid=mamahome&` +
-                        `linkkey=61eebef6f37f02f0af24a8dd27eed9bd&` +
-                        `shopname=${encodeURIComponent(payappParams.goodname)}&` +  // shopname 필수
-                        `goodname=${encodeURIComponent(payappParams.memo || '미블 체험단 서비스')}&` +  // 상품명
-                        `price=${payappParams.price}&` +
-                        `recvphone=${encodeURIComponent(payappParams.recvphone)}&` +  // recvphone 필수
-                        `buyer=${encodeURIComponent(payappParams.buyer)}&` +
-                        `buyeremail=${encodeURIComponent(payappParams.email)}&` +
-                        `returnurl=${encodeURIComponent(window.location.origin + '/pages/payment-complete.html')}&` +
-                        `feedbackurl=${encodeURIComponent(window.location.origin + '/api/payapp-webhook')}&` +
-                        `var1=${encodeURIComponent(payappParams.var1)}&` +
-                        `var2=${encodeURIComponent(payappParams.var2)}&` +
-                        `smsuse=n&` +
-                        `openpaytype=card`;  // 카드 결제로 지정
-
-                    // 결제 정보를 세션 스토리지에도 저장 (백업)
-                    sessionStorage.setItem('pendingPayment', JSON.stringify(payappParams));
-
-                    // 스타일 태그 추가 (spin 애니메이션용)
-                    if (!document.getElementById('payment-spinner-style')) {
-                        const style = document.createElement('style');
-                        style.id = 'payment-spinner-style';
-                        style.textContent = `
-                            @keyframes spin {
-                                0% { transform: rotate(0deg); }
-                                100% { transform: rotate(360deg); }
-                            }
-                        `;
-                        document.head.appendChild(style);
-                    }
-
-                    // 바로 결제 페이지로 이동 시도
-                    setTimeout(() => {
-                        window.location.href = mobilePayUrl;
-                    }, 1000);
-
-                    // 5초 후에도 페이지가 변경되지 않았다면 (연결 실패로 간주)
-                    setTimeout(() => {
-                        // 아직 같은 페이지에 있다면
-                        if (window.location.href.includes('checkout.html')) {
-                            const loading = document.getElementById('payment-loading');
-                            if (loading) document.body.removeChild(loading);
-
-                            if (confirm('PayApp 서버 연결이 지연되고 있습니다.\n다른 결제 방법을 선택하시겠습니까?')) {
-                                const errorParams = new URLSearchParams({
-                                    goodname: payappParams.goodname,
-                                    price: payappParams.price,
-                                    buyer: payappParams.buyer,
-                                    email: payappParams.email,
-                                    phone: payappParams.recvphone,
-                                    error: 'connection_timeout'
-                                });
-                                window.location.href = `/pages/mobile-payment-handler.html?${errorParams.toString()}`;
-                            }
-                        }
-                    }, 5000);
-
-                    return; // 여기서 종료
-                }
+                // 모바일도 PC와 동일하게 PayApp 모듈 사용 (기존 방식으로 복원)
+                console.log(`📱 디바이스 타입: ${isMobile ? '모바일' : 'PC'}`);
+                console.log('PayApp 모듈을 통한 결제 진행');
 
                 paymentModule.requestPayment(payappParams, (result) => {
                     if (result.state === 'SUCCESS' || result.state === 'PROCESSING') {
