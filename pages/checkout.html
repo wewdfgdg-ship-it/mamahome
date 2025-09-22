@@ -1769,46 +1769,11 @@
                         document.head.appendChild(style);
                     }
 
-                    // 타임아웃 처리 (10초 후 실패 처리)
+                    // 1초 후 결제 페이지로 이동 (로딩 표시 후)
                     setTimeout(() => {
-                        const loading = document.getElementById('payment-loading');
-                        if (loading) {
-                            document.body.removeChild(loading);
-                            if (confirm('PayApp 서버 연결이 지연되고 있습니다.\n다른 방법으로 결제하시겠습니까?')) {
-                                // 대체 결제 페이지로 이동
-                                const errorParams = new URLSearchParams({
-                                    goodname: payappParams.goodname,
-                                    price: payappParams.price,
-                                    buyer: payappParams.buyer,
-                                    email: payappParams.email,
-                                    phone: payappParams.recvphone
-                                });
-                                window.location.href = `/pages/mobile-payment-handler.html?${errorParams.toString()}`;
-                            }
-                        }
-                    }, 10000);
-
-                    // 모바일에서 새 창으로 결제 페이지 열기
-                    setTimeout(() => {
-                        const paymentWindow = window.open(mobilePayUrl, '_blank');
-
-                        // 새 창이 차단된 경우 대체 방법
-                        if (!paymentWindow || paymentWindow.closed || typeof paymentWindow.closed == 'undefined') {
-                            // 팝업이 차단된 경우 현재 창에서 이동
-                            const loading = document.getElementById('payment-loading');
-                            if (loading) document.body.removeChild(loading);
-
-                            if (confirm('결제 창이 차단되었습니다. 현재 창에서 결제를 진행하시겠습니까?')) {
-                                window.location.href = mobilePayUrl;
-                            }
-                        } else {
-                            // 새 창이 열린 경우 로딩 제거
-                            setTimeout(() => {
-                                const loading = document.getElementById('payment-loading');
-                                if (loading) document.body.removeChild(loading);
-                            }, 2000);
-                        }
-                    }, 100); // 짧은 지연 후 창 열기 (로딩 표시 후)
+                        // 현재 창에서 바로 이동 (모바일에서 더 안정적)
+                        window.location.href = mobilePayUrl;
+                    }, 1000);
 
                     return; // 여기서 종료
                 }
