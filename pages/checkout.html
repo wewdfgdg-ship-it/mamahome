@@ -1679,6 +1679,10 @@
             function usePayappModule() {
                 console.log('📝 PayappPayment 모듈로 결제 진행');
 
+                // 모바일 디바이스 감지
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
                 // PayappPayment 인스턴스 생성
                 const paymentModule = new window.PayappPayment(CONFIG);
 
@@ -1698,12 +1702,58 @@
                 console.log('🔥 PayApp 전달 데이터:', payappParams);
                 console.log('goodname(매장명):', payappParams.goodname);
                 console.log('memo(패키지정보):', payappParams.memo);
+                console.log('모바일 디바이스:', isMobile);
+                console.log('iOS 디바이스:', isIOS);
+
+                // 모바일에서 특별 처리 - 웹 결제 우선 권장
+                if (isMobile) {
+                    console.log('📱 모바일 결제 감지 - 웹 결제 방식 사용');
+
+                    // 모바일에서는 바로 웹 결제 페이지로 이동 (앱 스킴 오류 방지)
+                    // PayApp의 모바일 웹 결제는 카드사 앱 없이도 결제 가능
+                    const mobilePayUrl = `https://pay.payapp.kr/pay/pay.php?` +
+                        `userid=mamahome&` +
+                        `linkkey=61eebef6f37f02f0af24a8dd27eed9bd&` +
+                        `goodname=${encodeURIComponent(payappParams.goodname)}&` +
+                        `price=${payappParams.price}&` +
+                        `buyer=${encodeURIComponent(payappParams.buyer)}&` +
+                        `buyeremail=${encodeURIComponent(payappParams.email)}&` +
+                        `buyerphone=${encodeURIComponent(payappParams.recvphone)}&` +
+                        `returnurl=${encodeURIComponent(window.location.origin + '/pages/payment-complete.html')}&` +
+                        `feedbackurl=${encodeURIComponent(window.location.origin + '/api/payapp-webhook')}&` +
+                        `var1=${encodeURIComponent(payappParams.var1)}&` +
+                        `var2=${encodeURIComponent(payappParams.var2)}&` +
+                        `smsuse=n&` +
+                        `redirectpay=1&` +  // 리다이렉트 방식 사용
+                        `skip_app=Y&` +     // 앱 스킴 건너뛰기
+                        `web_only=Y&` +     // 웹 결제만 사용
+                        `openpaytype=`;     // 결제 방식 선택 가능하게 (카드/계좌이체 등)
+
+                    // 결제 정보를 세션 스토리지에도 저장 (백업)
+                    sessionStorage.setItem('pendingPayment', JSON.stringify(payappParams));
+
+                    // 웹 결제 페이지로 이동
+                    window.location.href = mobilePayUrl;
+                    return; // 여기서 종료
+                }
 
                 paymentModule.requestPayment(payappParams, (result) => {
                     if (result.state === 'SUCCESS' || result.state === 'PROCESSING') {
                         console.log('결제 처리:', result.message);
                     } else if (result.state === 'ERROR') {
-                        alert('결제 처리 실패: ' + result.message);
+                        // 모바일에서 앱 실행 오류인 경우 특별 처리
+                        if (isMobile && result.message && result.message.includes('앱')) {
+                            const errorParams = new URLSearchParams({
+                                goodname: payappParams.goodname,
+                                price: payappParams.price,
+                                buyer: payappParams.buyer,
+                                email: payappParams.email,
+                                phone: payappParams.recvphone
+                            });
+                            window.location.href = `/pages/mobile-payment-handler.html?${errorParams.toString()}`;
+                        } else {
+                            alert('결제 처리 실패: ' + result.message);
+                        }
                     }
                 });
             }

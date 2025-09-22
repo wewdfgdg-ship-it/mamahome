@@ -213,6 +213,22 @@
                 const checkoutData = localStorage.getItem('checkoutData');
                 console.log('localStorage checkoutData:', checkoutData);
 
+                // 로그인한 사용자 정보 가져오기 (최우선)
+                const userInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
+                let loggedInUserEmail = '';
+                let loggedInUserName = '';
+
+                if (userInfo) {
+                    try {
+                        const user = JSON.parse(userInfo);
+                        loggedInUserEmail = user.email || '';
+                        loggedInUserName = user.name || '';
+                        console.log('로그인 사용자 정보:', { email: loggedInUserEmail, name: loggedInUserName });
+                    } catch (e) {
+                        console.error('UserInfo parsing error:', e);
+                    }
+                }
+
                 let customerInfo = {};
 
                 if (checkoutData) {
@@ -220,8 +236,9 @@
                         const parsed = JSON.parse(checkoutData);
                         console.log('파싱된 checkoutData:', parsed);
                         customerInfo = {
-                            name: parsed.name || orderData.buyer || '',
-                            email: parsed.email || orderData.buyeremail || '',
+                            name: parsed.name || orderData.buyer || loggedInUserName || '',
+                            // 이메일은 로그인한 사용자 이메일을 최우선으로 사용
+                            email: loggedInUserEmail || parsed.email || orderData.buyeremail || '',
                             phone: parsed.phone || orderData.buyerphone || '',
                             businessName: parsed.businessName || parsed.company || '',
                             businessNumber: parsed.businessNumber || parsed.businessType || ''
@@ -230,11 +247,12 @@
                         console.error('Checkout data parsing error:', e);
                     }
                 } else {
-                    // checkoutData가 없으면 페이앱에서 받은 정보 사용
-                    console.log('checkoutData가 없어서 페이앱 정보 사용');
+                    // checkoutData가 없으면 로그인 정보 > 페이앱 정보 순으로 사용
+                    console.log('checkoutData가 없어서 로그인 정보 우선 사용');
                     customerInfo = {
-                        name: orderData.buyer || '미확인',
-                        email: orderData.buyeremail || '',
+                        name: loggedInUserName || orderData.buyer || '미확인',
+                        // 이메일은 로그인한 사용자 이메일을 최우선으로 사용
+                        email: loggedInUserEmail || orderData.buyeremail || '',
                         phone: orderData.buyerphone || '',
                         businessName: '',
                         businessNumber: ''
@@ -242,6 +260,7 @@
                 }
 
                 console.log('최종 customerInfo:', customerInfo);
+                console.log('주문에 저장될 이메일:', customerInfo.email);
 
                 // localStorage에서 패키지 정보 가져오기
                 let packageInfo = {
@@ -271,22 +290,36 @@
                     packageInfo.price = parseInt(orderData.price);
                 }
 
-                // 주문 데이터 구성 - API가 기대하는 플랫 구조로 변경
+                // 주문 데이터 구성 - API가 요구하는 두 가지 형식 모두 포함
                 const fullOrderData = {
+                    // 플랫 구조 (Supabase 테이블용)
+                    order_number: orderData.orderid || orderData.orderNumber || 'ORD-' + Date.now(),
+                    customer_name: customerInfo.name || '미확인',
+                    customer_email: customerInfo.email || '',
+                    customer_phone: customerInfo.phone || '',
+                    business_name: customerInfo.businessName || '',
+                    business_number: customerInfo.businessNumber || '',
+                    package_name: packageInfo.name || '미블 체험단',
+                    package_price: packageInfo.price || 0,
+                    amount: packageInfo.price || 0,
+                    payment_method: 'PayApp',
+                    status: 'paid',
+                    created_at: new Date().toISOString(),
+
+                    // 중첩 구조 (API 호환성을 위해 추가)
                     orderNumber: orderData.orderid || orderData.orderNumber || 'ORD-' + Date.now(),
                     customer: {
-                        name: customerInfo.name,
-                        email: customerInfo.email,
-                        phone: customerInfo.phone,
-                        businessName: customerInfo.businessName,
-                        businessNumber: customerInfo.businessNumber
+                        name: customerInfo.name || '미확인',
+                        email: customerInfo.email || '',
+                        phone: customerInfo.phone || '',
+                        businessName: customerInfo.businessName || '',
+                        businessNumber: customerInfo.businessNumber || ''
                     },
-                    packageInfo: packageInfo,
-                    amount: packageInfo.price,
-                    paymentMethod: 'payapp',
-                    status: 'paid',
-                    goodname: packageInfo.name,  // PayApp 호환성
-                    price: packageInfo.price,  // PayApp 호환성
+                    packageInfo: {
+                        name: packageInfo.name || '미블 체험단',
+                        price: packageInfo.price || 0
+                    },
+                    paymentMethod: 'PayApp',
                     createdAt: new Date().toISOString()
                 };
 
@@ -334,9 +367,25 @@
                     console.warn('⚠️ 주의: 개발 모드로 저장됨 - Supabase 연결 안됨');
                 }
 
-                // 백업용 로컬 스토리지 저장
+                // 백업용 로컬 스토리지 저장 (원본 구조로 저장)
+                const localOrderData = {
+                    orderNumber: fullOrderData.order_number,
+                    customerName: fullOrderData.customer_name,
+                    customerEmail: fullOrderData.customer_email,
+                    customerPhone: fullOrderData.customer_phone,
+                    businessName: fullOrderData.business_name,
+                    businessNumber: fullOrderData.business_number,
+                    packageInfo: {
+                        name: fullOrderData.package_name,
+                        price: fullOrderData.package_price
+                    },
+                    amount: fullOrderData.amount,
+                    paymentMethod: fullOrderData.payment_method,
+                    status: fullOrderData.status,
+                    createdAt: fullOrderData.created_at
+                };
                 const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-                orders.push(fullOrderData);
+                orders.push(localOrderData);
                 localStorage.setItem('orders', JSON.stringify(orders));
 
                 // 성공 메시지

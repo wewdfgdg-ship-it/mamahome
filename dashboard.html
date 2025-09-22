@@ -566,10 +566,7 @@
             const ordersList = document.getElementById('ordersList');
 
             try {
-                // localStorage에서 주문 정보 가져오기 (임시)
-                const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-
-                // 사용자 정보에서 이메일 가져오기
+                // 로그인한 사용자 정보 가져오기 (최우선)
                 const userInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
                 let userEmail = '';
 
@@ -577,6 +574,7 @@
                     try {
                         const user = JSON.parse(userInfo);
                         userEmail = user.email || '';
+                        console.log('로그인한 사용자 이메일:', userEmail);
                     } catch (e) {
                         console.error('사용자 정보 파싱 오류:', e);
                     }
@@ -595,7 +593,21 @@
                     }
                 }
 
-                if (orders.length === 0) {
+                // localStorage에서 주문 정보 가져오기
+                const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+
+                // 사용자 이메일로 필터링
+                const userOrders = userEmail ?
+                    orders.filter(order => {
+                        // 다양한 이메일 필드 확인
+                        return order.customerEmail === userEmail ||
+                               order.customer_email === userEmail ||
+                               (order.customer && order.customer.email === userEmail);
+                    }) : [];
+
+                console.log(`전체 주문 수: ${orders.length}, 사용자 주문 수: ${userOrders.length}`);
+
+                if (userOrders.length === 0) {
                     ordersList.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-state-icon">📦</div>
@@ -607,10 +619,10 @@
                     `;
                 } else {
                     // 주문 내역 표시
-                    const ordersHTML = orders.map(order => {
+                    const ordersHTML = userOrders.map(order => {
                         const status = order.status || 'pending';
                         const statusText = getStatusText(status);
-                        const orderDate = new Date(order.createdAt || Date.now()).toLocaleDateString('ko-KR');
+                        const orderDate = toKoreanTime(order.createdAt || new Date());
 
                         return `
                             <div class="order-card">
@@ -645,23 +657,8 @@
 
                 // API에서도 주문 내역 가져오기 시도
                 try {
-                    // 로그인한 사용자 정보 가져오기
-                    let userInfo = null;
-                    let userEmail = '';
-
-                    if (typeof AuthManager !== 'undefined' && AuthManager.isLoggedIn()) {
-                        userInfo = AuthManager.getUserInfo();
-                        if (userInfo) {
-                            if (typeof userInfo === 'string') {
-                                try {
-                                    userInfo = JSON.parse(userInfo);
-                                } catch (e) {
-                                    console.error('사용자 정보 파싱 오류:', e);
-                                }
-                            }
-                            userEmail = userInfo.email || '';
-                        }
-                    }
+                    // userEmail이 이미 위에서 설정되어 있으므로 바로 사용
+                    console.log('API 호출 - 사용자 이메일:', userEmail);
 
                     const response = await fetch('https://mamahome-five.vercel.app/api/orders');
                     const data = await response.json();
@@ -676,7 +673,7 @@
                             const apiOrdersHTML = userOrders.map(order => {
                                 const status = order.status || 'pending';
                                 const statusText = getStatusText(status);
-                                const orderDate = new Date(order.created_at).toLocaleDateString('ko-KR');
+                                const orderDate = toKoreanTime(order.created_at);
 
                                 return `
                                     <div class="order-card">
@@ -727,6 +724,29 @@
                     </div>
                 `;
             }
+        }
+
+        // UTC를 한국 시간으로 변환
+        function toKoreanTime(dateString) {
+            if (!dateString) return '시간 정보 없음';
+
+            const date = new Date(dateString);
+
+            // 유효한 날짜인지 확인
+            if (isNaN(date.getTime())) {
+                return '시간 정보 없음';
+            }
+
+            // 한국 시간으로 변환 (toLocaleString 사용)
+            return date.toLocaleString('ko-KR', {
+                timeZone: 'Asia/Seoul',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false  // 24시간 형식
+            });
         }
 
         // 상태 텍스트 변환

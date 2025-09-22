@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>모바일 결제 처리 - Mrble</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Apple Gothic', 'HY Gulim', MalgunGothic, sans-serif;
+            background: rgb(245, 245, 247);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 24px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, rgb(41, 212, 193), rgb(30, 180, 165));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .icon.warning {
+            background: linear-gradient(135deg, rgb(255, 214, 10), rgb(255, 204, 0));
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: rgb(29, 29, 31);
+            margin-bottom: 16px;
+        }
+
+        .message {
+            font-size: 16px;
+            color: rgb(134, 134, 139);
+            line-height: 1.5;
+            margin-bottom: 32px;
+        }
+
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .payment-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: white;
+            border: 1px solid rgb(232, 232, 237);
+            border-radius: 12px;
+            text-decoration: none;
+            color: rgb(29, 29, 31);
+            transition: all 0.24s;
+            cursor: pointer;
+        }
+
+        .payment-btn:hover {
+            background: rgb(245, 245, 247);
+            border-color: rgb(0, 113, 227);
+        }
+
+        .payment-btn.primary {
+            background: rgb(0, 113, 227);
+            color: white;
+            border-color: rgb(0, 113, 227);
+        }
+
+        .payment-btn.primary:hover {
+            background: rgb(0, 102, 204);
+        }
+
+        .payment-btn-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .payment-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .payment-label {
+            text-align: left;
+        }
+
+        .payment-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .payment-desc {
+            font-size: 12px;
+            color: rgb(134, 134, 139);
+        }
+
+        .arrow {
+            color: rgb(134, 134, 139);
+            font-size: 18px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+            color: rgb(134, 134, 139);
+            font-size: 14px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgb(232, 232, 237);
+        }
+
+        .divider span {
+            padding: 0 16px;
+        }
+
+        .help-text {
+            font-size: 14px;
+            color: rgb(134, 134, 139);
+            line-height: 1.4;
+            padding: 16px;
+            background: rgb(245, 245, 247);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: rgb(245, 245, 247);
+            color: rgb(29, 29, 31);
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.24s;
+        }
+
+        .back-btn:hover {
+            background: rgb(232, 232, 237);
+        }
+
+        /* 로딩 상태 */
+        .loading {
+            display: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgb(232, 232, 237);
+            border-top: 4px solid rgb(0, 113, 227);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="mainContent">
+            <div class="icon warning">⚠️</div>
+            <h1>앱 실행 오류</h1>
+            <div class="message">
+                현대카드 앱을 실행할 수 없습니다.<br>
+                다른 결제 방법을 선택해주세요.
+            </div>
+
+            <div class="payment-options">
+                <button onclick="retryWithApp()" class="payment-btn">
+                    <div class="payment-btn-content">
+                        <div class="payment-icon">📱</div>
+                        <div class="payment-label">
+                            <div class="payment-name">앱에서 다시 시도</div>
+                            <div class="payment-desc">앱이 설치되어 있다면 다시 시도</div>
+                        </div>
+                    </div>
+                    <div class="arrow">›</div>
+                </button>
+
+                <button onclick="payWithWeb()" class="payment-btn primary">
+                    <div class="payment-btn-content">
+                        <div class="payment-icon">💳</div>
+                        <div class="payment-label">
+                            <div class="payment-name">웹에서 결제하기</div>
+                            <div class="payment-desc">카드 정보 직접 입력</div>
+                        </div>
+                    </div>
+                    <div class="arrow">›</div>
+                </button>
+
+                <button onclick="payWithOther()" class="payment-btn">
+                    <div class="payment-btn-content">
+                        <div class="payment-icon">🏦</div>
+                        <div class="payment-label">
+                            <div class="payment-name">다른 결제 수단</div>
+                            <div class="payment-desc">계좌이체, 무통장 입금 등</div>
+                        </div>
+                    </div>
+                    <div class="arrow">›</div>
+                </button>
+            </div>
+
+            <div class="divider">
+                <span>또는</span>
+            </div>
+
+            <div class="help-text">
+                💡 <strong>도움말</strong><br>
+                모바일 웹브라우저에서 일부 카드 앱이 실행되지 않을 수 있습니다.
+                '웹에서 결제하기'를 선택하시면 카드 정보를 직접 입력하여 결제할 수 있습니다.
+            </div>
+
+            <a href="/pages/checkout.html" class="back-btn">처음으로 돌아가기</a>
+        </div>
+
+        <div id="loadingContent" class="loading">
+            <div class="loading-spinner"></div>
+            <h2>처리 중입니다...</h2>
+            <p>잠시만 기다려주세요</p>
+        </div>
+    </div>
+
+    <script>
+        // URL에서 결제 정보 파싱
+        const urlParams = new URLSearchParams(window.location.search);
+        const paymentData = {
+            goodname: urlParams.get('goodname') || '미블 체험단 서비스',
+            price: urlParams.get('price') || '0',
+            buyer: urlParams.get('buyer') || '',
+            email: urlParams.get('email') || '',
+            phone: urlParams.get('phone') || ''
+        };
+
+        // localStorage에 결제 정보 저장 (다른 방법으로 결제할 때 사용)
+        localStorage.setItem('pendingPayment', JSON.stringify(paymentData));
+
+        // 앱 다시 시도
+        function retryWithApp() {
+            const appScheme = urlParams.get('scheme') || 'hdcardappcardansimclick://appcard';
+
+            // 먼저 앱 스킴으로 시도
+            window.location.href = appScheme;
+
+            // 3초 후 앱이 실행되지 않으면 에러 메시지 표시
+            setTimeout(() => {
+                alert('앱을 실행할 수 없습니다. 앱이 설치되어 있는지 확인해주세요.');
+            }, 3000);
+        }
+
+        // 웹에서 결제
+        function payWithWeb() {
+            showLoading();
+
+            // PayApp의 웹 결제 페이지로 이동 (앱 스킴 없이)
+            const payappUrl = `https://pay.payapp.kr/pay/pay.php?` +
+                `userid=mamahome&` +
+                `linkkey=61eebef6f37f02f0af24a8dd27eed9bd&` +
+                `goodname=${encodeURIComponent(paymentData.goodname)}&` +
+                `price=${paymentData.price}&` +
+                `buyer=${encodeURIComponent(paymentData.buyer)}&` +
+                `buyeremail=${encodeURIComponent(paymentData.email)}&` +
+                `buyerphone=${encodeURIComponent(paymentData.phone)}&` +
+                `returnurl=${encodeURIComponent(window.location.origin + '/pages/payment-complete.html')}&` +
+                `smsuse=n&` +
+                `redirectpay=1&` +
+                `skip_app=Y&` +
+                `web_only=Y&` +
+                `openpaytype=`;  // 모든 결제수단 허용
+
+            window.location.href = payappUrl;
+        }
+
+        // 다른 결제 수단
+        function payWithOther() {
+            showLoading();
+
+            // 계좌이체 옵션으로 PayApp 실행 (앱 스킴 없이)
+            const payappUrl = `https://pay.payapp.kr/pay/pay.php?` +
+                `userid=mamahome&` +
+                `linkkey=61eebef6f37f02f0af24a8dd27eed9bd&` +
+                `goodname=${encodeURIComponent(paymentData.goodname)}&` +
+                `price=${paymentData.price}&` +
+                `buyer=${encodeURIComponent(paymentData.buyer)}&` +
+                `buyeremail=${encodeURIComponent(paymentData.email)}&` +
+                `buyerphone=${encodeURIComponent(paymentData.phone)}&` +
+                `returnurl=${encodeURIComponent(window.location.origin + '/pages/payment-complete.html')}&` +
+                `smsuse=n&` +
+                `redirectpay=1&` +
+                `skip_app=Y&` +
+                `web_only=Y&` +
+                `openpaytype=bank`;  // 계좌이체 선택
+
+            window.location.href = payappUrl;
+        }
+
+        // 로딩 표시
+        function showLoading() {
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('loadingContent').style.display = 'block';
+        }
+
+        // 앱 스킴 처리 실패 시 자동으로 이 페이지로 리다이렉트되도록 설정
+        window.addEventListener('error', function(e) {
+            if (e.message && e.message.includes('scheme')) {
+                // 스킴 오류 감지
+                console.log('앱 스킴 오류 감지:', e.message);
+            }
+        });
+
+        // 페이지 로드 시 이전 페이지에서 온 경우 확인
+        if (document.referrer && document.referrer.includes('payapp')) {
+            console.log('PayApp에서 리다이렉트됨');
+        }
+    </script>
+</body>
+</html>
