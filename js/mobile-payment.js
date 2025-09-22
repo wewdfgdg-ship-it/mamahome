@@ -63,6 +63,11 @@ const MobilePaymentHelper = {
             var1: params.var1 || '',
             var2: params.var2 || '',
             smsuse: 'n',
+            device_type: 'MOBILE',  // 모바일 디바이스 타입
+            mobile_view: 'Y',  // 모바일 뷰 최적화
+            skip_security_app: 'Y',  // 보안 앱 체크 스킵
+            skip_app_install: 'Y',  // 앱 설치 요구 스킵
+            web_only: 'Y',  // 웹 전용 모드
             openpaytype: params.payType || 'card'  // 기본값 카드
         };
 

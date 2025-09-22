@@ -322,6 +322,11 @@
                 `buyeremail=${encodeURIComponent(paymentData.email)}&` +
                 `returnurl=${encodeURIComponent(window.location.origin + '/pages/payment-complete.html')}&` +
                 `smsuse=n&` +
+                `device_type=MOBILE&` +
+                `mobile_view=Y&` +
+                `skip_security_app=Y&` +
+                `skip_app_install=Y&` +
+                `web_only=Y&` +
                 `openpaytype=card`;  // 카드 결제
 
             window.location.href = payappUrl;
@@ -347,6 +352,11 @@
                 `buyeremail=${encodeURIComponent(paymentData.email)}&` +
                 `returnurl=${encodeURIComponent(window.location.origin + '/pages/payment-complete.html')}&` +
                 `smsuse=n&` +
+                `device_type=MOBILE&` +
+                `mobile_view=Y&` +
+                `skip_security_app=Y&` +
+                `skip_app_install=Y&` +
+                `web_only=Y&` +
                 `openpaytype=bank`;  // 계좌이체
 
             window.location.href = payappUrl;

@@ -141,6 +141,10 @@
                 formData.append('appurl', window.location.origin + '/pages/mobile-payment-handler.html');
                 formData.append('device_type', 'MOBILE');
                 formData.append('mobile_view', 'Y');
+                // 보안 앱 체크 스킵 (V3, AhnLab 등의 앱 설치 요구 방지)
+                formData.append('skip_security_app', 'Y');
+                formData.append('skip_app_install', 'Y');
+                formData.append('web_only', 'Y');  // 웹 전용 모드로 강제
             }
 
             // 결제 수단에 따른 openpaytype 설정
