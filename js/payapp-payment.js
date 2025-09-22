@@ -125,7 +125,14 @@
             formData.append('var2', params.var2 || '');
             formData.append('reqaddr', '0');
             formData.append('smsuse', 'n');
-            
+
+            // 모바일 감지 및 설정
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            if (isMobile) {
+                formData.append('device_type', 'MOBILE');
+                formData.append('mobile_view', 'Y');
+            }
+
             // 결제 수단에 따른 openpaytype 설정
             let payType = 'card';
             if (params.paymentMethod) {
@@ -146,6 +153,10 @@
                 ? 'https://mamahome-five.vercel.app'
                 : '';
 
+            console.log('🔥 PayApp API 호출 시작');
+            console.log('API URL:', `${apiBaseUrl}/api/payapp-proxy`);
+            console.log('요청 데이터:', Object.fromEntries(formData));
+
             fetch(`${apiBaseUrl}/api/payapp-proxy`, {
                 method: 'POST',
                 headers: {
@@ -154,8 +165,8 @@
                 body: JSON.stringify(Object.fromEntries(formData))
             })
             .then(response => {
-                // console.log('프록시 응답 상태:', response.status);
-                // console.log('프록시 응답 헤더:', response.headers);
+                console.log('프록시 응답 상태:', response.status);
+                console.log('프록시 응답 헤더:', response.headers);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -164,7 +175,7 @@
                 return response.text();
             })
             .then(responseText => {
-                // console.log('페이앱 API 응답 원본:', responseText);
+                console.log('페이앱 API 응답 원본:', responseText);
 
                 // URL 인코딩된 응답 파싱
                 let data = {};
@@ -278,8 +289,8 @@
                 body: JSON.stringify(Object.fromEntries(formData))
             })
             .then(response => {
-                // console.log('프록시 응답 상태:', response.status);
-                // console.log('프록시 응답 헤더:', response.headers);
+                console.log('프록시 응답 상태:', response.status);
+                console.log('프록시 응답 헤더:', response.headers);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -288,7 +299,7 @@
                 return response.text();
             })
             .then(responseText => {
-                // console.log('페이앱 API 응답 원본:', responseText);
+                console.log('페이앱 API 응답 원본:', responseText);
 
                 // URL 인코딩된 응답 파싱
                 let data = {};

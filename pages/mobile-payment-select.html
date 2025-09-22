@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>결제 방법 선택 - Mrble</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f7;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgb(41, 212, 193), rgb(30, 180, 165));
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .amount {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .product-info {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .payment-methods {
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .payment-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .payment-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .payment-item:hover {
+            background: #f8f9fa;
+            border-color: rgb(41, 212, 193);
+            transform: translateY(-2px);
+        }
+
+        .payment-item.selected {
+            background: #e8faf7;
+            border-color: rgb(41, 212, 193);
+            border-width: 2px;
+        }
+
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .payment-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .payment-label {
+            font-size: 12px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .payment-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ff3838;
+            color: white;
+            font-size: 9px;
+            padding: 2px 5px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .simple-payments {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .simple-payment-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .simple-payment-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .simple-payment-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .simple-payment-item:hover {
+            background: #e8faf7;
+            transform: translateX(3px);
+        }
+
+        .simple-payment-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: #f5f5f7;
+            border-radius: 8px;
+        }
+
+        .simple-payment-name {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .proceed-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, rgb(41, 212, 193), rgb(30, 180, 165));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .proceed-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .proceed-button:active {
+            transform: translateY(0);
+        }
+
+        .proceed-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .notice {
+            background: #fff3cd;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #856404;
+            display: flex;
+            align-items: center;
+        }
+
+        .notice-icon {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        @media (max-width: 420px) {
+            .payment-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .simple-payment-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <script src="../config.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>결제 방법 선택</h1>
+            <div class="amount" id="amount">110,000원</div>
+            <div class="product-info" id="product-info">미블 체험단 서비스</div>
+        </div>
+
+        <div class="payment-methods">
+            <!-- 간편결제 섹션 -->
+            <div class="simple-payments">
+                <div class="simple-payment-title">🚀 간편결제</div>
+                <div class="simple-payment-list">
+                    <div class="simple-payment-item" onclick="selectPayment('kakaopay')">
+                        <div class="simple-payment-icon">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Kakaopay_logo.svg/2560px-Kakaopay_logo.svg.png" alt="카카오페이" style="width: 30px;">
+                        </div>
+                        <div class="simple-payment-name">카카오페이</div>
+                    </div>
+                    <div class="simple-payment-item" onclick="selectPayment('naverpay')">
+                        <div class="simple-payment-icon">
+                            <span style="color: #1ec800;">N</span>
+                        </div>
+                        <div class="simple-payment-name">네이버페이</div>
+                    </div>
+                    <div class="simple-payment-item" onclick="selectPayment('tosspay')">
+                        <div class="simple-payment-icon">
+                            <span style="color: #0064ff;">T</span>
+                        </div>
+                        <div class="simple-payment-name">토스</div>
+                    </div>
+                    <div class="simple-payment-item" onclick="selectPayment('samsungpay')">
+                        <div class="simple-payment-icon">
+                            <span style="color: #1428a0;">S</span>
+                        </div>
+                        <div class="simple-payment-name">삼성페이</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 신용카드 섹션 -->
+            <div class="section-title">💳 신용카드</div>
+            <div class="payment-grid">
+                <div class="payment-item" onclick="selectPayment('card')">
+                    <div class="payment-icon">💳</div>
+                    <div class="payment-label">모든 카드</div>
+                </div>
+                <div class="payment-item" onclick="selectPayment('kb')">
+                    <div class="payment-icon">🏦</div>
+                    <div class="payment-label">KB국민</div>
+                </div>
+                <div class="payment-item" onclick="selectPayment('shinhan')">
+                    <div class="payment-icon">🔵</div>
+                    <div class="payment-label">신한</div>
+                </div>
+                <div class="payment-item" onclick="selectPayment('samsung')">
+                    <div class="payment-icon">💙</div>
+                    <div class="payment-label">삼성</div>
+                </div>
+                <div class="payment-item" onclick="selectPayment('hyundai')">
+                    <div class="payment-icon">🔴</div>
+                    <div class="payment-label">현대</div>
+                </div>
+                <div class="payment-item" onclick="selectPayment('lotte')">
+                    <div class="payment-icon">🔺</div>
+                    <div class="payment-label">롯데</div>
+                </div>
+            </div>
+
+            <!-- 기타 결제 -->
+            <div class="section-title">🏦 기타 결제 수단</div>
+            <div class="payment-grid">
+                <div class="payment-item" onclick="selectPayment('bank')">
+                    <div class="payment-icon">🏛️</div>
+                    <div class="payment-label">계좌이체</div>
+                </div>
+                <div class="payment-item" onclick="selectPayment('phone')">
+                    <div class="payment-icon">📱</div>
+                    <div class="payment-label">휴대폰</div>
+                </div>
+                <div class="payment-item" onclick="selectPayment('virtual')">
+                    <div class="payment-icon">📄</div>
+                    <div class="payment-label">가상계좌</div>
+                </div>
+            </div>
+
+            <div class="notice">
+                <span class="notice-icon">ℹ️</span>
+                <span>모든 결제는 안전하게 암호화되어 처리됩니다.</span>
+            </div>
+
+            <button class="proceed-button" onclick="proceedPayment()">
+                결제 진행하기
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // URL 파라미터 파싱
+        const urlParams = new URLSearchParams(window.location.search);
+        const paymentData = {
+            goodname: urlParams.get('goodname') || '미블 체험단 서비스',
+            price: urlParams.get('price') || '110000',
+            buyer: urlParams.get('buyer') || '',
+            email: urlParams.get('email') || '',
+            phone: urlParams.get('phone') || ''
+        };
+
+        // 금액 표시
+        document.getElementById('amount').textContent =
+            parseInt(paymentData.price).toLocaleString() + '원';
+        document.getElementById('product-info').textContent = paymentData.goodname;
+
+        let selectedPaymentMethod = 'card';
+
+        function selectPayment(method) {
+            selectedPaymentMethod = method;
+
+            // 모든 선택 제거
+            document.querySelectorAll('.payment-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            document.querySelectorAll('.simple-payment-item').forEach(item => {
+                item.style.background = 'white';
+            });
+
+            // 선택 표시
+            if (event && event.currentTarget) {
+                if (event.currentTarget.classList.contains('payment-item')) {
+                    event.currentTarget.classList.add('selected');
+                } else {
+                    event.currentTarget.style.background = '#e8faf7';
+                }
+            }
+        }
+
+        function proceedPayment() {
+            // PayApp으로 결제 진행
+            const userid = (typeof CONFIG !== 'undefined' && CONFIG.userid) ? CONFIG.userid : 'ksbm';
+            const linkkey = (typeof CONFIG !== 'undefined' && CONFIG.linkkey) ? CONFIG.linkkey : 'QLo9WUgFwaqAYjAiv6z86e1DPJnCCRVaOgT+oqg6zaM=';
+
+            // openpaytype 매핑
+            const paytypeMap = {
+                'card': 'card',
+                'kakaopay': 'kakaopay',
+                'naverpay': 'naverpay',
+                'tosspay': 'tosspay',
+                'samsungpay': 'card',
+                'kb': 'card',
+                'shinhan': 'card',
+                'samsung': 'card',
+                'hyundai': 'card',
+                'lotte': 'card',
+                'bank': 'rbank',
+                'phone': 'phone',
+                'virtual': 'vbank'
+            };
+
+            const payType = paytypeMap[selectedPaymentMethod] || 'card';
+
+            // 모바일 최적화된 PayApp URL 생성
+            const payappUrl = `https://pay.payapp.kr/pay/pay.php?` +
+                `userid=${userid}&` +
+                `linkkey=${encodeURIComponent(linkkey)}&` +
+                `goodname=${encodeURIComponent(paymentData.goodname)}&` +
+                `price=${paymentData.price}&` +
+                `recvphone=${encodeURIComponent(paymentData.phone)}&` +
+                `buyer=${encodeURIComponent(paymentData.buyer)}&` +
+                `buyeremail=${encodeURIComponent(paymentData.email)}&` +
+                `returnurl=${encodeURIComponent(window.location.origin + '/pages/payment-complete.html')}&` +
+                `smsuse=n&` +
+                `device_type=MOBILE&` +
+                `mobile_view=Y&` +
+                `openpaytype=${payType}`;
+
+            window.location.href = payappUrl;
+        }
+    </script>
+</body>
+</html>
