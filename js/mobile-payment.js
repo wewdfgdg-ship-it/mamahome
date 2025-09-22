@@ -1,16 +1,22 @@
 // 모바일 결제 헬퍼 모듈
 const MobilePaymentHelper = {
-    // 디바이스 감지
+    // 디바이스 감지 (개선된 버전)
     isMobile() {
-        return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        return this.isIOS() || this.isAndroid() ||
+               /webOS|BlackBerry|Windows Phone|Opera Mini|IEMobile/i.test(userAgent);
     },
 
     isIOS() {
-        return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        return /iPhone|iPad|iPod/i.test(userAgent) ||
+               (navigator.platform && /iPhone|iPad|iPod/i.test(navigator.platform)) ||
+               (navigator.maxTouchPoints && navigator.maxTouchPoints > 1 && /MacIntel/.test(navigator.platform));
     },
 
     isAndroid() {
-        return /Android/i.test(navigator.userAgent);
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        return /Android/i.test(userAgent);
     },
 
     // 인앱 브라우저 감지

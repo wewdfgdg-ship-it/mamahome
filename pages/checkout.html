@@ -1679,9 +1679,19 @@
             function usePayappModule() {
                 console.log('📝 PayappPayment 모듈로 결제 진행');
 
-                // 모바일 디바이스 감지
-                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                // 모바일 디바이스 감지 (더 정확한 방식)
+                const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+                // iOS 감지 (여러 방법 조합)
+                const isIOS = /iPhone|iPad|iPod/i.test(userAgent) ||
+                              (navigator.platform && /iPhone|iPad|iPod/i.test(navigator.platform)) ||
+                              (navigator.maxTouchPoints && navigator.maxTouchPoints > 1 && /MacIntel/.test(navigator.platform));
+
+                // Android 감지
+                const isAndroid = /Android/i.test(userAgent);
+
+                // 모바일 전체 감지
+                const isMobile = isIOS || isAndroid || /webOS|BlackBerry|Windows Phone|Opera Mini|IEMobile/i.test(userAgent);
 
                 // PayappPayment 인스턴스 생성
                 const paymentModule = new window.PayappPayment(CONFIG);
@@ -1702,8 +1712,13 @@
                 console.log('🔥 PayApp 전달 데이터:', payappParams);
                 console.log('goodname(매장명):', payappParams.goodname);
                 console.log('memo(패키지정보):', payappParams.memo);
-                console.log('모바일 디바이스:', isMobile);
-                console.log('iOS 디바이스:', isIOS);
+                console.log('📱 디바이스 감지 정보:');
+                console.log('  - User Agent:', userAgent);
+                console.log('  - Platform:', navigator.platform);
+                console.log('  - Touch Points:', navigator.maxTouchPoints);
+                console.log('  - 모바일 디바이스:', isMobile);
+                console.log('  - iOS 디바이스:', isIOS);
+                console.log('  - Android 디바이스:', isAndroid);
 
                 // 모바일에서 특별 처리 - 웹 결제 우선 권장
                 if (isMobile) {
