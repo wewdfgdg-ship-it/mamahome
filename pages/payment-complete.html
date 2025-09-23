@@ -239,10 +239,32 @@
                             name: parsed.name || orderData.buyer || loggedInUserName || '',
                             // 이메일은 로그인한 사용자 이메일을 최우선으로 사용
                             email: loggedInUserEmail || parsed.email || orderData.buyeremail || '',
+                            // 전화번호는 checkoutData를 최우선으로 사용 (실제 입력값)
                             phone: parsed.phone || orderData.buyerphone || '',
                             businessName: parsed.businessName || parsed.company || '',
                             businessNumber: parsed.businessNumber || parsed.businessType || ''
                         };
+
+                        // 전화번호 검증 및 로그
+                        if (parsed.phone) {
+                            console.log('✅ checkoutData에서 전화번호 사용:', parsed.phone);
+
+                            // 기본값이나 placeholder 값인지 체크
+                            if (parsed.phone === '010-0000-0000' || parsed.phone === '010-1234-5678') {
+                                console.warn('⚠️ 전화번호가 기본값입니다. 실제 번호가 아닐 수 있습니다.');
+                                // 기본값인 경우 빈 문자열로 처리 (선택사항)
+                                // customerInfo.phone = '';
+                            }
+                        } else if (orderData.buyerphone) {
+                            console.log('⚠️ PayApp에서 전화번호 사용:', orderData.buyerphone);
+
+                            // PayApp에서 온 전화번호도 기본값 체크
+                            if (orderData.buyerphone === '010-0000-0000' || orderData.buyerphone === '010-1234-5678') {
+                                console.warn('⚠️ PayApp 전화번호가 기본값입니다.');
+                            }
+                        } else {
+                            console.log('❌ 전화번호 없음');
+                        }
                     } catch (e) {
                         console.error('Checkout data parsing error:', e);
                     }
@@ -295,6 +317,15 @@
                     console.warn('⚠️ 주문 금액이 0원입니다. orderData.price:', orderData.price);
                 }
 
+                // 부가세 계산 (10%)
+                const vat = Math.round((packageInfo.price || 0) * 0.1);
+                const totalAmount = (packageInfo.price || 0) + vat;
+
+                console.log('💰 금액 계산:');
+                console.log('  - 상품금액:', packageInfo.price);
+                console.log('  - 부가세(10%):', vat);
+                console.log('  - 총액:', totalAmount);
+
                 // 주문 데이터 구성 - API가 요구하는 두 가지 형식 모두 포함
                 const fullOrderData = {
                     // 플랫 구조 (Supabase 테이블용)
@@ -305,8 +336,8 @@
                     business_name: customerInfo.businessName || '',
                     business_number: customerInfo.businessNumber || '',
                     package_name: packageInfo.name || '미블 체험단',
-                    package_price: packageInfo.price || 0,
-                    amount: packageInfo.price || 0,
+                    package_price: packageInfo.price || 0,  // 상품금액 (부가세 제외)
+                    amount: totalAmount,  // 총액 (부가세 포함)
                     payment_method: 'PayApp',
                     status: 'paid',
                     receipt_url: orderData.csturl || '',  // PayApp 영수증 URL 저장

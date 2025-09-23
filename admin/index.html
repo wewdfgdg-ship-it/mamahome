@@ -853,20 +853,30 @@
                 const orders = data.orders || [];
 
                 // 데이터 형식 변환 - 실제 데이터베이스 컬럼명에 맞게 수정
-                const formattedOrders = orders.map(order => ({
-                    id: order.id,
-                    orderNumber: order.order_number || `ORD-${order.id}`,
-                    customer: order.customer_name || '미확인',
-                    customerEmail: order.customer_email || '',
-                    customerPhone: order.customer_phone || '',
-                    packageType: order.package_name || '미블 체험단',
-                    amount: `₩${(order.amount || 0).toLocaleString()}`,
-                    status: order.status || 'pending',
-                    // KST 시간 사용 (서버에서 이미 변환된 값 사용)
-                    createdAt: order.created_at_kst || order.created_at,
-                    businessName: order.business_name || '',
-                    businessNumber: order.business_number || ''
-                }));
+                const formattedOrders = orders.map(order => {
+                    // 가격 계산 - amount는 총액 (부가세 포함)
+                    const totalAmount = order.amount || 0;
+                    // package_price가 있으면 사용, 없으면 총액에서 역산
+                    const packagePrice = order.package_price || Math.round(totalAmount / 1.1);
+                    const vat = totalAmount - packagePrice;
+
+                    return {
+                        id: order.id,
+                        orderNumber: order.order_number || `ORD-${order.id}`,
+                        customer: order.customer_name || '미확인',
+                        customerEmail: order.customer_email || '',
+                        customerPhone: order.customer_phone || '',
+                        packageType: order.package_name || '미블 체험단',
+                        packagePrice: packagePrice,  // 상품금액
+                        vat: vat,  // 부가세
+                        totalAmount: totalAmount,  // 총액
+                        status: order.status || 'pending',
+                        // KST 시간 사용 (서버에서 이미 변환된 값 사용)
+                        createdAt: order.created_at_kst || order.created_at,
+                        businessName: order.business_name || '',
+                        businessNumber: order.business_number || ''
+                    };
+                });
 
                 renderOrdersTable(formattedOrders);
             } catch (error) {
@@ -899,7 +909,9 @@
                             <th>주문번호</th>
                             <th>고객명</th>
                             <th>패키지</th>
-                            <th>금액</th>
+                            <th>상품금액</th>
+                            <th>부가세</th>
+                            <th>총액</th>
                             <th>상태</th>
                             <th>주문일시</th>
                             <th>액션</th>
@@ -914,7 +926,9 @@
                                 <td><strong>${order.orderNumber}</strong></td>
                                 <td>${order.customer}</td>
                                 <td>${order.packageType}</td>
-                                <td>${order.amount}</td>
+                                <td>₩${order.packagePrice.toLocaleString()}</td>
+                                <td>₩${order.vat.toLocaleString()}</td>
+                                <td>₩${order.totalAmount.toLocaleString()}</td>
                                 <td>
                                     <select class="status-select" onchange="quickUpdateStatus('${order.id}', this.value)">
                                         <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>대기중</option>
@@ -977,7 +991,15 @@
 
                     detailText += `\n주문 정보:\n`;
                     detailText += `- 패키지: ${order.package_name || '미블 체험단'}\n`;
-                    detailText += `- 금액: ₩${(order.amount || 0).toLocaleString()}\n`;
+
+                    // 가격 정보 3개로 표시
+                    const totalAmount = order.amount || 0;
+                    const packagePrice = order.package_price || Math.round(totalAmount / 1.1);
+                    const vat = totalAmount - packagePrice;
+
+                    detailText += `- 상품금액: ₩${packagePrice.toLocaleString()}\n`;
+                    detailText += `- 부가세(10%): ₩${vat.toLocaleString()}\n`;
+                    detailText += `- 총액: ₩${totalAmount.toLocaleString()}\n`;
                     detailText += `- 결제방법: ${order.payment_method || 'payapp'}\n`;
                     detailText += `- 상태: ${getStatusText(order.status)}\n`;
 
@@ -1129,6 +1151,11 @@
                 const order = data.orders.find(o => o.id == orderId);
 
                 if (order) {
+                    // 가격 계산
+                    const totalAmount = order.amount || 0;
+                    const packagePrice = order.package_price || Math.round(totalAmount / 1.1);
+                    const vat = totalAmount - packagePrice;
+
                     // 모달 필드 채우기
                     document.getElementById('modalOrderId').value = order.id;
                     document.getElementById('modalOrderNumber').value = order.order_number || `ORD-${order.id}`;
@@ -1138,7 +1165,9 @@
                     document.getElementById('modalBusinessName').value = order.business_name || '';
                     document.getElementById('modalBusinessNumber').value = order.business_number || '';
                     document.getElementById('modalPackageName').value = order.package_name || '미블 체험단';
-                    document.getElementById('modalAmount').value = order.amount || 0;
+                    document.getElementById('modalPackagePrice').value = packagePrice;
+                    document.getElementById('modalVat').value = vat;
+                    document.getElementById('modalAmount').value = totalAmount;
                     document.getElementById('modalStatus').value = order.status || 'pending';
                     document.getElementById('modalNotes').value = order.notes || '';
 
@@ -1158,9 +1187,21 @@
             document.getElementById('orderModal').classList.remove('active');
         }
 
+        // 모달에서 가격 자동 계산
+        function updateModalPrices() {
+            const packagePrice = parseInt(document.getElementById('modalPackagePrice').value) || 0;
+            const vat = Math.round(packagePrice * 0.1);
+            const totalAmount = packagePrice + vat;
+
+            document.getElementById('modalVat').value = vat;
+            document.getElementById('modalAmount').value = totalAmount;
+        }
+
         // 모달에서 주문 정보 저장
         async function saveOrderChanges() {
             const orderId = document.getElementById('modalOrderId').value;
+            const packagePrice = parseInt(document.getElementById('modalPackagePrice').value) || 0;
+            const totalAmount = parseInt(document.getElementById('modalAmount').value) || 0;
 
             const updateData = {
                 order_number: document.getElementById('modalOrderNumber').value,
@@ -1170,7 +1211,8 @@
                 business_name: document.getElementById('modalBusinessName').value,
                 business_number: document.getElementById('modalBusinessNumber').value,
                 package_name: document.getElementById('modalPackageName').value,
-                amount: parseInt(document.getElementById('modalAmount').value),
+                package_price: packagePrice,  // 상품금액
+                amount: totalAmount,  // 총액
                 status: document.getElementById('modalStatus').value,
                 notes: document.getElementById('modalNotes').value
             };
@@ -1524,8 +1566,18 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">금액</label>
-                        <input type="number" class="form-input" id="modalAmount" required>
+                        <label class="form-label">상품금액</label>
+                        <input type="number" class="form-input" id="modalPackagePrice" required onchange="updateModalPrices()">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">부가세(10%)</label>
+                        <input type="number" class="form-input" id="modalVat" readonly style="background: rgb(245, 245, 247);">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">총액</label>
+                        <input type="number" class="form-input" id="modalAmount" readonly style="background: rgb(245, 245, 247);">
                     </div>
 
                     <div class="form-group">
