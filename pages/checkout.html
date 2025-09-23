@@ -1630,7 +1630,7 @@
             // 결제 정보 준비
             const paymentData = {
                 package: {
-                    name: '블로그 체험단',
+                    name: `블로그 체험단 ${selectedPackage.people}명`,  // 정확한 패키지명
                     people: selectedPackage.people,
                     originalPrice: selectedPackage.originalPrice,
                     discountRate: selectedPackage.discount,
@@ -1684,6 +1684,7 @@
                 phone: paymentData.customer.phone,
                 businessName: paymentData.customer.company || '',
                 businessType: paymentData.customer.businessType || '',
+                industryType: paymentData.customer.businessType || '',  // 업종 정보 추가
                 packageName: paymentData.package.name,
                 packagePrice: paymentData.package.total,
                 packagePeople: paymentData.package.people,
@@ -1702,7 +1703,9 @@
                 customerEmail: paymentData.customer.email,
                 customerPhone: paymentData.customer.phone,
                 businessName: `${paymentData.customer.company || ''}`,
-                packageName: paymentData.package.name,
+                industryType: paymentData.customer.businessType || '',  // 업종 추가
+                packageName: paymentData.package.name,  // 이미 "블로그 체험단 60명" 형식
+                packagePrice: paymentData.package.price,  // 상품금액 (VAT 제외)
                 totalAmount: paymentData.package.total,
                 amount: paymentData.package.total,
                 paymentMethod: 'payapp',

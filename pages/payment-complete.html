@@ -242,7 +242,8 @@
                             // 전화번호는 checkoutData를 최우선으로 사용 (실제 입력값)
                             phone: parsed.phone || orderData.buyerphone || '',
                             businessName: parsed.businessName || parsed.company || '',
-                            businessNumber: parsed.businessNumber || parsed.businessType || ''
+                            businessNumber: parsed.businessNumber || '',
+                            industryType: parsed.industryType || parsed.businessType || ''  // 업종 정보
                         };
 
                         // 전화번호 검증 및 로그
@@ -308,23 +309,29 @@
                 if (orderData.goodname) {
                     packageInfo.name = orderData.goodname;
                 }
+                // orderData.price는 이미 부가세 포함된 총액
+                let totalAmount = 0;
+                let packagePrice = 0;
+                let vat = 0;
+
                 if (orderData.price) {
-                    packageInfo.price = parseInt(orderData.price) || 0;
+                    totalAmount = parseInt(orderData.price) || 0;
+                    // 총액에서 부가세 제외한 상품금액 계산 (역산)
+                    packagePrice = Math.round(totalAmount / 1.1);
+                    vat = totalAmount - packagePrice;
+                    packageInfo.price = packagePrice;  // 상품금액 저장
                 }
 
                 // 가격이 0이면 경고
-                if (!packageInfo.price || packageInfo.price === 0) {
+                if (!totalAmount || totalAmount === 0) {
                     console.warn('⚠️ 주문 금액이 0원입니다. orderData.price:', orderData.price);
                 }
 
-                // 부가세 계산 (10%)
-                const vat = Math.round((packageInfo.price || 0) * 0.1);
-                const totalAmount = (packageInfo.price || 0) + vat;
-
                 console.log('💰 금액 계산:');
-                console.log('  - 상품금액:', packageInfo.price);
+                console.log('  - 총액 (PayApp에서 받은 값):', totalAmount);
+                console.log('  - 상품금액 (역산):', packagePrice);
                 console.log('  - 부가세(10%):', vat);
-                console.log('  - 총액:', totalAmount);
+                console.log('  - 검증: ', packagePrice, '+', vat, '=', totalAmount);
 
                 // 주문 데이터 구성 - API가 요구하는 두 가지 형식 모두 포함
                 const fullOrderData = {
@@ -335,6 +342,7 @@
                     customer_phone: customerInfo.phone || '',
                     business_name: customerInfo.businessName || '',
                     business_number: customerInfo.businessNumber || '',
+                    industry_type: customerInfo.industryType || '',  // 업종 추가
                     package_name: packageInfo.name || '미블 체험단',
                     package_price: packageInfo.price || 0,  // 상품금액 (부가세 제외)
                     amount: totalAmount,  // 총액 (부가세 포함)
@@ -350,7 +358,8 @@
                         email: customerInfo.email || '',
                         phone: customerInfo.phone || '',
                         businessName: customerInfo.businessName || '',
-                        businessNumber: customerInfo.businessNumber || ''
+                        businessNumber: customerInfo.businessNumber || '',
+                        industryType: customerInfo.industryType || ''  // 업종 추가
                     },
                     packageInfo: {
                         name: packageInfo.name || '미블 체험단',
@@ -510,7 +519,10 @@
                     price: paymentData.totalAmount || paymentData.amount || 0,
                     buyer: paymentData.customerName || '',
                     buyerphone: paymentData.customerPhone || '',
-                    buyeremail: paymentData.customerEmail || ''
+                    buyeremail: paymentData.customerEmail || '',
+                    industryType: paymentData.industryType || '',
+                    packageName: paymentData.packageName || '',
+                    packagePrice: paymentData.packagePrice || 0
                 };
 
                 console.log('✅ sessionStorage에서 복구한 결제 정보로 처리');

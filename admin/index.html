@@ -539,6 +539,11 @@
                 <div class="stat-change">+0% 전일 대비</div>
             </div>
             <div class="stat-card">
+                <div class="stat-label">오늘 매출</div>
+                <div class="stat-value" id="todaySales">₩0</div>
+                <div class="stat-change">+0% 전일 대비</div>
+            </div>
+            <div class="stat-card">
                 <div class="stat-label">이번 주 매출</div>
                 <div class="stat-value" id="weekSales">₩0</div>
                 <div class="stat-change">+0% 전주 대비</div>
@@ -798,11 +803,15 @@
                 todayEnd.setDate(todayEnd.getDate() + 1);
 
                 // 오늘 주문 필터링
-                const todayOrders = orders.filter(order => {
+                const todayOrdersList = orders.filter(order => {
                     // KST 시간 우선 사용
                     const orderDate = new Date(order.created_at_kst || order.created_at);
                     return orderDate >= todayStart && orderDate < todayEnd;
-                }).length;
+                });
+                const todayOrders = todayOrdersList.length;
+
+                // 오늘 매출 계산
+                const todaySales = todayOrdersList.reduce((sum, order) => sum + (order.amount || 0), 0);
 
                 // 이번 주 매출 (최근 7일)
                 const weekAgo = new Date();
@@ -817,6 +826,7 @@
 
                 // UI 업데이트
                 document.getElementById('todayOrders').textContent = todayOrders.toString();
+                document.getElementById('todaySales').textContent = `₩${todaySales.toLocaleString()}`;
                 document.getElementById('weekSales').textContent = `₩${weekSales.toLocaleString()}`;
                 document.getElementById('pendingOrders').textContent = pendingOrders.toString();
                 document.getElementById('completionRate').textContent = `${completionRate}%`;
@@ -824,6 +834,7 @@
                 console.error('Stats load error:', error);
                 // 에러 시 기본값
                 document.getElementById('todayOrders').textContent = '0';
+                document.getElementById('todaySales').textContent = '₩0';
                 document.getElementById('weekSales').textContent = '₩0';
                 document.getElementById('pendingOrders').textContent = '0';
                 document.getElementById('completionRate').textContent = '0%';
