@@ -20,7 +20,7 @@
             const CONFIG = {
                 userid: 'ksbm',
                 linkkey: 'QLo9WUgFwaqAYjAiv6z86e1DPJnCCRVaOgT+oqg6zaM=',
-                feedbackurl: '',  // 빈 값으로 설정 (에러 70080 방지)
+                feedbackurl: 'https://mamahome-five.vercel.app/api/payapp-feedback',  // 서버 간 결제 결과 통보
                 returnurl: window.location.origin + '/pages/payment-complete.html',  // 결제 완료 후 페이지
                 environment: 'production'
             };
@@ -64,7 +64,7 @@
                     recvphone: params.recvphone.replace(/-/g, ''),
                     memo: params.memo || '',
                     reqaddr: '0',
-                    feedbackurl: this.config.feedbackurl || '',
+                    feedbackurl: this.config.feedbackurl || 'https://mamahome-five.vercel.app/api/payapp-feedback',
                     var1: params.var1 || '',
                     var2: params.var2 || '',
                     smsuse: params.smsuse || 'n',
