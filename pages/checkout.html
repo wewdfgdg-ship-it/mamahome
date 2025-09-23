@@ -70,7 +70,8 @@
                     smsuse: params.smsuse || 'n',
                     email: params.email || '',
                     buyer: params.buyer || '',
-                    returnurl: window.location.origin + '/pages/payment-complete.html'  // 결제 완료 후 리다이렉트 URL
+                    returnurl: window.location.origin + '/pages/payment-complete.html',  // 결제 완료 후 리다이렉트 URL
+                    shopurl: window.location.origin  // 쇼핑몰 URL (PayApp 문서에 따라 추가)
                 };
 
                 // 결제 수단 설정
@@ -101,6 +102,8 @@
                 }
 
                 console.log('프록시 서버로 결제 요청:', requestData);
+                console.log('returnurl 설정값:', requestData.returnurl);
+                console.log('현재 origin:', window.location.origin);
 
                 fetch(`${apiBaseUrl}/api/payapp-proxy`, {
                     method: 'POST',
@@ -127,6 +130,16 @@
 
                     if (data.state === '1' && data.payurl) {
                         console.log('결제 URL 받기 성공:', data.payurl);
+                        console.log('PayApp 응답 전체:', data);
+
+                        // returnurl이 payurl에 포함되어 있는지 확인
+                        if (data.payurl.includes('returnurl')) {
+                            console.log('✅ payurl에 returnurl 포함됨');
+                        } else {
+                            console.warn('⚠️ payurl에 returnurl이 포함되지 않음');
+                            // returnurl을 세션에 저장 (나중에 사용)
+                            sessionStorage.setItem('payapp_returnurl', requestData.returnurl);
+                        }
 
                         callback({
                             state: 'PROCESSING',
