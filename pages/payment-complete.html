@@ -440,20 +440,9 @@
             const buyerphone = urlParams.get('buyerphone') || urlParams.get('BUYERPHONE');
             const buyeremail = urlParams.get('buyeremail') || urlParams.get('BUYEREMAIL');
             const message = urlParams.get('message') || urlParams.get('MESSAGE');
-            // 영수증 URL 파라미터 확인
-            const csturl = urlParams.get('csturl') || urlParams.get('CSTURL');
-            const receipturl = urlParams.get('receipturl') || urlParams.get('RECEIPTURL');
-
             console.log('파싱된 파라미터:', {
-                state, orderid, goodname, price, buyer, buyerphone, buyeremail,
-                csturl, receipturl
+                state, orderid, goodname, price, buyer, buyerphone, buyeremail
             });
-
-            // 영수증 URL 확인 및 로그
-            const finalReceiptUrl = csturl || receipturl;
-            if (finalReceiptUrl) {
-                console.log('🎯 PayApp 영수증 URL:', finalReceiptUrl);
-            }
 
             // 로딩 상태 숨기기
             document.getElementById('loadingState').style.display = 'none';
@@ -522,17 +511,8 @@
                     buyer: buyer,
                     buyerphone: buyerphone,
                     buyeremail: buyeremail,
-                    state: 'success',
-                    receiptUrl: finalReceiptUrl || ''  // 영수증 URL 추가
+                    state: 'success'
                 };
-
-                // 영수증 URL을 주문번호와 함께 저장
-                if (finalReceiptUrl && orderid) {
-                    const receipts = JSON.parse(localStorage.getItem('payappReceipts') || '{}');
-                    receipts[orderid] = finalReceiptUrl;
-                    localStorage.setItem('payappReceipts', JSON.stringify(receipts));
-                    console.log('💾 영수증 URL 저장됨:', orderid, '->', finalReceiptUrl);
-                }
 
                 // checkoutData가 있으면 보완
                 if (checkoutData && (!goodname || !price || !buyer)) {
