@@ -329,7 +329,7 @@
                 // 주문 데이터 구성 - API가 요구하는 두 가지 형식 모두 포함
                 const fullOrderData = {
                     // 플랫 구조 (Supabase 테이블용)
-                    order_number: orderData.orderid || orderData.orderNumber || 'ORD-' + Date.now(),
+                    order_number: orderData.orderid || orderData.orderNumber || 'PAYAPP-' + Date.now(),
                     customer_name: customerInfo.name || '미확인',
                     customer_email: customerInfo.email || '',
                     customer_phone: customerInfo.phone || '',
@@ -344,7 +344,7 @@
                     created_at: new Date().toISOString(),
 
                     // 중첩 구조 (API 호환성을 위해 추가)
-                    orderNumber: orderData.orderid || orderData.orderNumber || 'ORD-' + Date.now(),
+                    orderNumber: orderData.orderid || orderData.orderNumber || 'PAYAPP-' + Date.now(),
                     customer: {
                         name: customerInfo.name || '미확인',
                         email: customerInfo.email || '',
@@ -537,9 +537,26 @@
 
                 // PayApp이 파라미터를 안 보내는 경우 checkoutData에서 가져오기
                 const checkoutData = localStorage.getItem('checkoutData');
+                // 주문번호 생성: PayApp에서 orderid가 오면 사용, 없으면 새로 생성
+                let generatedOrderNumber;
+                if (orderid && !orderid.startsWith('TEST')) {
+                    // PayApp에서 온 실제 주문번호 사용
+                    generatedOrderNumber = orderid;
+                } else if (!orderid) {
+                    // orderid가 없으면 새로 생성 (PAYAPP- 접두사로 구분)
+                    generatedOrderNumber = 'PAYAPP-' + Date.now();
+                } else {
+                    // TEST로 시작하는 주문번호는 실제 주문번호로 변경
+                    generatedOrderNumber = 'PAYAPP-' + Date.now();
+                }
+
+                console.log('🔍 주문번호 생성 로직:');
+                console.log('  - PayApp orderid:', orderid);
+                console.log('  - 생성된 주문번호:', generatedOrderNumber);
+
                 let finalOrderData = {
-                    orderid: orderid || 'ORD-' + Date.now(),
-                    orderNumber: orderid || 'ORD-' + Date.now(),
+                    orderid: generatedOrderNumber,
+                    orderNumber: generatedOrderNumber,
                     goodname: goodname,
                     price: price,
                     buyer: buyer,
