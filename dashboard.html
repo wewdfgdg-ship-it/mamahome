@@ -652,7 +652,7 @@
                                     </div>
                                 </div>
                                 <div class="order-footer" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--color-border);">
-                                    <button onclick="viewPayAppReceipt('${order.orderNumber}')"
+                                    <button onclick="viewPayAppReceipt('${order.orderNumber}', '${order.receiptUrl || ''}')"
                                             style="background: var(--color-primary-main);
                                                    color: white;
                                                    border: none;
@@ -716,7 +716,7 @@
                                             </div>
                                         </div>
                                         <div class="order-footer" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--color-border);">
-                                            <button onclick="viewPayAppReceipt('${order.order_number}')"
+                                            <button onclick="viewPayAppReceipt('${order.order_number}', '${order.receipt_url || ''}')"
                                                     style="background: var(--color-primary-main);
                                                            color: white;
                                                            border: none;
@@ -791,17 +791,25 @@
         }
 
         // PayApp 영수증 확인 함수
-        function viewPayAppReceipt(orderNumber) {
-            console.log('PayApp 영수증 확인 - 주문번호:', orderNumber);
+        function viewPayAppReceipt(orderNumber, csturl) {
+            console.log('PayApp 영수증 확인 - 주문번호:', orderNumber, 'CSTURL:', csturl);
 
-            // CONFIG에서 userid 가져오기
-            const userid = (typeof CONFIG !== 'undefined' && CONFIG.userid) ? CONFIG.userid : 'ksbm';
+            let receiptUrl;
 
-            // PayApp 영수증 조회 URL
-            // PayApp 관리자 페이지에서 확인 가능한 영수증 URL 형식
-            const receiptUrl = `https://pay.payapp.kr/pay/pay_receipt.php?userid=${userid}&orderid=${orderNumber}`;
+            // CSTURL이 있으면 우선 사용
+            if (csturl) {
+                // CSTURL이 URL 인코딩되어 있을 수 있으므로 디코딩
+                receiptUrl = decodeURIComponent(csturl);
+                console.log('CSTURL 사용:', receiptUrl);
+            } else {
+                // CSTURL이 없으면 기존 방식으로 URL 생성
+                // CONFIG에서 userid 가져오기
+                const userid = (typeof CONFIG !== 'undefined' && CONFIG.userid) ? CONFIG.userid : 'ksbm';
+                receiptUrl = `https://pay.payapp.kr/pay/pay_receipt.php?userid=${userid}&orderid=${orderNumber}`;
+                console.log('기본 URL 생성:', receiptUrl);
+            }
 
-            console.log('영수증 URL:', receiptUrl);
+            console.log('최종 영수증 URL:', receiptUrl);
 
             // 새 창으로 영수증 열기
             const receiptWindow = window.open(receiptUrl, 'PayAppReceipt',

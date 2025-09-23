@@ -309,6 +309,7 @@
                     amount: packageInfo.price || 0,
                     payment_method: 'PayApp',
                     status: 'paid',
+                    receipt_url: orderData.csturl || '',  // PayApp 영수증 URL 저장
                     created_at: new Date().toISOString(),
 
                     // 중첩 구조 (API 호환성을 위해 추가)
@@ -401,6 +402,7 @@
                     amount: fullOrderData.amount,
                     paymentMethod: fullOrderData.payment_method,
                     status: fullOrderData.status,
+                    receiptUrl: fullOrderData.receipt_url,  // PayApp 영수증 URL 저장
                     createdAt: fullOrderData.created_at
                 };
                 const orders = JSON.parse(localStorage.getItem('orders') || '[]');
@@ -440,8 +442,9 @@
             const buyerphone = urlParams.get('buyerphone') || urlParams.get('BUYERPHONE');
             const buyeremail = urlParams.get('buyeremail') || urlParams.get('BUYEREMAIL');
             const message = urlParams.get('message') || urlParams.get('MESSAGE');
+            const csturl = urlParams.get('csturl') || urlParams.get('CSTURL');  // PayApp 영수증 URL
             console.log('파싱된 파라미터:', {
-                state, orderid, goodname, price, buyer, buyerphone, buyeremail
+                state, orderid, goodname, price, buyer, buyerphone, buyeremail, csturl
             });
 
             // 로딩 상태 숨기기
@@ -511,7 +514,8 @@
                     buyer: buyer,
                     buyerphone: buyerphone,
                     buyeremail: buyeremail,
-                    state: 'success'
+                    state: 'success',
+                    csturl: csturl  // PayApp 영수증 URL 추가
                 };
 
                 // checkoutData가 있으면 보완
