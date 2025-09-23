@@ -225,7 +225,8 @@ async function getOrders(req, res) {
       const ordersWithKST = (data || []).map(order => ({
         ...order,
         created_at_kst: order.created_at ? toKST(order.created_at) : null,
-        updated_at_kst: order.updated_at ? toKST(order.updated_at) : null
+        updated_at_kst: order.updated_at ? toKST(order.updated_at) : null,
+        receipt_url: order.receipt_url || ''  // receipt_url 필드 포함
       }));
 
       return res.status(200).json({
