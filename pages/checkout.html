@@ -1692,6 +1692,9 @@
 
             localStorage.setItem('checkoutData', JSON.stringify(checkoutInfo));
 
+            // 주문번호 생성
+            const orderNumber = 'ORD-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+
             // PayApp이 파라미터 없이 리다이렉트하는 경우를 대비하여 sessionStorage에도 저장
             const pendingPaymentData = {
                 orderNumber: orderNumber,
@@ -1770,6 +1773,7 @@
 
                 // PayApp으로 전달할 데이터 (goodname은 매장명이어야 함)
                 const payappParams = {
+                    orderid: orderNumber,  // 주문번호 추가
                     goodname: paymentData.customer.company || '매장명 미입력',  // 매장명/회사명
                     price: paymentData.package.total,
                     recvphone: paymentData.customer.phone,
