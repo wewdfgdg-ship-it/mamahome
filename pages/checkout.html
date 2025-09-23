@@ -1678,7 +1678,7 @@
             }
 
             // 결제 정보를 로컬 스토리지에 저장 (payment-complete에서 사용)
-            localStorage.setItem('checkoutData', JSON.stringify({
+            const checkoutInfo = {
                 name: paymentData.customer.name,
                 email: paymentData.customer.email,
                 phone: paymentData.customer.phone,
@@ -1688,7 +1688,26 @@
                 packagePrice: paymentData.package.total,
                 packagePeople: paymentData.package.people,
                 timestamp: new Date().toISOString()
-            }));
+            };
+
+            localStorage.setItem('checkoutData', JSON.stringify(checkoutInfo));
+
+            // PayApp이 파라미터 없이 리다이렉트하는 경우를 대비하여 sessionStorage에도 저장
+            const pendingPaymentData = {
+                orderNumber: orderNumber,
+                customerName: paymentData.customer.name,
+                customerEmail: paymentData.customer.email,
+                customerPhone: paymentData.customer.phone,
+                businessName: `${paymentData.customer.company || ''}`,
+                packageName: paymentData.package.name,
+                totalAmount: paymentData.package.total,
+                amount: paymentData.package.total,
+                paymentMethod: 'payapp',
+                status: 'pending'
+            };
+
+            sessionStorage.setItem('pendingPayment', JSON.stringify(pendingPaymentData));
+            console.log('📝 결제 정보를 sessionStorage에 저장:', pendingPaymentData);
 
             // 페이앱 결제 요청
             console.log('=== 결제 프로세스 시작 ===');
