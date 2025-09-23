@@ -1338,10 +1338,10 @@
                 // Admin 페이지용 임시 토큰
                 const adminToken = localStorage.getItem('adminToken') || 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQG1yYmxlLmtyIiwiaXNBZG1pbiI6dHJ1ZX0.admin';
 
-                // API에서 실제 사용자 데이터 가져오기
-                const usersResponse = await fetch('https://mamahome-five.vercel.app/api/users', {
+                // API에서 실제 사용자 데이터 가져오기 (admin-users 엔드포인트 사용)
+                const usersResponse = await fetch('https://mamahome-five.vercel.app/api/admin-users', {
                     headers: {
-                        'Authorization': adminToken,
+                        'X-Admin-Password': 'admin1234',
                         'Content-Type': 'application/json'
                     }
                 });
