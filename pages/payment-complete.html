@@ -287,7 +287,12 @@
                     packageInfo.name = orderData.goodname;
                 }
                 if (orderData.price) {
-                    packageInfo.price = parseInt(orderData.price);
+                    packageInfo.price = parseInt(orderData.price) || 0;
+                }
+
+                // 가격이 0이면 경고
+                if (!packageInfo.price || packageInfo.price === 0) {
+                    console.warn('⚠️ 주문 금액이 0원입니다. orderData.price:', orderData.price);
                 }
 
                 // 주문 데이터 구성 - API가 요구하는 두 가지 형식 모두 포함
@@ -423,14 +428,15 @@
             console.log('전체 URL:', window.location.href);
             console.log('URL 파라미터:', window.location.search);
 
-            const state = urlParams.get('state');
-            const orderid = urlParams.get('orderid');
-            const goodname = urlParams.get('goodname');
-            const price = urlParams.get('price');
-            const buyer = urlParams.get('buyer');
-            const buyerphone = urlParams.get('buyerphone');
-            const buyeremail = urlParams.get('buyeremail');
-            const message = urlParams.get('message');
+            // PayApp이 대문자로 보내는 경우도 처리
+            const state = urlParams.get('state') || urlParams.get('STATE');
+            const orderid = urlParams.get('orderid') || urlParams.get('ORDERID');
+            const goodname = urlParams.get('goodname') || urlParams.get('GOODNAME');
+            const price = urlParams.get('price') || urlParams.get('PRICE');
+            const buyer = urlParams.get('buyer') || urlParams.get('BUYER');
+            const buyerphone = urlParams.get('buyerphone') || urlParams.get('BUYERPHONE');
+            const buyeremail = urlParams.get('buyeremail') || urlParams.get('BUYEREMAIL');
+            const message = urlParams.get('message') || urlParams.get('MESSAGE');
 
             console.log('파싱된 파라미터:', {
                 state, orderid, goodname, price, buyer, buyerphone, buyeremail
@@ -487,16 +493,35 @@
                     buyeremail: buyeremail
                 });
 
-                saveOrderToDatabase({
-                    orderid: orderid,
-                    orderNumber: orderid,
+                // PayApp이 파라미터를 안 보내는 경우 checkoutData에서 가져오기
+                const checkoutData = localStorage.getItem('checkoutData');
+                let finalOrderData = {
+                    orderid: orderid || 'ORD-' + Date.now(),
+                    orderNumber: orderid || 'ORD-' + Date.now(),
                     goodname: goodname,
                     price: price,
                     buyer: buyer,
                     buyerphone: buyerphone,
                     buyeremail: buyeremail,
                     state: 'success'
-                }).then(() => {
+                };
+
+                // checkoutData가 있으면 보완
+                if (checkoutData && (!goodname || !price || !buyer)) {
+                    try {
+                        const checkout = JSON.parse(checkoutData);
+                        console.log('📌 checkoutData에서 보완:', checkout);
+                        finalOrderData.goodname = finalOrderData.goodname || checkout.packageName || '미블 체험단 서비스';
+                        finalOrderData.price = finalOrderData.price || checkout.packagePrice || 0;
+                        finalOrderData.buyer = finalOrderData.buyer || checkout.name || '';
+                        finalOrderData.buyerphone = finalOrderData.buyerphone || checkout.phone || '';
+                        finalOrderData.buyeremail = finalOrderData.buyeremail || checkout.email || '';
+                    } catch (e) {
+                        console.error('checkoutData 파싱 오류:', e);
+                    }
+                }
+
+                saveOrderToDatabase(finalOrderData).then(() => {
                     console.log('✅ saveOrderToDatabase 완료');
                 }).catch(error => {
                     console.error('❌ saveOrderToDatabase 실패:', error);
