@@ -21,7 +21,7 @@
                 userid: 'ksbm',
                 linkkey: 'QLo9WUgFwaqAYjAiv6z86e1DPJnCCRVaOgT+oqg6zaM=',
                 feedbackurl: '',  // 빈 값으로 설정 (에러 70080 방지)
-                returnurl: '',  // 동적으로 설정됨
+                returnurl: window.location.origin + '/pages/payment-complete.html',  // 결제 완료 후 페이지
                 environment: 'production'
             };
             window.CONFIG = CONFIG;
@@ -69,7 +69,8 @@
                     var2: params.var2 || '',
                     smsuse: params.smsuse || 'n',
                     email: params.email || '',
-                    buyer: params.buyer || ''
+                    buyer: params.buyer || '',
+                    returnurl: window.location.origin + '/pages/payment-complete.html'  // 결제 완료 후 리다이렉트 URL
                 };
 
                 // 결제 수단 설정
