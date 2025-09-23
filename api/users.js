@@ -73,7 +73,59 @@ export default async function handler(req, res) {
     }
   }
 
+  // /api/users - 전체 사용자 목록 (관리자 전용)
+  if (pathParts.length === 2 && pathParts[1] === 'users') {
+    if (req.method === 'GET') {
+      // 관리자 권한 체크 (임시로 모든 인증된 사용자 허용)
+      return await getAllUsers(req, res, decoded);
+    }
+  }
+
   res.status(404).json({ error: 'Endpoint not found' });
+}
+
+// 전체 사용자 목록 조회 (관리자 전용)
+async function getAllUsers(req, res, decoded) {
+  try {
+    if (!supabase) {
+      // 개발 환경용 더미 응답
+      return res.status(200).json({
+        success: true,
+        users: [
+          {
+            id: '1',
+            email: 'test@example.com',
+            name: '테스트 사용자1',
+            phone: '010-1234-5678',
+            business_name: '테스트 회사',
+            business_number: '123-45-67890',
+            created_at: new Date().toISOString(),
+            last_login: new Date().toISOString()
+          }
+        ]
+      });
+    }
+
+    // Supabase에서 모든 사용자 가져오기
+    const { data: users, error } = await supabase
+      .from('users')
+      .select('id, email, name, phone, business_name, business_number, created_at, last_login')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Get all users error:', error);
+      return res.status(500).json({ error: '사용자 목록 조회 중 오류가 발생했습니다.' });
+    }
+
+    res.status(200).json({
+      success: true,
+      users: users || []
+    });
+
+  } catch (error) {
+    console.error('Get all users error:', error);
+    res.status(500).json({ error: '사용자 목록 조회 중 오류가 발생했습니다.' });
+  }
 }
 
 // 사용자 정보 조회

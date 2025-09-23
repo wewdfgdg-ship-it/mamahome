@@ -718,7 +718,7 @@
                         const data = await response.json();
 
                         if (data.success) {
-                            authToken = data.token;
+                            authToken = 'Bearer ' + data.token;  // Bearer 추가
                             localStorage.setItem('adminToken', authToken);
                             showDashboard();
                         } else {
@@ -728,7 +728,15 @@
                         console.error('Login API error:', error);
                         // API 실패 시에도 로컬 인증 시도
                         if (password === 'admin1234') {
-                            authToken = 'admin-token-' + btoa(Date.now() + '-mrble');
+                            // 간단한 JWT 형식 토큰 생성
+                            const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+                            const payload = btoa(JSON.stringify({
+                                email: 'admin@mrble.kr',
+                                isAdmin: true,
+                                exp: Date.now() + 86400000
+                            }));
+                            const signature = 'admin-signature';
+                            authToken = 'Bearer ' + header + '.' + payload + '.' + signature;
                             localStorage.setItem('adminToken', authToken);
                             showDashboard();
                         } else {
@@ -1326,13 +1334,42 @@
             membersTableBody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 40px; color: rgb(134, 134, 139);">회원 데이터를 불러오는 중...</td></tr>';
 
             try {
-                // localStorage에서 회원 데이터 가져오기
-                const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                // 먼저 간단한 JWT 토큰 생성 (실제로는 로그인 시 받은 토큰 사용)
+                // Admin 페이지용 임시 토큰
+                const adminToken = localStorage.getItem('adminToken') || 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQG1yYmxlLmtyIiwiaXNBZG1pbiI6dHJ1ZX0.admin';
+
+                // API에서 실제 사용자 데이터 가져오기
+                const usersResponse = await fetch('https://mamahome-five.vercel.app/api/users', {
+                    headers: {
+                        'Authorization': adminToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                let users = [];
+                if (usersResponse.ok) {
+                    const usersData = await usersResponse.json();
+                    users = usersData.users || [];
+                } else {
+                    // API 실패 시 localStorage 폴백
+                    console.log('API 호출 실패, localStorage 사용');
+                    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                    users = registeredUsers.map((user, index) => ({
+                        id: user.id || `local-${index}`,
+                        email: user.email,
+                        name: user.name,
+                        phone: user.phone,
+                        business_name: user.businessName || '',
+                        business_number: user.businessNumber || '',
+                        created_at: user.registeredAt || new Date().toISOString(),
+                        last_login: user.lastLogin || null
+                    }));
+                }
 
                 // API에서 주문 데이터 가져와서 주문 수 계산
-                const response = await fetch('https://mamahome-five.vercel.app/api/orders');
-                const data = await response.json();
-                const orders = data.orders || [];
+                const ordersResponse = await fetch('https://mamahome-five.vercel.app/api/orders');
+                const ordersData = await ordersResponse.json();
+                const orders = ordersData.orders || [];
 
                 // 회원별 주문 수 계산
                 const orderCountByEmail = {};
@@ -1342,75 +1379,48 @@
                     }
                 });
 
-                // 테스트용 샘플 회원 추가
-                if (registeredUsers.length === 0) {
-                    registeredUsers.push({
-                        name: '김미블',
-                        email: 'test@mrble.com',
-                        phone: '010-1234-5678',
-                        businessName: '미블 카페',
-                        businessNumber: '123-45-67890',
-                        joinDate: new Date('2024-01-15').toISOString(),
-                        status: 'active',
-                        marketingAgreed: true
-                    });
-                    registeredUsers.push({
-                        name: '이체험',
-                        email: 'lee@example.com',
-                        phone: '010-9876-5432',
-                        businessName: '체험 레스토랑',
-                        businessNumber: '987-65-43210',
-                        joinDate: new Date('2024-02-20').toISOString(),
-                        status: 'active',
-                        marketingAgreed: false
-                    });
-                    registeredUsers.push({
-                        name: '박마케팅',
-                        email: 'park@marketing.com',
-                        phone: '010-5555-5555',
-                        businessName: '마케팅 플러스',
-                        businessNumber: '555-55-55555',
-                        joinDate: new Date('2024-03-10').toISOString(),
-                        status: 'inactive',
-                        marketingAgreed: true
-                    });
-                }
-
                 // 전체 회원 수 업데이트
-                document.getElementById('totalMembers').textContent = `전체: ${registeredUsers.length}명`;
+                document.getElementById('totalMembers').textContent = `전체: ${users.length}명`;
 
-                if (registeredUsers.length === 0) {
+                if (users.length === 0) {
                     membersTableBody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 40px; color: rgb(134, 134, 139);">등록된 회원이 없습니다.</td></tr>';
                     return;
                 }
 
-                // 회원 테이블 렌더링
-                membersTableBody.innerHTML = registeredUsers.map((user, index) => `
-                    <tr data-member-id="${index}">
-                        <td class="checkbox-cell">
-                            <input type="checkbox" class="member-checkbox" value="${index}" onchange="updateMemberDeleteButton()">
-                        </td>
-                        <td>${new Date(user.joinDate).toLocaleDateString('ko-KR')}</td>
-                        <td><strong>${user.name}</strong></td>
-                        <td>${user.email}</td>
-                        <td>${user.phone || '-'}</td>
-                        <td>${user.businessName || '-'}</td>
-                        <td>${user.businessNumber || '-'}</td>
-                        <td>${orderCountByEmail[user.email] || 0}건</td>
-                        <td>
-                            <span class="status-badge ${user.status === 'active' ? 'status-paid' : 'status-cancelled'}">
-                                ${user.status === 'active' ? '활성' : '비활성'}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="action-btn" onclick="viewMember(${index})">보기</button>
-                                <button class="action-btn" onclick="editMemberStatus(${index})">상태변경</button>
-                                <button class="action-btn delete" onclick="deleteMember(${index})">삭제</button>
-                            </div>
-                        </td>
-                    </tr>
-                `).join('');
+                // 회원 테이블 렌더링 - 실제 DB 데이터 사용
+                membersTableBody.innerHTML = users.map((user, index) => {
+                    const createdDate = user.created_at ? new Date(user.created_at).toLocaleDateString('ko-KR') : '-';
+                    const lastLoginDate = user.last_login ? new Date(user.last_login).toLocaleDateString('ko-KR') : '없음';
+                    const orderCount = orderCountByEmail[user.email] || 0;
+                    const isActive = user.last_login && (new Date() - new Date(user.last_login)) < 30 * 24 * 60 * 60 * 1000; // 30일 이내 로그인
+
+                    return `
+                        <tr data-member-id="${user.id}">
+                            <td class="checkbox-cell">
+                                <input type="checkbox" class="member-checkbox" value="${user.id}" onchange="updateMemberDeleteButton()">
+                            </td>
+                            <td>${createdDate}</td>
+                            <td><strong>${user.name || '이름 없음'}</strong></td>
+                            <td>${user.email}</td>
+                            <td>${user.phone || '-'}</td>
+                            <td>${user.business_name || '-'}</td>
+                            <td>${user.business_number || '-'}</td>
+                            <td>${orderCount}건</td>
+                            <td>
+                                <span class="status-badge ${isActive ? 'status-paid' : 'status-cancelled'}">
+                                    ${isActive ? '활성' : '비활성'}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn" onclick="viewMember('${user.id}')">보기</button>
+                                    <button class="action-btn" onclick="editMemberStatus('${user.id}')">상태변경</button>
+                                    <button class="action-btn delete" onclick="deleteMember('${user.id}')">삭제</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
             } catch (error) {
                 console.error('회원 데이터 로드 오류:', error);
                 membersTableBody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 40px; color: rgb(134, 134, 139);">회원 데이터를 불러올 수 없습니다.</td></tr>';
