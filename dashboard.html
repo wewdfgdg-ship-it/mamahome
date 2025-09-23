@@ -646,49 +646,55 @@
                         }
 
                         return `
-                            <div class="order-card">
-                                <div class="order-header">
-                                    <span class="order-number">주문번호: ${order.orderNumber || 'N/A'}</span>
-                                    <span class="order-status status-${status}">${statusText}</span>
-                                </div>
-                                <div class="order-details">
-                                    <div class="order-detail-item">
-                                        <span class="detail-label">서비스</span>
-                                        <span class="detail-value">${order.packageInfo?.name || '미블 체험단'}</span>
+                            <div class="order-card" style="padding: 20px;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+                                    <!-- 왼쪽: 주문 정보 -->
+                                    <div style="display: flex; align-items: center; gap: 20px; flex: 1;">
+                                        <div>
+                                            <div style="font-size: 12px; color: #888; margin-bottom: 4px;">주문번호</div>
+                                            <div style="font-weight: 600; font-size: 14px;">${order.orderNumber || 'N/A'}</div>
+                                        </div>
+                                        <div style="width: 1px; height: 30px; background: var(--color-border);"></div>
+                                        <div>
+                                            <div style="font-size: 12px; color: #888; margin-bottom: 4px;">서비스</div>
+                                            <div style="font-weight: 500; font-size: 14px;">${order.packageInfo?.name || '미블 체험단'}</div>
+                                        </div>
+                                        <div style="width: 1px; height: 30px; background: var(--color-border);"></div>
+                                        <div>
+                                            <div style="font-size: 12px; color: #888; margin-bottom: 4px;">상품금액</div>
+                                            <div style="font-weight: 500; font-size: 14px;">₩${packagePrice.toLocaleString()}</div>
+                                        </div>
+                                        <div>
+                                            <div style="font-size: 12px; color: #888; margin-bottom: 4px;">부가세(10%)</div>
+                                            <div style="font-weight: 500; font-size: 14px;">₩${vat.toLocaleString()}</div>
+                                        </div>
+                                        <div>
+                                            <div style="font-size: 12px; color: #888; margin-bottom: 4px;">총액</div>
+                                            <div style="font-weight: 700; font-size: 16px; color: var(--color-primary-main);">₩${totalAmount.toLocaleString()}</div>
+                                        </div>
+                                        <div style="width: 1px; height: 30px; background: var(--color-border);"></div>
+                                        <div>
+                                            <div style="font-size: 12px; color: #888; margin-bottom: 4px;">주문일</div>
+                                            <div style="font-weight: 500; font-size: 14px;">${orderDate}</div>
+                                        </div>
                                     </div>
-                                    <div class="order-detail-item">
-                                        <span class="detail-label">상품금액</span>
-                                        <span class="detail-value">₩${packagePrice.toLocaleString()}</span>
+
+                                    <!-- 오른쪽: 상태와 버튼 -->
+                                    <div style="display: flex; align-items: center; gap: 15px;">
+                                        <span class="order-status status-${status}" style="padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600;">${statusText}</span>
+                                        <button onclick="viewPayAppReceipt('${order.orderNumber}', '${order.receiptUrl || ''}')"
+                                                style="background: var(--color-primary-main);
+                                                       color: white;
+                                                       border: none;
+                                                       padding: 8px 16px;
+                                                       border-radius: 8px;
+                                                       font-size: 14px;
+                                                       cursor: pointer;
+                                                       transition: all 0.3s ease;
+                                                       white-space: nowrap;">
+                                            📄 PayApp 영수증 확인
+                                        </button>
                                     </div>
-                                    <div class="order-detail-item">
-                                        <span class="detail-label">부가세(10%)</span>
-                                        <span class="detail-value">₩${vat.toLocaleString()}</span>
-                                    </div>
-                                    <div class="order-detail-item">
-                                        <span class="detail-label">총액</span>
-                                        <span class="detail-value" style="font-weight: 700; color: var(--color-primary-main);">₩${totalAmount.toLocaleString()}</span>
-                                    </div>
-                                    <div class="order-detail-item">
-                                        <span class="detail-label">주문일</span>
-                                        <span class="detail-value">${orderDate}</span>
-                                    </div>
-                                    <div class="order-detail-item">
-                                        <span class="detail-label">결제 방법</span>
-                                        <span class="detail-value">${order.paymentMethod || 'PayApp'}</span>
-                                    </div>
-                                </div>
-                                <div class="order-footer" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--color-border);">
-                                    <button onclick="viewPayAppReceipt('${order.orderNumber}', '${order.receiptUrl || ''}')"
-                                            style="background: var(--color-primary-main);
-                                                   color: white;
-                                                   border: none;
-                                                   padding: 8px 16px;
-                                                   border-radius: 8px;
-                                                   font-size: 14px;
-                                                   cursor: pointer;
-                                                   transition: all 0.3s ease;">
-                                        📄 PayApp 영수증 확인
-                                    </button>
                                 </div>
                             </div>
                         `;
@@ -732,49 +738,55 @@
                                 }
 
                                 return `
-                                    <div class="order-card">
-                                        <div class="order-header">
-                                            <span class="order-number">주문번호: ${order.order_number || `ORD-${order.id}`}</span>
-                                            <span class="order-status status-${status}">${statusText}</span>
-                                        </div>
-                                        <div class="order-details">
-                                            <div class="order-detail-item">
-                                                <span class="detail-label">서비스</span>
-                                                <span class="detail-value">${order.package_name || '미블 체험단'}</span>
+                                    <div class="order-card" style="padding: 20px;">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+                                            <!-- 왼쪽: 주문 정보 -->
+                                            <div style="display: flex; align-items: center; gap: 20px; flex: 1;">
+                                                <div>
+                                                    <div style="font-size: 12px; color: #888; margin-bottom: 4px;">주문번호</div>
+                                                    <div style="font-weight: 600; font-size: 14px;">${order.order_number || `ORD-${order.id}`}</div>
+                                                </div>
+                                                <div style="width: 1px; height: 30px; background: var(--color-border);"></div>
+                                                <div>
+                                                    <div style="font-size: 12px; color: #888; margin-bottom: 4px;">서비스</div>
+                                                    <div style="font-weight: 500; font-size: 14px;">${order.package_name || '미블 체험단'}</div>
+                                                </div>
+                                                <div style="width: 1px; height: 30px; background: var(--color-border);"></div>
+                                                <div>
+                                                    <div style="font-size: 12px; color: #888; margin-bottom: 4px;">상품금액</div>
+                                                    <div style="font-weight: 500; font-size: 14px;">₩${packagePrice.toLocaleString()}</div>
+                                                </div>
+                                                <div>
+                                                    <div style="font-size: 12px; color: #888; margin-bottom: 4px;">부가세(10%)</div>
+                                                    <div style="font-weight: 500; font-size: 14px;">₩${vat.toLocaleString()}</div>
+                                                </div>
+                                                <div>
+                                                    <div style="font-size: 12px; color: #888; margin-bottom: 4px;">총액</div>
+                                                    <div style="font-weight: 700; font-size: 16px; color: var(--color-primary-main);">₩${totalAmount.toLocaleString()}</div>
+                                                </div>
+                                                <div style="width: 1px; height: 30px; background: var(--color-border);"></div>
+                                                <div>
+                                                    <div style="font-size: 12px; color: #888; margin-bottom: 4px;">주문일</div>
+                                                    <div style="font-weight: 500; font-size: 14px;">${orderDate}</div>
+                                                </div>
                                             </div>
-                                            <div class="order-detail-item">
-                                                <span class="detail-label">상품금액</span>
-                                                <span class="detail-value">₩${packagePrice.toLocaleString()}</span>
+
+                                            <!-- 오른쪽: 상태와 버튼 -->
+                                            <div style="display: flex; align-items: center; gap: 15px;">
+                                                <span class="order-status status-${status}" style="padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600;">${statusText}</span>
+                                                <button onclick="viewPayAppReceipt('${order.order_number}', '${order.receipt_url || ''}')"
+                                                        style="background: var(--color-primary-main);
+                                                               color: white;
+                                                               border: none;
+                                                               padding: 8px 16px;
+                                                               border-radius: 8px;
+                                                               font-size: 14px;
+                                                               cursor: pointer;
+                                                               transition: all 0.3s ease;
+                                                               white-space: nowrap;">
+                                                    📄 PayApp 영수증 확인
+                                                </button>
                                             </div>
-                                            <div class="order-detail-item">
-                                                <span class="detail-label">부가세(10%)</span>
-                                                <span class="detail-value">₩${vat.toLocaleString()}</span>
-                                            </div>
-                                            <div class="order-detail-item">
-                                                <span class="detail-label">총액</span>
-                                                <span class="detail-value" style="font-weight: 700; color: var(--color-primary-main);">₩${totalAmount.toLocaleString()}</span>
-                                            </div>
-                                            <div class="order-detail-item">
-                                                <span class="detail-label">주문일</span>
-                                                <span class="detail-value">${orderDate}</span>
-                                            </div>
-                                            <div class="order-detail-item">
-                                                <span class="detail-label">결제 방법</span>
-                                                <span class="detail-value">${order.payment_method || 'PayApp'}</span>
-                                            </div>
-                                        </div>
-                                        <div class="order-footer" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--color-border);">
-                                            <button onclick="viewPayAppReceipt('${order.order_number}', '${order.receipt_url || ''}')"
-                                                    style="background: var(--color-primary-main);
-                                                           color: white;
-                                                           border: none;
-                                                           padding: 8px 16px;
-                                                           border-radius: 8px;
-                                                           font-size: 14px;
-                                                           cursor: pointer;
-                                                           transition: all 0.3s ease;">
-                                                📄 PayApp 영수증 확인
-                                            </button>
                                         </div>
                                     </div>
                                 `;
