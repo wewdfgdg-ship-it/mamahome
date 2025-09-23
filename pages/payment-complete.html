@@ -535,10 +535,19 @@
                 saveOrderToDatabase(finalOrderData).then(() => {
                     console.log('✅ saveOrderToDatabase 완료');
                     alert('✅ 주문이 성공적으로 저장되었습니다!');
+
+                    // 3초 후 마이페이지로 자동 이동
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 3000);
                 }).catch(error => {
                     console.error('❌ saveOrderToDatabase 실패:', error);
                     alert(`❌ 주문 저장 실패: ${error.message}`);
-                    // 실패해도 사용자에게는 결제 완료로 표시
+
+                    // 실패해도 3초 후 마이페이지로 이동
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 3000);
                 });
 
                 // 성공 메시지를 부모 창에 전달 (iframe 사용 시)
