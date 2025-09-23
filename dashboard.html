@@ -8,6 +8,9 @@
     <!-- Common Header CSS -->
     <link rel="stylesheet" href="css/common-header.css">
 
+    <!-- 설정 파일 로드 -->
+    <script src="../config.js"></script>
+
     <!-- 인증 헬퍼 로드 -->
     <script src="js/auth.js"></script>
     <style>
@@ -791,9 +794,26 @@
         function viewPayAppReceipt(orderNumber) {
             console.log('PayApp 영수증 확인 - 주문번호:', orderNumber);
 
-            // PayApp 영수증 URL (실제 URL은 PayApp API 문서 참조)
-            // 일반적으로 주문번호로 영수증을 조회하는 형태
-            const receiptUrl = `https://pay.payapp.kr/receipt.php?orderid=${orderNumber}`;
+            // localStorage에서 저장된 영수증 URL 확인
+            const receipts = JSON.parse(localStorage.getItem('payappReceipts') || '{}');
+            let receiptUrl = receipts[orderNumber];
+
+            if (receiptUrl) {
+                console.log('💡 저장된 영수증 URL 사용:', receiptUrl);
+            } else {
+                // 저장된 URL이 없으면 PayApp에서 직접 조회 시도
+                // PayApp 공식 문서에 따르면 userid와 linkkey가 필요할 수 있음
+                console.log('⚠️ 저장된 영수증 URL이 없음. 기본 URL 사용');
+
+                // CONFIG가 있으면 사용
+                const userid = (typeof CONFIG !== 'undefined' && CONFIG.userid) ? CONFIG.userid : 'ksbm';
+
+                // PayApp 영수증 조회 URL
+                // 문서에 따르면 결제 성공 시 반환된 csturl을 사용해야 함
+                receiptUrl = `https://pay.payapp.kr/pay/state_receipt_view.php?userid=${userid}&mul_no=${orderNumber}`;
+
+                alert('영수증 URL이 저장되지 않았습니다.\n결제 직후에만 영수증을 확인할 수 있습니다.\n\nPayApp 고객센터에 문의하시기 바랍니다.');
+            }
 
             // 새 창으로 영수증 열기
             const receiptWindow = window.open(receiptUrl, 'PayAppReceipt',
