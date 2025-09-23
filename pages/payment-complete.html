@@ -428,6 +428,9 @@
             console.log('전체 URL:', window.location.href);
             console.log('URL 파라미터:', window.location.search);
 
+            // 디버깅용 알림
+            console.log('🔴 processPaymentResult 함수 진입');
+
             // PayApp이 대문자로 보내는 경우도 처리
             const state = urlParams.get('state') || urlParams.get('STATE');
             const orderid = urlParams.get('orderid') || urlParams.get('ORDERID');
@@ -445,7 +448,13 @@
             // 로딩 상태 숨기기
             document.getElementById('loadingState').style.display = 'none';
             
-            if (state === 'success' || state === 'SUCCESS' || orderid) {
+            // PayApp은 state=4를 성공으로 보내기도 함
+            console.log('🔴 state 값:', state, '타입:', typeof state);
+            console.log('🔴 orderid 값:', orderid, '타입:', typeof orderid);
+
+            if (state === 'success' || state === 'SUCCESS' || state === '4' || state === 4 || orderid) {
+                console.log('✅ 결제 성공 조건 만족!');
+
                 // 성공 상태 표시
                 document.getElementById('successState').style.display = 'block';
                 
@@ -521,10 +530,14 @@
                     }
                 }
 
+                console.log('🚀 saveOrderToDatabase 호출 직전, finalOrderData:', finalOrderData);
+
                 saveOrderToDatabase(finalOrderData).then(() => {
                     console.log('✅ saveOrderToDatabase 완료');
+                    alert('✅ 주문이 성공적으로 저장되었습니다!');
                 }).catch(error => {
                     console.error('❌ saveOrderToDatabase 실패:', error);
+                    alert(`❌ 주문 저장 실패: ${error.message}`);
                     // 실패해도 사용자에게는 결제 완료로 표시
                 });
 
