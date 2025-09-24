@@ -384,8 +384,64 @@
 
         /* 모바일 반응형 */
         @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px 10px;
+            }
+
+            .welcome-message {
+                font-size: 24px;
+            }
+
+            .section {
+                padding: 20px;
+                border-radius: 12px;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+
             .user-info {
                 display: none;
+            }
+
+            /* 모바일에서 주문 카드 레이아웃 변경 */
+            .order-card > div {
+                flex-direction: column !important;
+                gap: 0 !important;
+            }
+
+            .order-card > div > div:first-child {
+                flex-direction: column !important;
+                gap: 12px !important;
+                width: 100% !important;
+            }
+
+            .order-card > div > div:first-child > div {
+                width: 100% !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+            }
+
+            /* 구분선 숨기기 */
+            .order-card div[style*="width: 1px"] {
+                display: none !important;
+            }
+
+            /* 버튼과 상태 영역 */
+            .order-card > div > div:last-child {
+                width: 100% !important;
+                justify-content: space-between !important;
+                margin-top: 16px !important;
+                padding-top: 16px !important;
+                border-top: 1px solid #f0f0f0 !important;
+            }
+
+            /* 영수증 버튼 크기 조정 */
+            .order-card button {
+                font-size: 12px !important;
+                padding: 6px 12px !important;
             }
 
             /* nav-menu, nav-link 스타일 제거 - common-header.css에서 처리 */
