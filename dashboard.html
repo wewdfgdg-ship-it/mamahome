@@ -382,16 +382,6 @@
             background: rgba(255, 59, 48, 0.1);
         }
 
-        /* 주문 카드 반응형 */
-        @media (min-width: 769px) {
-            .order-content {
-                display: none !important;
-            }
-            .order-desktop {
-                display: flex !important;
-            }
-        }
-
         /* 모바일 반응형 */
         @media (max-width: 768px) {
             .dashboard-container {
@@ -413,14 +403,6 @@
 
             .user-info {
                 display: none;
-            }
-
-            .order-content {
-                display: block !important;
-            }
-
-            .order-desktop {
-                display: none !important;
             }
 
             /* nav-menu, nav-link 스타일 제거 - common-header.css에서 처리 */
@@ -734,6 +716,17 @@
                                     </div>
                                 </div>
 
+                                <!-- 데스크톱용 기존 레이아웃 -->
+                                <style>
+                                    @media (min-width: 769px) {
+                                        .order-content { display: none; }
+                                        .order-desktop { display: flex !important; }
+                                    }
+                                    @media (max-width: 768px) {
+                                        .order-content { display: block; }
+                                        .order-desktop { display: none !important; }
+                                    }
+                                </style>
 
                                 <div class="order-desktop" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
                                     <!-- 왼쪽: 주문 정보 -->
