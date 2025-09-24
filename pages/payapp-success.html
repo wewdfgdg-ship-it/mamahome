@@ -57,6 +57,12 @@
         // PayApp에서 전달된 파라미터 가져오기 (POST/GET 모두 처리)
         const urlParams = new URLSearchParams(window.location.search);
 
+        // 디버깅: 받은 모든 파라미터 출력
+        console.log('=== PayApp Success Page - 받은 파라미터 ===');
+        for (let [key, value] of urlParams) {
+            console.log(`${key}: ${value}`);
+        }
+
         // localStorage에서 checkout 데이터 가져오기
         const checkoutData = localStorage.getItem('checkoutData');
         let savedData = null;
@@ -71,16 +77,54 @@
             // 모든 PayApp 파라미터를 그대로 전달
             const params = new URLSearchParams();
 
-            // PayApp에서 온 파라미터들 (있으면 전달)
-            params.append('state', urlParams.get('state') || 'success');
-            params.append('orderid', urlParams.get('orderid') || urlParams.get('mul_no') || 'ORD-' + Date.now());
+            // PayApp에서 온 파라미터들
+            // state=1 은 성공
+            const state = urlParams.get('state');
+            params.append('state', state || 'success');
+
+            // mul_no가 주문번호
+            const orderId = urlParams.get('mul_no') || urlParams.get('orderid') || 'ORD-' + Date.now();
+            params.append('orderid', orderId);
+
             params.append('goodname', urlParams.get('goodname') || savedData?.packageName || '미블 체험단');
-            params.append('price', urlParams.get('price') || urlParams.get('amt') || savedData?.packagePrice || '0');
-            params.append('buyer', urlParams.get('buyer') || urlParams.get('buyername') || savedData?.name || '');
-            params.append('buyerphone', urlParams.get('buyerphone') || urlParams.get('buyertel') || savedData?.phone || '');
+            params.append('price', urlParams.get('price') || savedData?.packagePrice || '0');
+            params.append('buyer', urlParams.get('buyer') || savedData?.name || '');
+            params.append('buyerphone', urlParams.get('buyerphone') || savedData?.phone || '');
             params.append('buyeremail', urlParams.get('buyeremail') || savedData?.email || '');
-            params.append('message', urlParams.get('message') || '결제가 완료되었습니다');
+
+            // CSTURL 처리 (대문자로 오는 경우)
+            // 예: CSTURL=https%3A%2F%2Fwww.payapp.kr%2FCST%2Fzcv7
+            const cstUrl = urlParams.get('CSTURL') || urlParams.get('csturl') || '';
+
+            if (cstUrl) {
+                // URL 디코딩 (PayApp에서 인코딩된 URL로 전달)
+                const decodedUrl = decodeURIComponent(cstUrl);
+                params.append('receipt_url', decodedUrl);
+                console.log('✅ PayApp 영수증 URL 캡처 성공!');
+                console.log('   원본 (인코딩):', cstUrl);
+                console.log('   디코딩:', decodedUrl);
+            } else {
+                console.error('❌ CSTURL 파라미터가 없습니다!');
+                console.log('받은 파라미터들:', Array.from(urlParams.keys()));
+            }
+
+            // 오류 관련 파라미터
+            const errorMessage = urlParams.get('errorMessage') || '';
+            const errno = urlParams.get('errno') || '';
+            if (errorMessage) {
+                params.append('errorMessage', errorMessage);
+            }
+            if (errno && errno !== '00000') {
+                params.append('errno', errno);
+            }
+
+            params.append('message', '결제가 완료되었습니다');
             params.append('timestamp', new Date().toISOString());
+
+            console.log('=== payment-complete.html로 전달할 파라미터 ===');
+            for (let [key, value] of params) {
+                console.log(`${key}: ${value}`);
+            }
 
             // payment-complete.html로 모든 데이터와 함께 리다이렉트
             window.location.href = 'payment-complete.html?' + params.toString();

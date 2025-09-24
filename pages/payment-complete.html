@@ -348,7 +348,7 @@
                     amount: totalAmount,  // 총액 (부가세 포함)
                     payment_method: 'PayApp',
                     status: 'paid',
-                    receipt_url: orderData.csturl || '',  // PayApp 영수증 URL 저장
+                    receipt_url: orderData.receipt_url || orderData.csturl || orderData.CSTURL || '',  // PayApp 영수증 URL 저장
                     created_at: new Date().toISOString(),
 
                     // 중첩 구조 (API 호환성을 위해 추가)
