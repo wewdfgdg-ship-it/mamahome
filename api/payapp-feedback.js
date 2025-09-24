@@ -30,8 +30,10 @@ export default async function handler(req, res) {
     const params = req.method === 'GET' ? req.query : req.body;
 
     const {
-      state,      // 결제 상태 (4: 입금완료)
+      state,      // 결제 상태 (구형)
+      pay_state,  // 결제 상태 (신형 - 4: 입금완료)
       orderid,    // 주문번호
+      mul_no,     // 결제 요청번호 (PayApp 문서 기준)
       goodname,   // 상품명
       price,      // 결제금액
       recvphone,  // 수신자 전화번호
@@ -42,36 +44,47 @@ export default async function handler(req, res) {
       var2,       // 추가 변수 2
       receipturl, // 영수증 URL (구형 파라미터)
       csturl,     // 영수증 URL (신형 파라미터 - PayApp 문서 기준)
-      paytype,    // 결제수단
-      paydate     // 결제일시
+      payurl,     // 결제 페이지 URL
+      pay_type,   // 결제수단 (1=카드, 2=휴대폰 등)
+      paytype,    // 결제수단 (구형)
+      pay_date,   // 결제일시 (신형)
+      paydate,    // 결제일시 (구형)
+      card_name,  // 카드사명
+      payauthcode // 승인번호
     } = params;
 
-    console.log('결제 상태:', state);
-    console.log('주문번호:', orderid);
+    // 모든 파라미터 로깅 (디버깅용)
+    console.log('전체 파라미터:', params);
+    console.log('결제 상태 (state):', state);
+    console.log('결제 상태 (pay_state):', pay_state);
+    console.log('주문번호:', orderid || mul_no);
     console.log('상품명:', goodname);
     console.log('금액:', price);
     console.log('영수증 URL (receipturl):', receipturl);
     console.log('영수증 URL (csturl):', csturl);
+    console.log('결제 페이지 URL (payurl):', payurl);
+    console.log('결제수단:', pay_type || paytype);
 
-    // 결제 성공 (state === '4' 또는 state === 4)
-    if (state == 4 || state == '4') {
+    // 결제 성공 (state 또는 pay_state === '4' 또는 4)
+    const paymentState = pay_state || state;
+    if (paymentState == 4 || paymentState == '4') {
       console.log('✅ 결제 성공 확인');
 
       // 여기서 데이터베이스에 저장해야 함
       // Supabase에 직접 저장
       try {
         const orderData = {
-          order_number: orderid,
+          order_number: orderid || mul_no || `PAYAPP-${Date.now()}`,
           customer_name: buyer || '미확인',
           customer_email: email || '',
           customer_phone: recvphone || '',
           business_name: goodname || '',  // goodname이 매장명
           package_name: memo || '미블 체험단',  // memo에 패키지 정보
           amount: parseInt(price) || 0,
-          payment_method: paytype || 'payapp',
+          payment_method: pay_type || paytype || 'payapp',
           status: 'paid',
           receipt_url: csturl || receipturl || '',  // csturl 우선, 없으면 receipturl
-          notes: `PayApp Feedback - ${new Date().toISOString()}`
+          notes: `PayApp Feedback - ${new Date().toISOString()} | mul_no: ${mul_no} | csturl: ${csturl}`
         };
 
         console.log('Supabase에 저장할 데이터:', orderData);
