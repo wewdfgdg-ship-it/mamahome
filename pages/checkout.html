@@ -131,19 +131,31 @@
                     if (data.state === '1' && data.payurl) {
                         console.log('결제 URL 받기 성공:', data.payurl);
                         console.log('PayApp 응답 전체:', data);
+                        console.log('응답 키 목록:', Object.keys(data));
 
                         // CSTURL (영수증 URL) 저장 - 중요!
-                        if (data.CSTURL || data.csturl) {
-                            const cstUrl = data.CSTURL || data.csturl;
-                            console.log('🎯 영수증 URL(CSTURL) 받음:', cstUrl);
-                            sessionStorage.setItem('payapp_csturl', cstUrl);
+                        // 가능한 모든 필드 확인
+                        const possibleCstUrlFields = ['CSTURL', 'csturl', 'CstUrl', 'cstURL', 'receipturl', 'receiptUrl'];
+                        let foundCstUrl = null;
+
+                        for (const field of possibleCstUrlFields) {
+                            if (data[field]) {
+                                foundCstUrl = data[field];
+                                console.log(`🎯 영수증 URL 발견 (${field}):`, foundCstUrl);
+                                break;
+                            }
+                        }
+
+                        if (foundCstUrl) {
+                            console.log('✅ 영수증 URL 저장:', foundCstUrl);
+                            sessionStorage.setItem('payapp_csturl', foundCstUrl);
 
                             // pendingPayment 데이터 업데이트
                             const pendingData = sessionStorage.getItem('pendingPayment');
                             if (pendingData) {
                                 try {
                                     const payment = JSON.parse(pendingData);
-                                    payment.csturl = cstUrl;
+                                    payment.csturl = foundCstUrl;
                                     sessionStorage.setItem('pendingPayment', JSON.stringify(payment));
                                     console.log('pendingPayment에 CSTURL 추가됨');
                                 } catch (e) {

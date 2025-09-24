@@ -40,12 +40,30 @@ export default async function handler(req, res) {
 
     const responseText = await payappResponse.text();
 
+    // PayApp 응답 로깅 (디버깅용)
+    console.log('=== PayApp API 응답 ===');
+    console.log('응답 텍스트:', responseText);
+
     // 응답이 JSON인지 확인
     try {
       const jsonResponse = JSON.parse(responseText);
+
+      // JSON 응답 상세 로깅
+      console.log('JSON 파싱 성공:', jsonResponse);
+      if (jsonResponse.CSTURL) {
+        console.log('🎯 CSTURL 발견:', jsonResponse.CSTURL);
+      }
+      if (jsonResponse.csturl) {
+        console.log('🎯 csturl 발견:', jsonResponse.csturl);
+      }
+      if (jsonResponse.payurl) {
+        console.log('📍 payurl:', jsonResponse.payurl);
+      }
+
       return res.status(200).json(jsonResponse);
     } catch (e) {
       // JSON이 아니면 텍스트로 반환
+      console.log('JSON 파싱 실패, 텍스트로 반환');
       return res.status(200).send(responseText);
     }
 
