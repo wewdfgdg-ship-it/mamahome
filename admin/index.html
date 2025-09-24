@@ -499,6 +499,119 @@
             margin-bottom: 16px;
             opacity: 0.5;
         }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 16px;
+            }
+
+            .nav-menu {
+                display: none; /* 모바일에서 메뉴 숨김 */
+            }
+
+            .dashboard {
+                padding: 20px 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 16px;
+            }
+
+            .orders-section {
+                padding: 16px;
+                overflow-x: auto;
+            }
+
+            /* 테이블 모바일 최적화 - 카드 레이아웃으로 변경 */
+            table {
+                display: none;
+            }
+
+            .mobile-order-cards {
+                display: block;
+            }
+
+            .mobile-order-card {
+                background: white;
+                border: 1px solid rgb(232, 232, 237);
+                border-radius: 8px;
+                padding: 16px;
+                margin-bottom: 12px;
+            }
+
+            .mobile-order-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+                padding-bottom: 12px;
+                border-bottom: 1px solid rgb(245, 245, 247);
+            }
+
+            .mobile-order-number {
+                font-weight: 600;
+                font-size: 14px;
+            }
+
+            .mobile-order-details {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                margin-bottom: 12px;
+            }
+
+            .mobile-detail-item {
+                font-size: 13px;
+            }
+
+            .mobile-detail-label {
+                color: rgb(134, 134, 139);
+                font-size: 11px;
+                margin-bottom: 2px;
+            }
+
+            .mobile-detail-value {
+                font-weight: 500;
+            }
+
+            .mobile-order-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-top: 12px;
+                border-top: 1px solid rgb(245, 245, 247);
+            }
+
+            .mobile-actions {
+                display: flex;
+                gap: 8px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .delete-selected-btn {
+                width: 100%;
+            }
+
+            .refresh-btn {
+                width: 100%;
+            }
+        }
+
+        /* 기본적으로 모바일 카드 숨김 */
+        .mobile-order-cards {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -812,8 +925,8 @@
 
                 // 오늘 주문 필터링
                 const todayOrdersList = orders.filter(order => {
-                    // KST 시간 우선 사용
-                    const orderDate = new Date(order.created_at_kst || order.created_at);
+                    // created_at이 이미 한국시간으로 저장되어 있음
+                    const orderDate = new Date(order.created_at);
                     return orderDate >= todayStart && orderDate < todayEnd;
                 });
                 const todayOrders = todayOrdersList.length;
@@ -824,7 +937,7 @@
                 // 이번 주 매출 (최근 7일)
                 const weekAgo = new Date();
                 weekAgo.setDate(weekAgo.getDate() - 7);
-                const weekOrders = orders.filter(order => new Date(order.created_at_kst || order.created_at) >= weekAgo);
+                const weekOrders = orders.filter(order => new Date(order.created_at) >= weekAgo);
                 const weekSales = weekOrders.reduce((sum, order) => sum + (order.amount || 0), 0);
 
                 const pendingOrders = orders.filter(order => order.status === 'pending').length;
@@ -890,8 +1003,8 @@
                         vat: vat,  // 부가세
                         totalAmount: totalAmount,  // 총액
                         status: order.status || 'pending',
-                        // KST 시간 사용 (서버에서 이미 변환된 값 사용)
-                        createdAt: order.created_at_kst || order.created_at,
+                        // created_at이 이미 한국시간으로 저장되어 있음
+                        createdAt: formatKoreanTime(order.created_at),
                         businessName: order.business_name || '',
                         businessNumber: order.business_number || ''
                     };
@@ -918,6 +1031,7 @@
                 return;
             }
 
+            // 데스크톱용 테이블
             const tableHTML = `
                 <table>
                     <thead>
@@ -970,7 +1084,65 @@
                 </table>
             `;
 
-            ordersTable.innerHTML = tableHTML;
+            // 모바일용 카드 레이아웃
+            const mobileCardsHTML = `
+                <div class="mobile-order-cards">
+                    ${orders.map(order => `
+                        <div class="mobile-order-card" data-order-id="${order.id}">
+                            <div class="mobile-order-header">
+                                <div>
+                                    <input type="checkbox" class="order-checkbox" value="${order.id}" onchange="updateDeleteButton()">
+                                    <span class="mobile-order-number">${order.orderNumber}</span>
+                                </div>
+                                <span class="status-badge status-${order.status}">
+                                    ${getStatusText(order.status)}
+                                </span>
+                            </div>
+                            <div class="mobile-order-details">
+                                <div class="mobile-detail-item">
+                                    <div class="mobile-detail-label">고객명</div>
+                                    <div class="mobile-detail-value">${order.customer}</div>
+                                </div>
+                                <div class="mobile-detail-item">
+                                    <div class="mobile-detail-label">패키지</div>
+                                    <div class="mobile-detail-value">${order.packageType}</div>
+                                </div>
+                                <div class="mobile-detail-item">
+                                    <div class="mobile-detail-label">상품금액</div>
+                                    <div class="mobile-detail-value">₩${order.packagePrice.toLocaleString()}</div>
+                                </div>
+                                <div class="mobile-detail-item">
+                                    <div class="mobile-detail-label">부가세</div>
+                                    <div class="mobile-detail-value">₩${order.vat.toLocaleString()}</div>
+                                </div>
+                                <div class="mobile-detail-item">
+                                    <div class="mobile-detail-label">총액</div>
+                                    <div class="mobile-detail-value" style="color: rgb(0, 113, 227); font-weight: 600;">₩${order.totalAmount.toLocaleString()}</div>
+                                </div>
+                                <div class="mobile-detail-item">
+                                    <div class="mobile-detail-label">주문일시</div>
+                                    <div class="mobile-detail-value">${order.createdAt}</div>
+                                </div>
+                            </div>
+                            <div class="mobile-order-footer">
+                                <select class="status-select" onchange="quickUpdateStatus('${order.id}', this.value)" style="font-size: 12px; padding: 4px 8px;">
+                                    <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>대기중</option>
+                                    <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>처리중</option>
+                                    <option value="paid" ${order.status === 'paid' ? 'selected' : ''}>결제완료</option>
+                                    <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>완료</option>
+                                    <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>취소</option>
+                                </select>
+                                <div class="mobile-actions">
+                                    <button class="action-btn" onclick="viewOrderModal('${order.id}')" style="font-size: 12px; padding: 6px 10px;">보기</button>
+                                    <button class="action-btn delete" onclick="deleteOrderDirect('${order.id}')" style="font-size: 12px; padding: 6px 10px;">삭제</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            ordersTable.innerHTML = tableHTML + mobileCardsHTML;
         }
 
         // 상태 텍스트 변환
@@ -985,6 +1157,49 @@
             return statusMap[status] || status;
         }
 
+        // 마이페이지와 동일한 한국시간 변환 함수 사용
+        function formatKoreanTime(dateString) {
+            if (!dateString) return '시간 정보 없음';
+
+            const date = new Date(dateString);
+
+            // 유효한 날짜인지 확인
+            if (isNaN(date.getTime())) {
+                return '시간 정보 없음';
+            }
+
+            // 한국 시간으로 변환 (toLocaleString 사용) - 마이페이지와 동일한 방식
+            return date.toLocaleString('ko-KR', {
+                timeZone: 'Asia/Seoul',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false  // 24시간 형식
+            });
+        }
+
+        function formatKoreanDate(dateString) {
+            if (!dateString) return '-';
+
+            const date = new Date(dateString);
+
+            // 유효한 날짜인지 확인
+            if (isNaN(date.getTime())) {
+                return '-';
+            }
+
+            // 한국 시간으로 변환 (toLocaleString 사용) - 날짜만
+            return date.toLocaleDateString('ko-KR', {
+                timeZone: 'Asia/Seoul',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+        }
+
         // 주문 상세 보기
         async function viewOrder(orderId) {
             try {
@@ -996,7 +1211,7 @@
                     let detailText = `주문 상세 정보:\n`;
                     detailText += `================================\n`;
                     detailText += `주문번호: ${order.order_number || `ORD-${order.id}`}\n`;
-                    detailText += `주문일시: ${order.created_at_kst || order.created_at}\n`;
+                    detailText += `주문일시: ${formatKoreanTime(order.created_at)}\n`;
                     detailText += `\n고객 정보:\n`;
                     detailText += `- 이름: ${order.customer_name || '미확인'}\n`;
                     detailText += `- 이메일: ${order.customer_email || '없음'}\n`;
@@ -1389,7 +1604,7 @@
 
                 // 회원 테이블 렌더링 - 실제 DB 데이터 사용
                 membersTableBody.innerHTML = users.map((user, index) => {
-                    const createdDate = user.created_at ? new Date(user.created_at).toLocaleDateString('ko-KR') : '-';
+                    const createdDate = user.created_at ? formatKoreanDate(user.created_at) : '-';
                     const lastLoginDate = user.last_login ? new Date(user.last_login).toLocaleDateString('ko-KR') : '없음';
                     const orderCount = orderCountByEmail[user.email] || 0;
                     const isActive = user.last_login && (new Date() - new Date(user.last_login)) < 30 * 24 * 60 * 60 * 1000; // 30일 이내 로그인
