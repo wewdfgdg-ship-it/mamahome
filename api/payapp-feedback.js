@@ -40,7 +40,8 @@ export default async function handler(req, res) {
       memo,       // 메모
       var1,       // 추가 변수 1
       var2,       // 추가 변수 2
-      receipturl, // 영수증 URL
+      receipturl, // 영수증 URL (구형 파라미터)
+      csturl,     // 영수증 URL (신형 파라미터 - PayApp 문서 기준)
       paytype,    // 결제수단
       paydate     // 결제일시
     } = params;
@@ -49,7 +50,8 @@ export default async function handler(req, res) {
     console.log('주문번호:', orderid);
     console.log('상품명:', goodname);
     console.log('금액:', price);
-    console.log('영수증 URL:', receipturl);
+    console.log('영수증 URL (receipturl):', receipturl);
+    console.log('영수증 URL (csturl):', csturl);
 
     // 결제 성공 (state === '4' 또는 state === 4)
     if (state == 4 || state == '4') {
@@ -68,7 +70,7 @@ export default async function handler(req, res) {
           amount: parseInt(price) || 0,
           payment_method: paytype || 'payapp',
           status: 'paid',
-          receipt_url: receipturl || '',
+          receipt_url: csturl || receipturl || '',  // csturl 우선, 없으면 receipturl
           notes: `PayApp Feedback - ${new Date().toISOString()}`
         };
 
