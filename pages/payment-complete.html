@@ -442,9 +442,13 @@
                     amount: fullOrderData.amount,
                     paymentMethod: fullOrderData.payment_method,
                     status: fullOrderData.status,
-                    receiptUrl: fullOrderData.receipt_url,  // PayApp 영수증 URL 저장
+                    receiptUrl: fullOrderData.receipt_url || '',  // PayApp 영수증 URL 저장
                     createdAt: fullOrderData.created_at
                 };
+
+                // 영수증 URL 로깅 추가
+                console.log('💾 localStorage에 저장할 영수증 URL:', fullOrderData.receipt_url);
+                console.log('📋 전체 localStorage 주문 데이터:', localOrderData);
                 const orders = JSON.parse(localStorage.getItem('orders') || '[]');
                 orders.push(localOrderData);
                 localStorage.setItem('orders', JSON.stringify(orders));
