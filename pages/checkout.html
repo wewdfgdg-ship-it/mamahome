@@ -134,28 +134,29 @@
                         console.log('응답 키 목록:', Object.keys(data));
 
                         // CSTURL (영수증 URL) 저장 - 중요!
-                        // 가능한 모든 필드 확인
-                        const possibleCstUrlFields = ['CSTURL', 'csturl', 'CstUrl', 'cstURL', 'receipturl', 'receiptUrl'];
-                        let foundCstUrl = null;
+                        // PayApp는 대문자 CSTURL로 보냄 (PHP 예시 확인)
+                        const cstUrl = data.CSTURL || data.csturl || data.CstUrl || null;
 
-                        for (const field of possibleCstUrlFields) {
-                            if (data[field]) {
-                                foundCstUrl = data[field];
-                                console.log(`🎯 영수증 URL 발견 (${field}):`, foundCstUrl);
-                                break;
+                        if (cstUrl) {
+                            console.log('🎯 영수증 URL(CSTURL) 받음:', cstUrl);
+                            sessionStorage.setItem('payapp_csturl', cstUrl);
+
+                            // 응답 확인
+                            console.log('✅ CSTURL 저장 성공');
+                            console.log('   - 전체 URL:', cstUrl);
+
+                            // CST ID 추출 (디버깅용)
+                            const cstIdMatch = cstUrl.match(/\/CST\/([a-zA-Z0-9]+)$/);
+                            if (cstIdMatch) {
+                                console.log('   - CST ID:', cstIdMatch[1]);
                             }
-                        }
-
-                        if (foundCstUrl) {
-                            console.log('✅ 영수증 URL 저장:', foundCstUrl);
-                            sessionStorage.setItem('payapp_csturl', foundCstUrl);
 
                             // pendingPayment 데이터 업데이트
                             const pendingData = sessionStorage.getItem('pendingPayment');
                             if (pendingData) {
                                 try {
                                     const payment = JSON.parse(pendingData);
-                                    payment.csturl = foundCstUrl;
+                                    payment.csturl = cstUrl;
                                     sessionStorage.setItem('pendingPayment', JSON.stringify(payment));
                                     console.log('pendingPayment에 CSTURL 추가됨');
                                 } catch (e) {
@@ -166,10 +167,15 @@
                             console.warn('⚠️ PayApp 응답에 CSTURL이 없음');
                         }
 
-                        // mul_no (결제 요청번호) 저장
+                        // mul_no (결제 요청번호) 저장 - PayApp 고유 번호
                         if (data.mul_no) {
-                            console.log('결제 요청번호(mul_no):', data.mul_no);
+                            console.log('📍 결제 요청번호(mul_no):', data.mul_no);
                             sessionStorage.setItem('payapp_mul_no', data.mul_no);
+                        }
+
+                        // price (결제 금액) 확인
+                        if (data.price) {
+                            console.log('💰 결제 금액:', data.price);
                         }
 
                         // returnurl이 payurl에 포함되어 있는지 확인
