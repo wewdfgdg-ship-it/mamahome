@@ -144,6 +144,7 @@ async function createOrder(req, res) {
     amount: amount,
     payment_method: ensureUTF8(orderData.paymentMethod || orderData.payment_method) || 'payapp',
     status: ensureUTF8(orderData.status) || 'paid',
+    receipt_url: ensureUTF8(orderData.receipt_url || orderData.receiptUrl || orderData.csturl || orderData.CSTURL) || '',
     notes: ensureUTF8(orderData.notes)
   };
 
