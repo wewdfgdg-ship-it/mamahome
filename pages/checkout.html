@@ -132,6 +132,34 @@
                         console.log('결제 URL 받기 성공:', data.payurl);
                         console.log('PayApp 응답 전체:', data);
 
+                        // CSTURL (영수증 URL) 저장 - 중요!
+                        if (data.CSTURL || data.csturl) {
+                            const cstUrl = data.CSTURL || data.csturl;
+                            console.log('🎯 영수증 URL(CSTURL) 받음:', cstUrl);
+                            sessionStorage.setItem('payapp_csturl', cstUrl);
+
+                            // pendingPayment 데이터 업데이트
+                            const pendingData = sessionStorage.getItem('pendingPayment');
+                            if (pendingData) {
+                                try {
+                                    const payment = JSON.parse(pendingData);
+                                    payment.csturl = cstUrl;
+                                    sessionStorage.setItem('pendingPayment', JSON.stringify(payment));
+                                    console.log('pendingPayment에 CSTURL 추가됨');
+                                } catch (e) {
+                                    console.error('pendingPayment 업데이트 실패:', e);
+                                }
+                            }
+                        } else {
+                            console.warn('⚠️ PayApp 응답에 CSTURL이 없음');
+                        }
+
+                        // mul_no (결제 요청번호) 저장
+                        if (data.mul_no) {
+                            console.log('결제 요청번호(mul_no):', data.mul_no);
+                            sessionStorage.setItem('payapp_mul_no', data.mul_no);
+                        }
+
                         // returnurl이 payurl에 포함되어 있는지 확인
                         if (data.payurl.includes('returnurl')) {
                             console.log('✅ payurl에 returnurl 포함됨');
