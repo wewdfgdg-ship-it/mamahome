@@ -1082,21 +1082,7 @@
 
                 // RECOVERY 형식 주문 처리 (데이터베이스에서 직접 가져온 주문)
                 if (orderNumber.startsWith('RECOVERY-')) {
-                    console.log('🔄 RECOVERY 주문 - 하드코딩된 URL 사용');
-
-                    // 임시로 하드코딩 (010-9947-2244용)
-                    if (orderNumber === 'RECOVERY-1758785981902') {
-                        // 첫 번째 주문용 URL
-                        window.open('https://www.payapp.kr/CST/z5sD7wF', 'PayAppReceipt', 'width=700,height=900,scrollbars=yes,resizable=yes');
-                        return;
-                    }
-
-                    // 두 번째 주문용 (매장명테스트)
-                    if (orderNumber.startsWith('RECOVERY-') && receiptUrl) {
-                        // orders 테이블의 receipt_url이 있으면 사용
-                        window.open(receiptUrl, 'PayAppReceipt', 'width=700,height=900,scrollbars=yes,resizable=yes');
-                        return;
-                    }
+                    console.log('🔄 RECOVERY 주문 - PayApp 테이블에서 조회');
 
                     // Supabase에서 PayApp 테이블 조회
                     const { createClient } = window.supabase;
@@ -1135,12 +1121,7 @@
                                 }
                             } else if (error) {
                                 console.error('PayApp 테이블 조회 에러:', error);
-                                // 에러 발생 시 하드코딩된 URL 사용 (임시)
-                                if (orderData.customer_phone === '010-9947-2244') {
-                                    // 스크린샷에서 본 URL 직접 사용
-                                    window.open('https://www.payapp.kr/z7sOfFO', 'PayAppReceipt', 'width=700,height=900,scrollbars=yes,resizable=yes');
-                                    return;
-                                }
+                                alert('영수증을 찾을 수 없습니다. PayApp 데이터가 없습니다.');
                             }
                         } catch (err) {
                             console.error('PayApp 조회 중 예외 발생:', err);
