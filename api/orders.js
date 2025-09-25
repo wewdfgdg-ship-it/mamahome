@@ -131,12 +131,40 @@ async function createOrder(req, res) {
     return String(str);
   };
 
+  // 전화번호 포맷팅 함수
+  const formatPhoneNumber = (phone) => {
+    if (!phone) return '';
+
+    // 숫자만 추출
+    const numbers = String(phone).replace(/[^0-9]/g, '');
+
+    // 11자리 휴대폰 번호 (010-xxxx-xxxx)
+    if (numbers.length === 11 && numbers.startsWith('010')) {
+      return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7)}`;
+    }
+    // 10자리 휴대폰 번호 (011, 016, 017, 018, 019 등)
+    else if (numbers.length === 10 && (numbers.startsWith('011') || numbers.startsWith('016') ||
+             numbers.startsWith('017') || numbers.startsWith('018') || numbers.startsWith('019'))) {
+      return `${numbers.slice(0, 3)}-${numbers.slice(3, 6)}-${numbers.slice(6)}`;
+    }
+    // 서울 지역번호 (02-xxxx-xxxx)
+    else if (numbers.length === 10 && numbers.startsWith('02')) {
+      return `${numbers.slice(0, 2)}-${numbers.slice(2, 6)}-${numbers.slice(6)}`;
+    }
+    // 그 외 지역번호 (031, 032 등)
+    else if (numbers.length === 11 && !numbers.startsWith('010')) {
+      return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7)}`;
+    }
+    // 기타 경우 원본 반환
+    return phone;
+  };
+
   // 주문 데이터 구성 (UTF-8 인코딩 보장) - 두 가지 형식 모두 지원
   const newOrder = {
     order_number: ensureUTF8(orderNumber),
     customer_name: ensureUTF8(customer?.name || orderData.customer_name) || '고객',
     customer_email: ensureUTF8(customer?.email || orderData.customer_email) || '',
-    customer_phone: ensureUTF8(customer?.phone || orderData.customer_phone) || '',
+    customer_phone: formatPhoneNumber(customer?.phone || orderData.customer_phone),  // 전화번호 포맷팅 적용
     business_name: ensureUTF8(customer?.businessName || orderData.business_name),
     business_number: ensureUTF8(customer?.businessNumber || orderData.business_number),
     package_name: ensureUTF8(orderData.packageInfo?.name || orderData.package_name || orderData.goodname) || '미블 체험단',

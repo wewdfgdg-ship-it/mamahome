@@ -72,6 +72,34 @@ export default async function handler(req, res) {
 
       // PayApp 전용 테이블에 저장
       try {
+        // 전화번호 포맷팅 함수
+        function formatPhoneNumber(phone) {
+          if (!phone) return '';
+
+          // 숫자만 추출
+          const numbers = phone.replace(/[^0-9]/g, '');
+
+          // 11자리 휴대폰 번호 (010-xxxx-xxxx)
+          if (numbers.length === 11 && numbers.startsWith('010')) {
+            return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7)}`;
+          }
+          // 10자리 휴대폰 번호 (011, 016, 017, 018, 019 등)
+          else if (numbers.length === 10 && (numbers.startsWith('011') || numbers.startsWith('016') ||
+                   numbers.startsWith('017') || numbers.startsWith('018') || numbers.startsWith('019'))) {
+            return `${numbers.slice(0, 3)}-${numbers.slice(3, 6)}-${numbers.slice(6)}`;
+          }
+          // 서울 지역번호 (02-xxxx-xxxx)
+          else if (numbers.length === 10 && numbers.startsWith('02')) {
+            return `${numbers.slice(0, 2)}-${numbers.slice(2, 6)}-${numbers.slice(6)}`;
+          }
+          // 그 외 지역번호 (031, 032 등)
+          else if (numbers.length === 11 && !numbers.startsWith('010')) {
+            return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7)}`;
+          }
+          // 기타 경우 원본 반환
+          return phone;
+        }
+
         // PayApp 전용 데이터 구성
         const payappData = {
           mul_no: mul_no || `PAYAPP-${Date.now()}`,  // PayApp 고유번호
@@ -81,7 +109,7 @@ export default async function handler(req, res) {
           price: parseInt(price) || 0,
           goodname: goodname || '',
           buyer: buyer || '',
-          recvphone: recvphone || '',
+          recvphone: formatPhoneNumber(recvphone),  // 전화번호 포맷팅 적용
           email: email || '',
           memo: memo || '',
           receipt_url: csturl || receipturl || '',  // 영수증 URL (중요!)
