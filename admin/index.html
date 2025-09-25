@@ -525,16 +525,16 @@
 
             .orders-section {
                 padding: 16px;
-                overflow-x: auto;
+                overflow-x: visible; /* 스크롤 제거 */
             }
 
             /* 테이블 모바일 최적화 - 카드 레이아웃으로 변경 */
-            table {
-                display: none;
+            #ordersTable table {
+                display: none !important;
             }
 
-            .mobile-order-cards {
-                display: block;
+            #ordersTable .mobile-order-cards {
+                display: block !important;
             }
 
             .mobile-order-card {
