@@ -11,6 +11,16 @@
     <!-- 설정 파일 로드 -->
     <script src="config.js"></script>
 
+    <!-- CONFIG가 없을 경우 직접 설정 -->
+    <script>
+        if (!window.CONFIG) {
+            window.CONFIG = {
+                SUPABASE_URL: 'https://hietixfbvlfzgaemsmnw.supabase.co',
+                SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpZXRpeGZidmxmemdoZW1zbW53Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY3MzMxMjksImV4cCI6MjA0MjMwOTEyOX0.wNdq5KzmQD-qhumLjLlUUqkQOP91G1-N0r7YJ2Bo3oU'
+            };
+        }
+    </script>
+
     <!-- Supabase 클라이언트 라이브러리 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
