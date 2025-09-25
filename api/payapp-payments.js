@@ -5,8 +5,8 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase 클라이언트 초기화
-const supabaseUrl = process.env.SUPABASE_URL || 'https://nvbpdjrsjcibebuehshg.supabase.co';
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52YnBkanJzamNpYmVidWVoc2hnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU0NjY5MTMsImV4cCI6MjA1MTA0MjkxM30.FjdYM8bleHe8EPH01wdcmAedQjvQpCZf-dJTcu6xGKk';
+const supabaseUrl = process.env.SUPABASE_URL || 'https://glvbvrujursqvqryokzm.supabase.co';
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdsdmJ2cnVqdXJzcXZxcnlva3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgwODQ5MTcsImV4cCI6MjA3MzY2MDkxN30.jtP3w5pgecw-77_R1yvW4zrwedgcbroH3guez7wOPnQ';
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -43,7 +43,7 @@ export default async function handler(req, res) {
 
         // UPSERT 방식으로 저장 (중복 방지)
         const { data: insertData, error: insertError } = await supabase
-          .from('payapp_payments')
+          .from('payapp')
           .upsert({
             mul_no: payappData.mul_no,
             order_id: payappData.order_id || null,
@@ -95,7 +95,7 @@ export default async function handler(req, res) {
         const { mul_no, order_id } = req.query;
 
         let query = supabase
-          .from('payapp_payments')
+          .from('payapp')
           .select('*');
 
         if (mul_no) {

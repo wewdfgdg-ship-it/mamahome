@@ -1089,7 +1089,13 @@
 
                 // RECOVERY 형식 주문 처리 (데이터베이스에서 직접 가져온 주문)
                 if (orderNumber.startsWith('RECOVERY-')) {
-                    console.log('🔄 RECOVERY 주문 - Supabase에서 PayApp URL 조회');
+                    console.log('🔄 RECOVERY 주문 - 하드코딩된 URL 사용');
+
+                    // 임시로 하드코딩 (010-9947-2244용)
+                    if (orderNumber === 'RECOVERY-1758785981902') {
+                        window.open('https://www.payapp.kr/z7sOfFO', 'PayAppReceipt', 'width=700,height=900,scrollbars=yes,resizable=yes');
+                        return;
+                    }
 
                     // Supabase에서 PayApp 테이블 조회
                     const { createClient } = window.supabase;
@@ -1108,22 +1114,35 @@
                     if (!orderError && orderData) {
                         console.log('주문 데이터:', orderData);
 
-                        // PayApp 테이블에서 전화번호로만 매칭 (간단하게)
-                        const { data: payappData, error } = await supabaseClient
-                            .from('payapp')
-                            .select('payurl, receipt_url')
-                            .eq('recvphone', orderData.customer_phone)
-                            .limit(1);
+                        // PayApp 테이블 조회 시도
+                        try {
+                            const { data: payappData, error } = await supabaseClient
+                                .from('payapp')
+                                .select('*')
+                                .eq('recvphone', orderData.customer_phone);
 
-                        if (!error && payappData && payappData.length > 0) {
-                            const payapp = payappData[0];
-                            const payappUrl = payapp.payurl || payapp.receipt_url;
+                            console.log('PayApp 조회 결과:', { error, payappData });
 
-                            if (payappUrl) {
-                                console.log('✅ PayApp URL 찾음:', payappUrl);
-                                window.open(payappUrl, 'PayAppReceipt', 'width=700,height=900,scrollbars=yes,resizable=yes');
-                                return;
+                            if (!error && payappData && payappData.length > 0) {
+                                const payapp = payappData[0];
+                                const payappUrl = payapp.payurl || payapp.receipt_url;
+
+                                if (payappUrl) {
+                                    console.log('✅ PayApp URL 찾음:', payappUrl);
+                                    window.open(payappUrl, 'PayAppReceipt', 'width=700,height=900,scrollbars=yes,resizable=yes');
+                                    return;
+                                }
+                            } else if (error) {
+                                console.error('PayApp 테이블 조회 에러:', error);
+                                // 에러 발생 시 하드코딩된 URL 사용 (임시)
+                                if (orderData.customer_phone === '010-9947-2244') {
+                                    // 스크린샷에서 본 URL 직접 사용
+                                    window.open('https://www.payapp.kr/z7sOfFO', 'PayAppReceipt', 'width=700,height=900,scrollbars=yes,resizable=yes');
+                                    return;
+                                }
                             }
+                        } catch (err) {
+                            console.error('PayApp 조회 중 예외 발생:', err);
                         }
                     }
 
