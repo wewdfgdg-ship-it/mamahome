@@ -1100,13 +1100,13 @@
 
                     // order_number로 PayApp 테이블 조회
                     const { data: payappData, error } = await supabaseClient
-                        .from('payapp_payments')
-                        .select('payurl, receipt_url, csturl')
+                        .from('payapp')
+                        .select('payurl, receipt_url')
                         .eq('order_id', orderNumber)
                         .single();
 
                     if (!error && payappData) {
-                        const payappUrl = payappData.payurl || payappData.receipt_url || payappData.csturl;
+                        const payappUrl = payappData.payurl || payappData.receipt_url;
                         if (payappUrl) {
                             console.log('✅ PayApp URL 찾음:', payappUrl);
                             window.open(payappUrl, 'PayAppReceipt', 'width=700,height=900,scrollbars=yes,resizable=yes');
