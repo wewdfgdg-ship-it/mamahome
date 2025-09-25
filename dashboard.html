@@ -1106,14 +1106,13 @@
                         .single();
 
                     if (!orderError && orderData) {
-                        // PayApp 테이블에서 3개 필드로 매칭
+                        console.log('주문 데이터:', orderData);
+
+                        // PayApp 테이블에서 전화번호로만 매칭 (간단하게)
                         const { data: payappData, error } = await supabaseClient
                             .from('payapp')
                             .select('payurl, receipt_url')
-                            .eq('goodname', orderData.business_name)
                             .eq('recvphone', orderData.customer_phone)
-                            .eq('memo', orderData.package_name)
-                            .order('pay_date', { ascending: false })
                             .limit(1);
 
                         if (!error && payappData && payappData.length > 0) {
