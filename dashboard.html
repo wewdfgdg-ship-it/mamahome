@@ -944,10 +944,11 @@
 
                     if (result.success && result.data && result.data.length > 0) {
                         const payappData = result.data[0];
-                        const payappReceiptUrl = payappData.receipt_url;
+                        // payurl 사용 (결제 페이지 URL)
+                        const payappReceiptUrl = payappData.payurl || payappData.receipt_url;
 
                         if (payappReceiptUrl) {
-                            console.log('✅ PayApp 영수증 URL 찾음:', payappReceiptUrl);
+                            console.log('✅ PayApp URL 찾음:', payappReceiptUrl);
 
                             // URL 디코딩 (필요한 경우)
                             let finalUrl = decodeURIComponent(payappReceiptUrl);
