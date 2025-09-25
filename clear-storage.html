@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>localStorage 초기화</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .storage-info {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .storage-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .storage-item:last-child {
+            border-bottom: none;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        .btn-clear-all {
+            background: #ff4757;
+            color: white;
+        }
+        .btn-clear-all:hover {
+            background: #ff3838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+        }
+        .btn-clear-orders {
+            background: #ffa502;
+            color: white;
+        }
+        .btn-clear-orders:hover {
+            background: #ff8c00;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 165, 2, 0.4);
+        }
+        .btn-refresh {
+            background: #00b894;
+            color: white;
+        }
+        .btn-refresh:hover {
+            background: #00a383;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4);
+        }
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        .key-name {
+            font-family: 'Courier New', monospace;
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗑️ localStorage 관리</h1>
+
+        <div class="storage-info">
+            <h3 style="margin-top: 0;">현재 저장된 데이터:</h3>
+            <div id="storageList"></div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-clear-orders" onclick="clearOrders()">
+                📦 주문 데이터만 삭제
+            </button>
+            <button class="btn-clear-all" onclick="clearAll()">
+                💣 전체 삭제
+            </button>
+            <button class="btn-refresh" onclick="refreshList()">
+                🔄 새로고침
+            </button>
+        </div>
+
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        // localStorage 목록 표시
+        function refreshList() {
+            const storageList = document.getElementById('storageList');
+            const keys = Object.keys(localStorage);
+
+            if (keys.length === 0) {
+                storageList.innerHTML = '<p style="color: #666;">저장된 데이터가 없습니다.</p>';
+            } else {
+                storageList.innerHTML = keys.map(key => {
+                    let size = '';
+                    try {
+                        const value = localStorage.getItem(key);
+                        size = value ? `(${(value.length / 1024).toFixed(2)} KB)` : '';
+                    } catch (e) {
+                        size = '(크기 계산 불가)';
+                    }
+                    return `
+                        <div class="storage-item">
+                            <span class="key-name">${key}</span>
+                            <span style="color: #666; font-size: 14px;">${size}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // 주문 관련 데이터만 삭제
+        function clearOrders() {
+            const orderKeys = ['orders', 'checkoutData', 'userInfo', 'cart', 'recentOrder'];
+            let deletedCount = 0;
+
+            orderKeys.forEach(key => {
+                if (localStorage.getItem(key)) {
+                    localStorage.removeItem(key);
+                    deletedCount++;
+                    console.log(`✅ ${key} 삭제됨`);
+                }
+            });
+
+            showMessage(`주문 관련 데이터 ${deletedCount}개 항목이 삭제되었습니다.`, 'success');
+            refreshList();
+        }
+
+        // 전체 삭제
+        function clearAll() {
+            const count = Object.keys(localStorage).length;
+            localStorage.clear();
+            showMessage(`전체 ${count}개 항목이 삭제되었습니다.`, 'success');
+            refreshList();
+        }
+
+        // 메시지 표시
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+
+            setTimeout(() => {
+                messageEl.className = 'message';
+            }, 3000);
+        }
+
+        // 페이지 로드시 목록 표시
+        refreshList();
+
+        // 5초마다 자동 새로고침
+        setInterval(refreshList, 5000);
+    </script>
+</body>
+</html>

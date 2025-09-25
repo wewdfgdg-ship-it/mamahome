@@ -770,7 +770,10 @@
                     ordersList.innerHTML = ordersHTML;
                 }
 
-                // API에서도 주문 내역 가져오기 시도
+                // API에서도 주문 내역 가져오기 시도 (임시 비활성화)
+                const skipAPI = true; // API 호출 비활성화 (테스트용)
+
+                if (!skipAPI) {
                 try {
                     // userEmail이 이미 위에서 설정되어 있으므로 바로 사용
                     console.log('API 호출 - 사용자 이메일:', userEmail);
@@ -867,6 +870,7 @@
                 } catch (apiError) {
                     console.log('API 주문 내역 가져오기 실패:', apiError);
                 }
+                } // skipAPI if 문 닫기
 
             } catch (error) {
                 console.error('주문 내역 로드 오류:', error);
