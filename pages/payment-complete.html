@@ -294,20 +294,30 @@
                 if (checkoutData) {
                     try {
                         const parsed = JSON.parse(checkoutData);
+                        // 패키지명 설정 - checkout.html에서 "블로그 체험단 XX명" 형식으로 저장됨
                         if (parsed.packageName) {
                             packageInfo.name = parsed.packageName;
+                            console.log('✅ 패키지명:', packageInfo.name);
                         }
+                        // packagePrice는 총액이므로 VAT를 제외한 상품가격 계산
                         if (parsed.packagePrice) {
-                            packageInfo.price = parseInt(parsed.packagePrice);
+                            const totalPrice = parseInt(parsed.packagePrice);
+                            // 총액에서 상품가격 역산 (VAT 10% 제외)
+                            packageInfo.price = Math.round(totalPrice / 1.1);
+                            console.log('💰 패키지 가격 계산:');
+                            console.log('   - 총액:', totalPrice);
+                            console.log('   - 상품가격(VAT제외):', packageInfo.price);
                         }
                     } catch (e) {
                         console.error('Package info parsing error:', e);
                     }
                 }
 
-                // PayApp에서 온 정보로 보완
-                if (orderData.goodname) {
+                // PayApp에서 온 정보로 보완 (localStorage에 패키지명이 없을 때만)
+                if (!packageInfo.name && orderData.goodname) {
+                    // localStorage에 패키지명이 없을 때만 PayApp의 goodname 사용
                     packageInfo.name = orderData.goodname;
+                    console.log('⚠️ localStorage에 패키지명 없음, PayApp goodname 사용:', orderData.goodname);
                 }
                 // orderData.price는 이미 부가세 포함된 총액
                 let totalAmount = 0;
