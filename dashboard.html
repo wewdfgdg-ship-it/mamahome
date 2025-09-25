@@ -1082,8 +1082,47 @@
         // 기존 함수는 더 이상 사용하지 않지만 남겨둠 (호환성)
         async function viewPayAppReceipt(orderNumber, receiptUrl) {
             try {
+                console.log('📄 영수증 확인 클릭 - 주문번호:', orderNumber, '/ receiptUrl:', receiptUrl);
+
                 // mul_no를 추출 (ORD-xxx 형식이 아닌 순수 PayApp 번호)
                 let mulNo = orderNumber;
+
+                // RECOVERY 형식 주문 처리 (데이터베이스에서 직접 가져온 주문)
+                if (orderNumber.startsWith('RECOVERY-')) {
+                    console.log('🔄 RECOVERY 주문 - Supabase에서 PayApp URL 조회');
+
+                    // Supabase에서 PayApp 테이블 조회
+                    const { createClient } = window.supabase;
+                    const supabaseClient = createClient(
+                        window.CONFIG.SUPABASE_URL,
+                        window.CONFIG.SUPABASE_ANON_KEY
+                    );
+
+                    // order_number로 PayApp 테이블 조회
+                    const { data: payappData, error } = await supabaseClient
+                        .from('payapp_payments')
+                        .select('payurl, receipt_url, csturl')
+                        .eq('order_id', orderNumber)
+                        .single();
+
+                    if (!error && payappData) {
+                        const payappUrl = payappData.payurl || payappData.receipt_url || payappData.csturl;
+                        if (payappUrl) {
+                            console.log('✅ PayApp URL 찾음:', payappUrl);
+                            window.open(payappUrl, 'PayAppReceipt', 'width=700,height=900,scrollbars=yes,resizable=yes');
+                            return;
+                        }
+                    }
+
+                    // PayApp 테이블에 없으면 orders 테이블의 receipt_url 사용
+                    if (receiptUrl && receiptUrl !== 'undefined' && receiptUrl !== 'null' && receiptUrl !== '' && receiptUrl !== 'NULL') {
+                        console.log('📌 Fallback: orders 테이블 receipt_url 사용');
+                        window.open(receiptUrl, 'PayAppReceipt', 'width=700,height=900,scrollbars=yes,resizable=yes');
+                    } else {
+                        alert('영수증을 찾을 수 없습니다.');
+                    }
+                    return;
+                }
 
                 // ORD- 형식인 경우 처리 (기존 주문용)
                 if (orderNumber.startsWith('ORD-')) {
