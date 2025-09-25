@@ -333,6 +333,26 @@
                 console.log('  - 부가세(10%):', vat);
                 console.log('  - 검증: ', packagePrice, '+', vat, '=', totalAmount);
 
+                // PayApp 테이블에서 영수증 URL 가져오기
+                let payappReceiptUrl = '';
+                try {
+                    console.log('🔍 PayApp 테이블에서 영수증 URL 조회 시도...');
+                    console.log('   조회할 mul_no:', orderData.orderid);
+
+                    const payappResponse = await fetch(`/api/payapp-payments?mul_no=${orderData.orderid}`);
+                    if (payappResponse.ok) {
+                        const payappResult = await payappResponse.json();
+                        if (payappResult.success && payappResult.data && payappResult.data.length > 0) {
+                            payappReceiptUrl = payappResult.data[0].receipt_url || '';
+                            console.log('✅ PayApp 테이블에서 영수증 URL 가져옴:', payappReceiptUrl);
+                        } else {
+                            console.log('⚠️ PayApp 테이블에 데이터가 없음');
+                        }
+                    }
+                } catch (error) {
+                    console.error('PayApp 테이블 조회 실패:', error);
+                }
+
                 // 주문 데이터 구성 - PayApp mul_no를 주문번호로 사용
                 const fullOrderData = {
                     // 플랫 구조 (Supabase 테이블용)
@@ -348,7 +368,8 @@
                     amount: totalAmount,  // 총액 (부가세 포함)
                     payment_method: 'PayApp',
                     status: 'paid',
-                    receipt_url: orderData.receipt_url || orderData.csturl || orderData.CSTURL || '',  // PayApp 영수증 URL 저장
+                    // PayApp 테이블에서 가져온 영수증 URL 우선, 없으면 URL 파라미터에서
+                    receipt_url: payappReceiptUrl || orderData.receipt_url || orderData.csturl || orderData.CSTURL || '',
                     created_at: new Date().toISOString(),
 
                     // 중첩 구조 (API 호환성을 위해 추가)

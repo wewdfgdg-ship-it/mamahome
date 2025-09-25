@@ -70,38 +70,54 @@ export default async function handler(req, res) {
     if (paymentState == 4 || paymentState == '4') {
       console.log('✅ 결제 성공 확인');
 
-      // 여기서 데이터베이스에 저장해야 함
-      // Supabase에 직접 저장
+      // PayApp 전용 테이블에 저장
       try {
-        const orderData = {
-          order_number: orderid || mul_no || `PAYAPP-${Date.now()}`,
-          customer_name: buyer || '미확인',
-          customer_email: email || '',
-          customer_phone: recvphone || '',
-          business_name: goodname || '',  // goodname이 매장명
-          package_name: memo || '미블 체험단',  // memo에 패키지 정보
-          amount: parseInt(price) || 0,
-          payment_method: pay_type || paytype || 'payapp',
-          status: 'paid',
-          receipt_url: csturl || receipturl || '',  // csturl 우선, 없으면 receipturl
-          notes: `PayApp Feedback - ${new Date().toISOString()} | mul_no: ${mul_no} | csturl: ${csturl}`
+        // PayApp 전용 데이터 구성
+        const payappData = {
+          mul_no: mul_no || `PAYAPP-${Date.now()}`,  // PayApp 고유번호
+          order_id: orderid || '',
+          state: state || '',
+          pay_state: pay_state || '',
+          price: parseInt(price) || 0,
+          goodname: goodname || '',
+          buyer: buyer || '',
+          recvphone: recvphone || '',
+          email: email || '',
+          memo: memo || '',
+          receipt_url: csturl || receipturl || '',  // 영수증 URL (중요!)
+          payurl: payurl || '',
+          pay_type: pay_type || paytype || '',
+          pay_date: pay_date || paydate || '',
+          card_name: card_name || '',
+          payauthcode: payauthcode || '',
+          var1: var1 || '',
+          var2: var2 || '',
+          raw_data: params  // 전체 원본 데이터 저장
         };
 
-        console.log('Supabase에 저장할 데이터:', orderData);
+        console.log('PayApp 테이블에 저장할 데이터:', payappData);
 
-        // Supabase API 호출
-        const supabaseResponse = await fetch('https://mamahome-five.vercel.app/api/orders', {
+        // Supabase PayApp 테이블에 저장
+        const supabaseResponse = await fetch('https://mamahome-five.vercel.app/api/payapp-payments', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(orderData)
+          body: JSON.stringify(payappData)
         });
 
         const result = await supabaseResponse.json();
-        console.log('Supabase 저장 결과:', result);
+        console.log('PayApp 테이블 저장 결과:', result);
+
+        // 영수증 URL 확인 로그
+        if (payappData.receipt_url) {
+          console.log('🎯 영수증 URL 저장 성공:', payappData.receipt_url);
+        } else {
+          console.warn('⚠️ 영수증 URL이 없습니다');
+        }
+
       } catch (error) {
-        console.error('Supabase 저장 실패:', error);
+        console.error('PayApp 테이블 저장 실패:', error);
       }
 
       // PayApp에 성공 응답 반환 (중요!)
