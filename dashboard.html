@@ -918,50 +918,36 @@
         }
 
         // PayApp 영수증 확인 함수
-        function viewPayAppReceipt(orderNumber, csturl) {
-            console.log('PayApp 영수증 확인 - 주문번호:', orderNumber, 'CSTURL:', csturl);
+        function viewPayAppReceipt(orderNumber, receiptUrl) {
+            console.log('PayApp 영수증 확인 - 주문번호:', orderNumber, '영수증 URL:', receiptUrl);
 
-            let receiptUrl;
-
-            // CSTURL이 있으면 사용 (PayApp에서 제공하는 실제 영수증 URL)
-            if (csturl && csturl !== 'undefined' && csturl !== 'null' && csturl !== '') {
-                // CSTURL이 URL 인코딩되어 있을 수 있으므로 디코딩
-                receiptUrl = decodeURIComponent(csturl);
+            // 영수증 URL이 있으면 사용
+            if (receiptUrl && receiptUrl !== 'undefined' && receiptUrl !== 'null' && receiptUrl !== '' && receiptUrl !== 'NULL') {
+                // URL 디코딩 (필요한 경우)
+                let finalUrl = decodeURIComponent(receiptUrl);
 
                 // 전체 URL이 아니라 CST ID만 있는 경우 처리
-                if (!receiptUrl.startsWith('http')) {
-                    // CST ID만 있으면 전체 URL로 변환 (z5swD45 같은 형태)
-                    receiptUrl = `https://www.payapp.kr/CST/${receiptUrl}`;
-                    console.log('CST ID를 전체 URL로 변환:', receiptUrl);
+                if (!finalUrl.startsWith('http')) {
+                    // CST ID만 있으면 전체 URL로 변환
+                    finalUrl = `https://www.payapp.kr/CST/${finalUrl}`;
+                    console.log('CST ID를 전체 URL로 변환:', finalUrl);
                 }
 
-                // https://www.payapp.kr/CST/z5swD45 형태인지 확인
-                if (!receiptUrl.includes('payapp.kr/CST/')) {
-                    console.warn('PayApp CST URL 형식이 아님:', receiptUrl);
-                    // 그래도 시도는 해본다
+                console.log('최종 영수증 URL:', finalUrl);
+
+                // 새 창으로 영수증 열기
+                const receiptWindow = window.open(finalUrl, 'PayAppReceipt',
+                    'width=700,height=900,scrollbars=yes,resizable=yes');
+
+                if (!receiptWindow) {
+                    // 팝업 차단 시에만 알림
+                    alert('팝업이 차단되었습니다. 팝업 차단을 해제하고 다시 시도해주세요.');
                 }
-                console.log('CSTURL 사용:', receiptUrl);
             } else {
-                // CSTURL이 없으면 오류 메시지 표시
-                console.error('CSTURL이 없음 - PayApp에서 영수증 URL을 제공하지 않았습니다.');
-                console.log('주문번호:', orderNumber);
-                console.log('전달받은 csturl 값:', csturl);
-
-                alert('영수증 URL이 저장되지 않았습니다.\n\n' +
-                      '결제 시스템에서 영수증 URL이 제공되지 않았을 수 있습니다.\n' +
-                      'PayApp 가맹점 관리자 페이지에서 확인해 주세요.\n' +
-                      '주문번호: ' + orderNumber);
-                return;
-            }
-
-            console.log('최종 영수증 URL:', receiptUrl);
-
-            // 새 창으로 영수증 열기
-            const receiptWindow = window.open(receiptUrl, 'PayAppReceipt',
-                'width=700,height=900,scrollbars=yes,resizable=yes');
-
-            if (!receiptWindow) {
-                alert('팝업이 차단되었습니다. 팝업 차단을 해제하고 다시 시도해주세요.');
+                // 영수증 URL이 없어도 팝업 띄우지 않음 - 콘솔에만 기록
+                console.warn('영수증 URL이 없습니다. 주문번호:', orderNumber);
+                console.log('전달받은 receipt_url 값:', receiptUrl);
+                // alert 제거 - 사용자에게 불필요한 팝업 방지
             }
         }
 
