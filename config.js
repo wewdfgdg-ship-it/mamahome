@@ -29,6 +29,15 @@ const PAYAPP_TEST_CONFIG = {
     environment: 'development'
 };
 
+// Supabase 설정 추가
+const SUPABASE_CONFIG = {
+    SUPABASE_URL: 'https://hietixfbvlfzgaemsmnw.supabase.co',
+    SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpZXRpeGZidmxmemdoZW1zbW53Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY3MzMxMjksImV4cCI6MjA0MjMwOTEyOX0.wNdq5KzmQD-qhumLjLlUUqkQOP91G1-N0r7YJ2Bo3oU'
+};
+
 // 환경에 따라 설정 선택
 // 실제 결제를 위해 항상 PAYAPP_CONFIG 사용
-const CONFIG = PAYAPP_CONFIG;
+const CONFIG = {
+    ...PAYAPP_CONFIG,
+    ...SUPABASE_CONFIG
+};
