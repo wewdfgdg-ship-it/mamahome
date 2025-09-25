@@ -736,19 +736,12 @@
                     }
                 } catch (error) {
                     console.error('❌ 주문 조회 실패:', error);
-                    // 오류 발생 시 localStorage 폴백
-                    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-                    userOrders = userEmail ?
-                        orders.filter(order => {
-                            return order.customerEmail === userEmail ||
-                                   order.customer_email === userEmail ||
-                                   (order.customer && order.customer.email === userEmail);
-                        }) : [];
+                    // localStorage 사용하지 않음 - 데이터베이스만 사용
+                    userOrders = [];
                 }
 
-                // 디버그 로그 - localStorage의 전체 주문 수와 필터링된 사용자 주문 수 표시
-                const allOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-                console.log(`전체 주문 수: ${allOrders.length}, 사용자 주문 수: ${userOrders.length}`);
+                // 디버그 로그 - 데이터베이스 주문 수 표시
+                console.log(`데이터베이스 사용자 주문 수: ${userOrders.length}`);
 
                 if (userOrders.length === 0) {
                     ordersList.innerHTML = `
