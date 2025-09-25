@@ -404,16 +404,12 @@
                 const result = await AuthManager.login(email, password, rememberMe);
 
                 if (result.success) {
-                    // 로그인 성공
-                    showSuccess('로그인 성공! 잠시만 기다려주세요...');
-
-                    // 대시보드로 리다이렉트 또는 이전 페이지로
+                    // 로그인 성공 - 바로 리다이렉트 (메시지 표시하지 않음)
                     const urlParams = new URLSearchParams(window.location.search);
                     const redirect = urlParams.get('redirect') || '/dashboard.html';
 
-                    setTimeout(() => {
-                        window.location.href = redirect;
-                    }, 1500);
+                    // 즉시 리다이렉트
+                    window.location.href = redirect;
                 } else {
                     // 로그인 실패
                     showError(result.error || '이메일 또는 비밀번호가 올바르지 않습니다.');

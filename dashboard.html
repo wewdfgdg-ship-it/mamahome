@@ -422,6 +422,7 @@
                 display: flex !important;
                 justify-content: space-between !important;
                 align-items: center !important;
+                padding: 8px 0 !important;
             }
 
             /* 구분선 숨기기 */
@@ -429,19 +430,29 @@
                 display: none !important;
             }
 
-            /* 버튼과 상태 영역 */
+            /* 버튼과 상태 영역 - 세로 정렬로 변경 */
             .order-card > div > div:last-child {
                 width: 100% !important;
-                justify-content: space-between !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 12px !important;
                 margin-top: 16px !important;
                 padding-top: 16px !important;
                 border-top: 1px solid #f0f0f0 !important;
             }
 
-            /* 영수증 버튼 크기 조정 */
+            /* 상태 배지 중앙 정렬 */
+            .order-card .order-status {
+                width: fit-content !important;
+                margin: 0 auto !important;
+            }
+
+            /* 영수증 버튼 전체 너비로 확장 */
             .order-card button {
-                font-size: 12px !important;
-                padding: 6px 12px !important;
+                width: 100% !important;
+                font-size: 14px !important;
+                padding: 10px 16px !important;
+                margin: 0 !important;
             }
 
             /* nav-menu, nav-link 스타일 제거 - common-header.css에서 처리 */
