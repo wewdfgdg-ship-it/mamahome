@@ -150,30 +150,77 @@ async function createOrder(req, res) {
 
   console.log('Prepared order data for DB:', JSON.stringify(newOrder, null, 2));
 
-  // Supabase에 저장
+  // Supabase에 저장 (UPSERT - 중복 방지)
   if (supabase) {
     console.log('Attempting to save to Supabase...');
-    try {
-      const { data, error } = await supabase
-        .from('orders')
-        .insert([newOrder])
-        .select();
+    console.log('주문번호로 중복 체크:', newOrder.order_number);
 
-      if (error) {
-        console.error('Supabase INSERT error:', error);
-        console.error('Error details:', JSON.stringify(error, null, 2));
-        return res.status(500).json({
-          error: error.message,
-          details: error.details || 'No additional details',
-          hint: error.hint || 'No hint available'
-        });
+    try {
+      // 먼저 해당 주문번호가 존재하는지 확인
+      const { data: existingOrder, error: selectError } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('order_number', newOrder.order_number)
+        .single();
+
+      if (selectError && selectError.code !== 'PGRST116') { // PGRST116 = no rows
+        console.error('주문 조회 에러:', selectError);
+        return res.status(500).json({ error: '주문 조회 실패' });
       }
 
-      console.log('Order saved successfully:', data);
+      let result;
+
+      if (existingOrder) {
+        console.log('🔄 기존 주문 발견 - 업데이트 수행:', existingOrder.id);
+
+        // 기존 주문 업데이트 (빈 필드만 업데이트)
+        const updateData = {};
+
+        // 각 필드를 확인하고 기존 값이 비어있으면 새 값으로 업데이트
+        Object.keys(newOrder).forEach(key => {
+          if (newOrder[key] && (!existingOrder[key] || existingOrder[key] === '' || existingOrder[key] === 'EMPTY')) {
+            updateData[key] = newOrder[key];
+          }
+        });
+
+        // notes 필드는 항상 추가 (타임스탬프 포함)
+        updateData.notes = `${existingOrder.notes || ''} | Updated: ${new Date().toISOString()}`;
+
+        const { data, error } = await supabase
+          .from('orders')
+          .update(updateData)
+          .eq('id', existingOrder.id)
+          .select();
+
+        if (error) {
+          console.error('Supabase UPDATE error:', error);
+          return res.status(500).json({ error: error.message });
+        }
+
+        result = data[0];
+        console.log('✅ 주문 업데이트 완료:', result);
+      } else {
+        console.log('🆕 새 주문 - INSERT 수행');
+
+        // 새 주문 삽입
+        const { data, error } = await supabase
+          .from('orders')
+          .insert([newOrder])
+          .select();
+
+        if (error) {
+          console.error('Supabase INSERT error:', error);
+          return res.status(500).json({ error: error.message });
+        }
+
+        result = data[0];
+        console.log('✅ 새 주문 저장 완료:', result);
+      }
+
       return res.status(201).json({
         success: true,
-        order: data[0],
-        message: '주문이 성공적으로 저장되었습니다.'
+        order: result,
+        message: existingOrder ? '주문이 업데이트되었습니다.' : '주문이 성공적으로 저장되었습니다.'
       });
     } catch (err) {
       console.error('Database exception:', err);
