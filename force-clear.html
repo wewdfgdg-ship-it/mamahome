@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>강제 데이터 삭제</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        button {
+            width: 100%;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 0;
+        }
+        .btn-nuclear {
+            background: linear-gradient(135deg, #ff4757, #ff6348);
+            color: white;
+        }
+        .btn-nuclear:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 71, 87, 0.5);
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .log-item {
+            text-align: left;
+            margin: 5px 0;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .emoji {
+            font-size: 72px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💣 강제 데이터 완전 삭제</h1>
+
+        <div class="warning">
+            <strong>⚠️ 경고!</strong><br>
+            이 버튼은 모든 로컬 저장 데이터를 삭제합니다.<br>
+            로그인 정보도 함께 삭제됩니다.
+        </div>
+
+        <button class="btn-nuclear" onclick="nuclearDelete()">
+            🔥 모든 데이터 완전 삭제
+        </button>
+
+        <div id="result" class="result">
+            <div class="emoji">✅</div>
+            <h2>삭제 완료!</h2>
+            <div id="logContainer"></div>
+            <p style="margin-top: 20px;">
+                <strong>3초 후 페이지가 자동으로 새로고침됩니다...</strong>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        async function nuclearDelete() {
+            const resultDiv = document.getElementById('result');
+            const logContainer = document.getElementById('logContainer');
+            let logs = [];
+
+            // 1. localStorage 완전 삭제
+            const localStorageKeys = Object.keys(localStorage);
+            localStorage.clear();
+            logs.push(`✅ localStorage: ${localStorageKeys.length}개 항목 삭제`);
+
+            // 2. sessionStorage 완전 삭제
+            const sessionStorageKeys = Object.keys(sessionStorage);
+            sessionStorage.clear();
+            logs.push(`✅ sessionStorage: ${sessionStorageKeys.length}개 항목 삭제`);
+
+            // 3. 모든 쿠키 삭제
+            let cookieCount = 0;
+            document.cookie.split(";").forEach(function(c) {
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                cookieCount++;
+            });
+            if (cookieCount > 0) {
+                logs.push(`✅ Cookies: ${cookieCount}개 쿠키 삭제`);
+            }
+
+            // 4. IndexedDB 삭제
+            try {
+                const databases = await indexedDB.databases();
+                for (const db of databases) {
+                    await indexedDB.deleteDatabase(db.name);
+                    logs.push(`✅ IndexedDB: ${db.name} 데이터베이스 삭제`);
+                }
+            } catch (e) {
+                console.log('IndexedDB 삭제 중 오류:', e);
+            }
+
+            // 5. Cache Storage 삭제 (Service Worker 캐시)
+            if ('caches' in window) {
+                try {
+                    const cacheNames = await caches.keys();
+                    for (const cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                        logs.push(`✅ Cache: ${cacheName} 캐시 삭제`);
+                    }
+                } catch (e) {
+                    console.log('Cache 삭제 중 오류:', e);
+                }
+            }
+
+            // 6. WebSQL 삭제 (구형 브라우저용)
+            if (window.openDatabase) {
+                try {
+                    const db = window.openDatabase('', '', '', '');
+                    db.transaction(function(tx) {
+                        tx.executeSql('DROP TABLE IF EXISTS data');
+                    });
+                    logs.push(`✅ WebSQL: 데이터베이스 삭제`);
+                } catch(e) {
+                    // WebSQL이 없거나 오류 발생
+                }
+            }
+
+            // 결과 표시
+            logContainer.innerHTML = logs.map(log =>
+                `<div class="log-item">${log}</div>`
+            ).join('');
+
+            resultDiv.classList.add('show', 'success');
+
+            // 콘솔에도 로그 출력
+            console.log('=== 완전 삭제 완료 ===');
+            logs.forEach(log => console.log(log));
+
+            // 3초 후 강제 새로고침
+            setTimeout(() => {
+                // 캐시 무시하고 서버에서 새로 가져오기
+                window.location.reload(true);
+            }, 3000);
+        }
+
+        // 페이지 로드시 현재 상태 표시
+        window.onload = function() {
+            console.log('현재 localStorage 항목:', Object.keys(localStorage).length);
+            console.log('현재 sessionStorage 항목:', Object.keys(sessionStorage).length);
+        };
+    </script>
+</body>
+</html>
