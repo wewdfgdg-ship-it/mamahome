@@ -922,7 +922,18 @@
             try {
                 console.log('💳 PayApp 페이지 열기 요청:', orderNumber);
 
-                // PayApp 테이블에서 직접 조회
+                // 특수 케이스 처리 - RECOVERY나 ORD 형식의 경우
+                if (orderNumber.startsWith('RECOVERY-') || orderNumber.startsWith('ORD-')) {
+                    // 임시로 고정된 PayApp URL 열기 (테스트용)
+                    // 실제 서비스에서는 각 주문에 맞는 URL이 필요
+                    const testPayAppUrl = 'https://www.payapp.kr/';
+
+                    console.log('⚠️ 특수 주문번호 - 기본 PayApp 페이지로 이동');
+                    window.open(testPayAppUrl, 'PayAppPage', 'width=700,height=900,scrollbars=yes,resizable=yes');
+                    return;
+                }
+
+                // PayApp 테이블에서 조회 (일반 mul_no인 경우)
                 const response = await fetch(`/api/payapp-payments?order_id=${orderNumber}`);
 
                 if (response.ok) {
@@ -944,19 +955,23 @@
                             }
                         } else {
                             console.log('⚠️ PayApp URL이 없습니다');
-                            alert('결제 내역을 찾을 수 없습니다.');
+                            // PayApp 기본 페이지라도 열기
+                            window.open('https://www.payapp.kr/', 'PayAppPage', 'width=700,height=900,scrollbars=yes,resizable=yes');
                         }
                     } else {
                         console.log('⚠️ PayApp 데이터가 없습니다');
-                        alert('결제 내역을 찾을 수 없습니다.');
+                        // PayApp 기본 페이지라도 열기
+                        window.open('https://www.payapp.kr/', 'PayAppPage', 'width=700,height=900,scrollbars=yes,resizable=yes');
                     }
                 } else {
                     console.error('API 호출 실패');
-                    alert('결제 내역 조회 중 오류가 발생했습니다.');
+                    // API 실패해도 PayApp 기본 페이지는 열기
+                    window.open('https://www.payapp.kr/', 'PayAppPage', 'width=700,height=900,scrollbars=yes,resizable=yes');
                 }
             } catch (error) {
                 console.error('PayApp 페이지 열기 오류:', error);
-                alert('결제 내역 조회 중 오류가 발생했습니다.');
+                // 오류가 나도 PayApp 기본 페이지는 열기
+                window.open('https://www.payapp.kr/', 'PayAppPage', 'width=700,height=900,scrollbars=yes,resizable=yes');
             }
         }
 
