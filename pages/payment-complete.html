@@ -336,7 +336,7 @@
                 // 주문 데이터 구성 - API가 요구하는 두 가지 형식 모두 포함
                 const fullOrderData = {
                     // 플랫 구조 (Supabase 테이블용)
-                    order_number: orderData.orderid || orderData.orderNumber || 'PAYAPP-' + Date.now(),
+                    order_number: orderData.orderid || orderData.orderNumber || ('ERR-' + Date.now()),
                     customer_name: customerInfo.name || '미확인',
                     customer_email: customerInfo.email || '',
                     customer_phone: customerInfo.phone || '',
@@ -352,7 +352,7 @@
                     created_at: new Date().toISOString(),
 
                     // 중첩 구조 (API 호환성을 위해 추가)
-                    orderNumber: orderData.orderid || orderData.orderNumber || 'PAYAPP-' + Date.now(),
+                    orderNumber: orderData.orderid || orderData.orderNumber || ('ERR-' + Date.now()),
                     customer: {
                         name: customerInfo.name || '미확인',
                         email: customerInfo.email || '',
@@ -372,6 +372,21 @@
                 // 이메일이 없으면 경고
                 if (!customerInfo.email) {
                     console.warn('⚠️ 경고: 고객 이메일이 없습니다. 로그인 정보:', loggedInUserEmail);
+                }
+
+                // 영수증 URL 검증
+                const receiptUrl = fullOrderData.receipt_url;
+                if (!receiptUrl) {
+                    console.error('❌ 경고: 영수증 URL이 없습니다!');
+                    console.log('orderData:', orderData);
+                    console.log('receipt_url:', orderData.receipt_url);
+                    console.log('csturl:', orderData.csturl);
+                    console.log('CSTURL:', orderData.CSTURL);
+
+                    // 영수증 URL이 없으면 주문 저장하지 않고 경고
+                    alert('⚠️ 영수증 URL이 전달되지 않았습니다.\n결제는 완료되었지만 영수증을 확인할 수 없습니다.\n관리자에게 문의하세요.');
+                } else {
+                    console.log('✅ 영수증 URL 확인:', receiptUrl);
                 }
 
                 // Vercel API로 주문 저장
@@ -531,7 +546,7 @@
             if (paymentData && !orderid) {
                 // 복구된 데이터로 결제 정보 설정
                 const finalOrderData = {
-                    orderid: paymentData.orderNumber || 'PAYAPP-' + Date.now(),
+                    orderid: paymentData.orderNumber || ('RECOVERY-' + Date.now()),
                     goodname: paymentData.businessName || paymentData.packageName || '',
                     price: paymentData.totalAmount || paymentData.amount || 0,
                     buyer: paymentData.customerName || '',
@@ -616,11 +631,12 @@
                     // PayApp에서 온 실제 주문번호 사용
                     generatedOrderNumber = orderid;
                 } else if (!orderid) {
-                    // orderid가 없으면 새로 생성 (PAYAPP- 접두사로 구분)
-                    generatedOrderNumber = 'PAYAPP-' + Date.now();
-                } else {
+                    // orderid가 없으면 오류 표시
+                    console.error('❌ 주문번호가 없습니다!');
+                    generatedOrderNumber = 'MISSING-' + Date.now();
+                } else if (orderid.startsWith('TEST')) {
                     // TEST로 시작하는 주문번호는 실제 주문번호로 변경
-                    generatedOrderNumber = 'PAYAPP-' + Date.now();
+                    generatedOrderNumber = 'TEST-' + Date.now();
                 }
 
                 console.log('🔍 주문번호 생성 로직:');

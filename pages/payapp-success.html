@@ -82,9 +82,26 @@
             const state = urlParams.get('state');
             params.append('state', state || 'success');
 
-            // mul_no가 주문번호
-            const orderId = urlParams.get('mul_no') || urlParams.get('orderid') || 'ORD-' + Date.now();
-            params.append('orderid', orderId);
+            // mul_no가 주문번호 (PayApp에서 전달받은 주문번호 사용)
+            const orderId = urlParams.get('mul_no') || urlParams.get('orderid');
+            if (!orderId) {
+                console.error('⚠️ 주문번호가 없습니다! mul_no와 orderid 모두 없음');
+                // 주문번호가 없으면 sessionStorage에서 복구 시도
+                const pendingPayment = sessionStorage.getItem('pendingPayment');
+                if (pendingPayment) {
+                    const data = JSON.parse(pendingPayment);
+                    params.append('orderid', data.orderNumber);
+                    console.log('📝 sessionStorage에서 주문번호 복구:', data.orderNumber);
+                } else {
+                    // 최후의 수단으로 새 번호 생성 (하지만 경고)
+                    const fallbackId = 'ERR-' + Date.now();
+                    params.append('orderid', fallbackId);
+                    console.error('❌ 주문번호 복구 실패! 임시 번호 생성:', fallbackId);
+                }
+            } else {
+                params.append('orderid', orderId);
+                console.log('✅ PayApp 주문번호 사용:', orderId);
+            }
 
             params.append('goodname', urlParams.get('goodname') || savedData?.packageName || '미블 체험단');
             params.append('price', urlParams.get('price') || savedData?.packagePrice || '0');
