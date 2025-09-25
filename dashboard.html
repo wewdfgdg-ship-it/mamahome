@@ -1101,16 +1101,18 @@
                     // 먼저 orders 테이블에서 주문 정보 가져오기
                     const { data: orderData, error: orderError } = await supabaseClient
                         .from('orders')
-                        .select('customer_phone, business_name, amount')
+                        .select('customer_phone, business_name, package_name, amount')
                         .eq('order_number', orderNumber)
                         .single();
 
                     if (!orderError && orderData) {
-                        // PayApp 테이블에서 전화번호로 매칭
+                        // PayApp 테이블에서 3개 필드로 매칭
                         const { data: payappData, error } = await supabaseClient
                             .from('payapp')
                             .select('payurl, receipt_url')
+                            .eq('goodname', orderData.business_name)
                             .eq('recvphone', orderData.customer_phone)
+                            .eq('memo', orderData.package_name)
                             .order('pay_date', { ascending: false })
                             .limit(1);
 
