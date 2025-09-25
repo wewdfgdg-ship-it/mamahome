@@ -663,19 +663,79 @@
                     }
                 }
 
-                // localStorage에서 주문 정보 가져오기
-                const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+                // Supabase에서 주문 정보 가져오기
+                let userOrders = [];
 
-                // 사용자 이메일로 필터링
-                const userOrders = userEmail ?
-                    orders.filter(order => {
-                        // 다양한 이메일 필드 확인
-                        return order.customerEmail === userEmail ||
-                               order.customer_email === userEmail ||
-                               (order.customer && order.customer.email === userEmail);
-                    }) : [];
+                try {
+                    console.log('🔍 Supabase에서 주문 내역 가져오는 중...');
+                    console.log('📧 현재 로그인 이메일:', userEmail);
 
-                console.log(`전체 주문 수: ${orders.length}, 사용자 주문 수: ${userOrders.length}`);
+                    const { createClient } = window.supabase;
+                    const supabaseClient = createClient(
+                        window.CONFIG.SUPABASE_URL,
+                        window.CONFIG.SUPABASE_ANON_KEY
+                    );
+
+                    // 먼저 전체 주문 확인 (디버깅)
+                    const { data: allOrders } = await supabaseClient
+                        .from('orders')
+                        .select('*');
+                    console.log('📦 전체 주문:', allOrders);
+
+                    // 이메일로 필터링하여 주문 가져오기
+                    const { data: ordersData, error } = await supabaseClient
+                        .from('orders')
+                        .select('*')
+                        .eq('customer_email', userEmail)
+                        .order('created_at', { ascending: false });
+
+                    console.log('✅ 필터링된 주문:', ordersData);
+
+                    if (error) {
+                        console.error('❌ Supabase 조회 오류:', error);
+                        // 오류 발생 시 localStorage 폴백
+                        const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+                        userOrders = userEmail ?
+                            orders.filter(order => {
+                                return order.customerEmail === userEmail ||
+                                       order.customer_email === userEmail ||
+                                       (order.customer && order.customer.email === userEmail);
+                            }) : [];
+                    } else {
+                        console.log('✅ Supabase에서 가져온 주문 수:', ordersData ? ordersData.length : 0);
+                        // Supabase 데이터를 기존 형식으로 변환
+                        userOrders = ordersData ? ordersData.map(order => ({
+                            orderId: order.order_id,
+                            orderNumber: order.order_number,
+                            customerName: order.customer_name,
+                            customerEmail: order.customer_email,
+                            customerPhone: order.customer_phone,
+                            package: {
+                                name: order.package_name,
+                                price: order.package_price
+                            },
+                            amount: order.amount,
+                            paymentMethod: order.payment_method,
+                            status: order.status,
+                            receiptUrl: order.receipt_url,
+                            createdAt: order.created_at
+                        })) : [];
+                    }
+                } catch (error) {
+                    console.error('❌ 주문 조회 실패:', error);
+                    // 오류 발생 시 localStorage 폴백
+                    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+                    userOrders = userEmail ?
+                        orders.filter(order => {
+                            return order.customerEmail === userEmail ||
+                                   order.customer_email === userEmail ||
+                                   (order.customer && order.customer.email === userEmail);
+                        }) : [];
+                }
+
+                // 디버그 로그 - localStorage의 전체 주문 수와 필터링된 사용자 주문 수 표시
+                const allOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+                console.log(`전체 주문 수: ${allOrders.length}, 사용자 주문 수: ${userOrders.length}`);
 
                 if (userOrders.length === 0) {
                     ordersList.innerHTML = `
