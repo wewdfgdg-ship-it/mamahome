@@ -1739,12 +1739,10 @@
 
             localStorage.setItem('checkoutData', JSON.stringify(checkoutInfo));
 
-            // 주문번호 생성
-            const orderNumber = 'ORD-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
-
-            // PayApp이 파라미터 없이 리다이렉트하는 경우를 대비하여 sessionStorage에도 저장
+            // PayApp이 주문번호(mul_no)를 생성하므로 우리는 생성하지 않음
+            // sessionStorage에 고객 정보만 저장 (PayApp이 반환하는 mul_no와 결합용)
             const pendingPaymentData = {
-                orderNumber: orderNumber,
+                // orderNumber 제거 - PayApp mul_no 사용
                 customerName: paymentData.customer.name,
                 customerEmail: paymentData.customer.email,
                 customerPhone: paymentData.customer.phone,
@@ -1821,9 +1819,9 @@
                 const paymentModule = new window.PayappPayment(CONFIG);
 
                 // PayApp으로 전달할 데이터 (goodname은 매장명이어야 함)
+                // PayApp이 자체적으로 mul_no를 생성하므로 우리는 전달하지 않음
                 const payappParams = {
-                    orderid: orderNumber,  // 주문번호 추가
-                    mul_no: orderNumber,    // PayApp에서 사용하는 주문번호 필드 (중요!)
+                    // orderid, mul_no 제거 - PayApp이 자동 생성
                     goodname: paymentData.customer.company || '매장명 미입력',  // 매장명/회사명
                     price: paymentData.package.total,
                     recvphone: paymentData.customer.phone,

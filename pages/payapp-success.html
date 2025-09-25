@@ -82,25 +82,20 @@
             const state = urlParams.get('state');
             params.append('state', state || 'success');
 
-            // mul_no가 주문번호 (PayApp에서 전달받은 주문번호 사용)
-            const orderId = urlParams.get('mul_no') || urlParams.get('orderid');
-            if (!orderId) {
-                console.error('⚠️ 주문번호가 없습니다! mul_no와 orderid 모두 없음');
-                // 주문번호가 없으면 sessionStorage에서 복구 시도
-                const pendingPayment = sessionStorage.getItem('pendingPayment');
-                if (pendingPayment) {
-                    const data = JSON.parse(pendingPayment);
-                    params.append('orderid', data.orderNumber);
-                    console.log('📝 sessionStorage에서 주문번호 복구:', data.orderNumber);
-                } else {
-                    // 최후의 수단으로 새 번호 생성 (하지만 경고)
-                    const fallbackId = 'ERR-' + Date.now();
-                    params.append('orderid', fallbackId);
-                    console.error('❌ 주문번호 복구 실패! 임시 번호 생성:', fallbackId);
-                }
+            // mul_no만 주문번호로 사용 (PayApp의 고유 번호)
+            const mulNo = urlParams.get('mul_no');
+            if (mulNo) {
+                params.append('orderid', mulNo);
+                console.log('✅ PayApp 주문번호(mul_no) 사용:', mulNo);
             } else {
-                params.append('orderid', orderId);
-                console.log('✅ PayApp 주문번호 사용:', orderId);
+                // mul_no가 없으면 에러 - PayApp 결제는 항상 mul_no가 있어야 함
+                console.error('❌ 심각한 오류: PayApp mul_no가 없습니다!');
+                console.log('받은 파라미터들:', Array.from(urlParams.keys()));
+
+                // 임시 번호 생성 (데이터 손실 방지)
+                const fallbackId = 'ERROR-' + Date.now();
+                params.append('orderid', fallbackId);
+                console.error('⚠️ 임시 주문번호 생성:', fallbackId);
             }
 
             params.append('goodname', urlParams.get('goodname') || savedData?.packageName || '미블 체험단');

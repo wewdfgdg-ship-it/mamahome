@@ -333,10 +333,10 @@
                 console.log('  - 부가세(10%):', vat);
                 console.log('  - 검증: ', packagePrice, '+', vat, '=', totalAmount);
 
-                // 주문 데이터 구성 - API가 요구하는 두 가지 형식 모두 포함
+                // 주문 데이터 구성 - PayApp mul_no를 주문번호로 사용
                 const fullOrderData = {
                     // 플랫 구조 (Supabase 테이블용)
-                    order_number: orderData.orderid || orderData.orderNumber || ('ERR-' + Date.now()),
+                    order_number: orderData.orderid,  // PayApp mul_no만 사용
                     customer_name: customerInfo.name || '미확인',
                     customer_email: customerInfo.email || '',
                     customer_phone: customerInfo.phone || '',
@@ -352,7 +352,7 @@
                     created_at: new Date().toISOString(),
 
                     // 중첩 구조 (API 호환성을 위해 추가)
-                    orderNumber: orderData.orderid || orderData.orderNumber || ('ERR-' + Date.now()),
+                    orderNumber: orderData.orderid,  // PayApp mul_no만 사용
                     customer: {
                         name: customerInfo.name || '미확인',
                         email: customerInfo.email || '',
