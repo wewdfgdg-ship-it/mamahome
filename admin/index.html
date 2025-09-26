@@ -2664,6 +2664,12 @@
                 const category = categoriesCache.find(c => c.id === categoryId);
                 console.log('Found category:', category);
 
+                // 수정 모드에서는 slug 자동 생성 비활성화
+                const slugInput = document.getElementById('categorySlug');
+                if (slugInput) {
+                    slugInput.dataset.manual = 'true';
+                }
+
                 if (category) {
                     const nameInput = document.getElementById('categoryName');
                     const slugInput = document.getElementById('categorySlug');
@@ -2712,6 +2718,13 @@
                 // 등록 모드
                 title.textContent = '새 카테고리 등록';
                 form.reset();
+
+                // 등록 모드에서는 slug 자동 생성 활성화
+                const slugInput = document.getElementById('categorySlug');
+                if (slugInput) {
+                    slugInput.dataset.manual = 'false';
+                }
+
                 const activeInput = document.getElementById('categoryActive');
                 if (activeInput) activeInput.checked = true;
                 form.onsubmit = (e) => saveCategory(e);
@@ -2743,12 +2756,21 @@
                 });
 
                 const result = await response.json();
-                if (result.success) {
+
+                if (response.ok && result.success) {
                     alert('카테고리가 등록되었습니다.');
                     closeCategoryModal();
                     loadCategories();
                 } else {
-                    alert('카테고리 등록에 실패했습니다: ' + (result.error || ''));
+                    // 오류 메시지를 더 명확하게 표시
+                    const errorMessage = result.error || '카테고리 등록에 실패했습니다.';
+                    alert(errorMessage);
+
+                    // slug 중복 오류인 경우 해당 입력 필드에 포커스
+                    if (errorMessage.includes('slug') || errorMessage.includes('Slug')) {
+                        document.getElementById('categorySlug').focus();
+                        document.getElementById('categorySlug').select();
+                    }
                 }
             } catch (error) {
                 console.error('카테고리 저장 오류:', error);
@@ -2779,12 +2801,21 @@
                 });
 
                 const result = await response.json();
-                if (result.success) {
+
+                if (response.ok && result.success) {
                     alert('카테고리가 수정되었습니다.');
                     closeCategoryModal();
                     loadCategories();
                 } else {
-                    alert('카테고리 수정에 실패했습니다: ' + (result.error || ''));
+                    // 오류 메시지를 더 명확하게 표시
+                    const errorMessage = result.error || '카테고리 수정에 실패했습니다.';
+                    alert(errorMessage);
+
+                    // slug 중복 오류인 경우 해당 입력 필드에 포커스
+                    if (errorMessage.includes('slug') || errorMessage.includes('Slug')) {
+                        document.getElementById('categorySlug').focus();
+                        document.getElementById('categorySlug').select();
+                    }
                 }
             } catch (error) {
                 console.error('카테고리 수정 오류:', error);
@@ -2812,11 +2843,13 @@
                 });
 
                 const result = await response.json();
-                if (result.success) {
+
+                if (response.ok && result.success) {
                     alert('카테고리가 삭제되었습니다.');
                     loadCategories();
                 } else {
-                    alert('카테고리 삭제에 실패했습니다: ' + (result.error || ''));
+                    const errorMessage = result.error || '카테고리 삭제에 실패했습니다.';
+                    alert(errorMessage);
                 }
             } catch (error) {
                 console.error('카테고리 삭제 오류:', error);
@@ -2828,6 +2861,48 @@
         function closeCategoryModal() {
             document.getElementById('categoryModal').style.display = 'none';
             document.getElementById('categoryForm').reset();
+        }
+
+        // Slug 자동 생성
+        function generateSlug(text) {
+            // 수정 모드일 때는 자동 생성하지 않음
+            const slugInput = document.getElementById('categorySlug');
+            if (slugInput.dataset.manual === 'true') {
+                return;
+            }
+
+            // 한글 → 영문 매핑 (간단한 예시)
+            const koreanToEnglish = {
+                '블로그': 'blog',
+                '인스타그램': 'instagram',
+                '인스타': 'instagram',
+                '유튜브': 'youtube',
+                '페이스북': 'facebook',
+                '마케팅': 'marketing',
+                '최적화': 'optimization',
+                '광고': 'ads',
+                '컨설팅': 'consulting',
+                '브랜딩': 'branding',
+                '디자인': 'design',
+                '개발': 'development',
+                '분석': 'analysis'
+            };
+
+            let slug = text.toLowerCase();
+
+            // 한글을 영문으로 변환
+            for (const [korean, english] of Object.entries(koreanToEnglish)) {
+                slug = slug.replace(new RegExp(korean, 'gi'), english);
+            }
+
+            // 특수문자 제거하고 공백을 하이픈으로 변경
+            slug = slug
+                .replace(/[^a-z0-9\s-]/g, '') // 영문, 숫자, 공백, 하이픈만 남김
+                .replace(/\s+/g, '-') // 공백을 하이픈으로
+                .replace(/-+/g, '-') // 연속된 하이픈을 하나로
+                .replace(/^-|-$/g, ''); // 시작/끝 하이픈 제거
+
+            slugInput.value = slug;
         }
 
         // ========== 썸네일 CRUD ==========
@@ -3379,11 +3454,15 @@
             <form id="categoryForm">
                 <div style="margin-bottom: 20px;">
                     <label style="display: block; margin-bottom: 5px; font-weight: 500;">카테고리명 *</label>
-                    <input type="text" id="categoryName" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    <input type="text" id="categoryName" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;"
+                           oninput="generateSlug(this.value)">
                 </div>
                 <div style="margin-bottom: 20px;">
                     <label style="display: block; margin-bottom: 5px; font-weight: 500;">Slug (URL) *</label>
-                    <input type="text" id="categorySlug" required pattern="[a-z0-9-]+" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    <input type="text" id="categorySlug" required pattern="[a-z0-9-]+" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;"
+                           placeholder="영문 소문자와 숫자, 하이픈(-)만 사용 가능"
+                           onkeyup="this.dataset.manual='true'">
+                    <small style="color: #666; font-size: 12px;">예: blog-marketing, instagram-1, seo-optimization</small>
                 </div>
                 <div style="margin-bottom: 20px;">
                     <label style="display: block; margin-bottom: 5px; font-weight: 500;">설명</label>
