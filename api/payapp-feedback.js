@@ -65,9 +65,11 @@ export default async function handler(req, res) {
     console.log('결제 페이지 URL (payurl):', payurl);
     console.log('결제수단:', pay_type || paytype);
 
-    // 결제 성공 (state 또는 pay_state === '4' 또는 4)
-    const paymentState = pay_state || state;
-    if (paymentState == 4 || paymentState == '4') {
+    // 결제 상태 확인 - PayApp은 state='1'이 성공
+    console.log('Payment State Check:', { state, pay_state });
+
+    // PayApp 결제 성공: state='1' (구형) 또는 pay_state='4' (신형)
+    if (state == '1' || state == 1 || pay_state == '4' || pay_state == 4) {
       console.log('✅ 결제 성공 확인');
 
       // PayApp 전용 테이블에 저장

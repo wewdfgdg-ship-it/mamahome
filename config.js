@@ -10,8 +10,8 @@ const PAYAPP_CONFIG = {
     linkkey: 'QLo9WUgFwaqAYjAiv6z86e1DPJnCCRVaOgT+oqg6zaM=',
 
     // 결제 완료 후 서버로 전송되는 콜백 URL
-    // 에러 70080 방지를 위해 빈 값으로 설정 (페이앱이 접속할 수 없는 경우)
-    feedbackurl: '',
+    // PayApp 서버에서 결제 완료 시 호출할 Webhook URL
+    feedbackurl: 'https://mamahome-five.vercel.app/api/payapp-feedback',
 
     // 결제 완료 후 사용자가 리다이렉트되는 URL
     returnurl: '',  // 빈 값 = 현재 도메인 사용

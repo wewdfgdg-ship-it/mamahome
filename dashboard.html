@@ -1101,13 +1101,15 @@
                     if (!orderError && orderData) {
                         console.log('주문 데이터:', orderData);
 
-                        // PayApp 테이블 조회 시도
+                        // PayApp 테이블 조회 시도 - goodname(매장명)과 price(금액)로 매칭
                         try {
                             const { data: payappData, error } = await supabaseClient
-                                .from('payapp')
+                                .from('payapp_payments')
                                 .select('*')
-                                .eq('recvphone', orderData.customer_phone);
+                                .eq('goodname', orderData.business_name)  // 매장명으로 매칭
+                                .eq('price', orderData.amount);           // 금액으로 매칭
 
+                            console.log('PayApp 조회 조건:', { goodname: orderData.business_name, price: orderData.amount });
                             console.log('PayApp 조회 결과:', { error, payappData });
 
                             if (!error && payappData && payappData.length > 0) {
