@@ -723,7 +723,10 @@
                             customerName: order.customer_name,
                             customerEmail: order.customer_email,
                             customerPhone: order.customer_phone,
-                            package: {
+                            businessName: order.business_name,
+                            industryType: order.industry_type,
+                            package_name: order.package_name,  // 직접 필드 추가
+                            packageInfo: {
                                 name: order.package_name,
                                 price: order.package_price
                             },
