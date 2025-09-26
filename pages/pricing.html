@@ -155,8 +155,8 @@
         
         /* Grid System - 3x3 */
         .grid-3x3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            display: flex;
+            justify-content: center;
             gap: var(--spacing-lg);
             margin-top: var(--spacing-2xl);
         }
@@ -174,6 +174,8 @@
             height: 420px;
             position: relative;
             border: 2px solid transparent;
+            width: 380px;
+            max-width: 100%;
         }
         
         /* Featured Card */
@@ -315,28 +317,24 @@
         /* Responsive - Tablet */
         @media (max-width: 1024px) {
             .grid-3x3 {
-                grid-template-columns: repeat(2, 1fr);
+                display: flex;
+                justify-content: center;
                 gap: var(--spacing-md);
             }
-            
-            .package-card.featured {
-                grid-column: span 2;
-            }
         }
-        
+
         /* Responsive - Mobile */
         @media (max-width: 767px) {
             .grid-3x3 {
-                grid-template-columns: 1fr;
+                display: flex;
+                justify-content: center;
                 gap: var(--spacing-md);
             }
-            
-            .package-card.featured {
-                grid-column: 1;
-            }
-            
+
             .package-card {
                 height: 380px;
+                width: 100%;
+                max-width: 380px;
             }
         }
     </style>
@@ -353,8 +351,8 @@
             
             <!-- 3x3 Grid -->
             <div class="grid-3x3">
-                 <!-- 1. 이번달 패키지 (Featured) -->
-                <div class="package-card featured">
+                <!-- 1. 이번달 패키지 (Featured) - 숨김 처리 -->
+                <div class="package-card featured" style="display: none;">
                     <div class="card-image-wrapper">
                         <img src="https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=800&h=600&fit=crop" alt="이번달 패키지" class="card-image">
                         <div class="card-image-overlay"></div>
@@ -374,7 +372,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- 2. 블로그 체험단 -->
+                <!-- 2. 블로그 체험단 - 표시 유지 -->
                 <div class="package-card" onclick="window.location.href='package-detail.html?package=blog-experience'" style="cursor: pointer;">
                     <div class="card-image-wrapper">
                         <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&fit=crop" alt="블로그 체험단" class="card-image">
@@ -395,9 +393,9 @@
                         </div>
                     </div>
                 </div>
-                            
-                <!-- 3. 인스타 체험단 -->
-                <div class="package-card">
+
+                <!-- 3. 인스타 체험단 - 숨김 처리 -->
+                <div class="package-card" style="display: none;">
                     <div class="card-image-wrapper">
                         <img src="https://images.unsplash.com/photo-1598128558393-70ff21433be0?w=800" alt="인스타 체험단" class="card-image">
                         <div class="card-image-overlay"></div>
@@ -417,9 +415,9 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- 4. 클립 체험단 -->
-                <div class="package-card">
+
+                <!-- 4. 클립 체험단 - 숨김 처리 -->
+                <div class="package-card" style="display: none;">
                     <div class="card-image-wrapper">
                         <img src="https://images.unsplash.com/photo-1626544827763-d516dce335e2?w=800&h=600&fit=crop" alt="클립 체험단" class="card-image">
                         <div class="card-image-overlay"></div>
@@ -439,9 +437,9 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- 5. 릴스 체험단 -->
-                <div class="package-card">
+
+                <!-- 5. 릴스 체험단 - 숨김 처리 -->
+                <div class="package-card" style="display: none;">
                     <div class="card-image-wrapper">
                         <img src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=800&h=600&fit=crop" alt="릴스 체험단" class="card-image">
                         <div class="card-image-overlay"></div>
@@ -461,9 +459,9 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- 6. 네이버지도 최적화 -->
-                <div class="package-card">
+
+                <!-- 6. 네이버지도 최적화 - 숨김 처리 -->
+                <div class="package-card" style="display: none;">
                     <div class="card-image-wrapper">
                         <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop" alt="네이버지도 최적화" class="card-image">
                         <div class="card-image-overlay"></div>
@@ -483,9 +481,9 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- 7. 플레이스 광고 세팅 -->
-                <div class="package-card">
+
+                <!-- 7. 플레이스 광고 세팅 - 숨김 처리 -->
+                <div class="package-card" style="display: none;">
                     <div class="card-image-wrapper">
                         <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop" alt="플레이스 광고" class="card-image">
                         <div class="card-image-overlay"></div>
@@ -505,9 +503,9 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- 8. 블로그 기자단 -->
-                <div class="package-card">
+
+                <!-- 8. 블로그 기자단 - 숨김 처리 -->
+                <div class="package-card" style="display: none;">
                     <div class="card-image-wrapper">
                         <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=600&fit=crop" alt="블로그 기자단" class="card-image">
                         <div class="card-image-overlay"></div>
@@ -527,9 +525,9 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- 9. 인스타 기자단 -->
-                <div class="package-card">
+
+                <!-- 9. 인스타 기자단 - 숨김 처리 -->
+                <div class="package-card" style="display: none;">
                     <div class="card-image-wrapper">
                         <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&h=600&fit=crop" alt="인스타 기자단" class="card-image">
                         <div class="card-image-overlay"></div>
