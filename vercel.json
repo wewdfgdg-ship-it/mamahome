@@ -30,19 +30,7 @@
     "api/payapp-payments.js": {
       "maxDuration": 10
     },
-    "api/packages-list.js": {
-      "maxDuration": 10
-    },
-    "api/packages-create.js": {
-      "maxDuration": 10
-    },
-    "api/packages-update.js": {
-      "maxDuration": 10
-    },
-    "api/packages-delete.js": {
-      "maxDuration": 10
-    },
-    "api/packages-detail.js": {
+    "api/packages.js": {
       "maxDuration": 10
     }
   },

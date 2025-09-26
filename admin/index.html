@@ -1991,7 +1991,7 @@
             packagesList.innerHTML = '<div style="text-align: center; padding: 40px; color: #999;">패키지를 불러오는 중...</div>';
 
             try {
-                const response = await fetch('/api/packages-list?active=true');
+                const response = await fetch('/api/packages?active=true');
                 const data = await response.json();
 
                 if (!data.success || data.data.length === 0) {
@@ -2065,7 +2065,7 @@
             document.getElementById('packageFormTitle').textContent = '패키지 수정';
 
             try {
-                const response = await fetch(`/api/packages-detail?id=${id}`);
+                const response = await fetch(`/api/packages?id=${id}`);
                 const data = await response.json();
 
                 if (data.success) {
@@ -2114,7 +2114,7 @@
             if (!confirm('정말 이 패키지를 삭제하시겠습니까?')) return;
 
             try {
-                const response = await fetch(`/api/packages-delete?id=${id}`, {
+                const response = await fetch(`/api/packages?id=${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': localStorage.getItem('adminToken') || 'admin-token'
@@ -2175,8 +2175,8 @@
 
             try {
                 const url = currentEditPackageId
-                    ? `/api/packages-update?id=${currentEditPackageId}`
-                    : '/api/packages-create';
+                    ? `/api/packages?id=${currentEditPackageId}`
+                    : '/api/packages';
 
                 const method = currentEditPackageId ? 'PUT' : 'POST';
 
