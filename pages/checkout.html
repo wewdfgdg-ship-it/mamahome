@@ -14,20 +14,14 @@
     <link rel="stylesheet" href="../css/common-header.css">
 
     <!-- 페이앱 설정 -->
+    <script src="../config.js"></script>
     <script>
-        // config.js 파일이 없을 때를 위한 기본 설정
+        // config.js가 로드되지 않았을 때를 위한 fallback
         if (typeof CONFIG === 'undefined') {
-            const CONFIG = {
-                userid: 'ksbm',
-                linkkey: 'QLo9WUgFwaqAYjAiv6z86e1DPJnCCRVaOgT+oqg6zaM=',
-                feedbackurl: 'https://mamahome-five.vercel.app/api/payapp-feedback',  // 서버 간 결제 결과 통보
-                returnurl: window.location.origin + '/pages/payment-complete.html',  // 결제 완료 후 페이지
-                environment: 'production'
-            };
-            window.CONFIG = CONFIG;
+            console.error('CONFIG not loaded from config.js');
+            // 기본값 설정하지 않음 - config.js가 반드시 필요
         }
     </script>
-    <script src="../config.js"></script>
 
     <!-- 페이앱 커스텀 결제 모듈 정의 (인라인으로 직접 정의) -->
     <script>
@@ -64,7 +58,7 @@
                     recvphone: params.recvphone.replace(/-/g, ''),
                     memo: params.memo || '',
                     reqaddr: '0',
-                    feedbackurl: this.config.feedbackurl || 'https://mamahome-five.vercel.app/api/payapp-feedback',
+                    feedbackurl: this.config.feedbackurl,
                     var1: params.var1 || '',
                     var2: params.var2 || '',
                     smsuse: params.smsuse || 'n',
@@ -1150,14 +1144,14 @@
                                 <label class="form-label">업종 선택 <span class="required">*</span></label>
                                 <select id="business-type" class="form-select" required>
                                     <option value="">업종을 선택해주세요</option>
-                                    <option value="restaurant">음식점</option>
-                                    <option value="cafe">카페</option>
-                                    <option value="beauty">뷰티/미용</option>
-                                    <option value="fashion">패션</option>
-                                    <option value="education">교육</option>
-                                    <option value="medical">의료/건강</option>
-                                    <option value="realestate">부동산</option>
-                                    <option value="other">기타</option>
+                                    <option value="음식점">음식점</option>
+                                    <option value="카페">카페</option>
+                                    <option value="뷰티/미용">뷰티/미용</option>
+                                    <option value="패션">패션</option>
+                                    <option value="교육">교육</option>
+                                    <option value="의료/건강">의료/건강</option>
+                                    <option value="부동산">부동산</option>
+                                    <option value="기타">기타</option>
                                 </select>
                             </div>
                         </div>

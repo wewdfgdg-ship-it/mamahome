@@ -43,7 +43,7 @@ export default async function handler(req, res) {
 
         // UPSERT 방식으로 저장 (중복 방지)
         const { data: insertData, error: insertError } = await supabase
-          .from('payapp')
+          .from('payapp_payments')
           .upsert({
             mul_no: payappData.mul_no,
             order_id: payappData.order_id || null,
@@ -95,7 +95,7 @@ export default async function handler(req, res) {
         const { mul_no, order_id } = req.query;
 
         let query = supabase
-          .from('payapp')
+          .from('payapp_payments')
           .select('*');
 
         if (mul_no) {
