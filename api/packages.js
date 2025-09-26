@@ -327,13 +327,41 @@ async function handleCategories(req, res, id) {
           return res.status(401).json({ success: false, error: '관리자 권한이 필요합니다.' });
         }
 
+        // Slug 중복 체크
+        if (req.body.slug) {
+          const { data: existingCategory } = await supabase
+            .from('categories')
+            .select('id')
+            .eq('slug', req.body.slug)
+            .single();
+
+          if (existingCategory) {
+            return res.status(400).json({
+              success: false,
+              error: `'${req.body.slug}' slug는 이미 사용 중입니다. 다른 값을 입력해주세요.`
+            });
+          }
+        }
+
         const { data: newCategory, error: createError } = await supabase
           .from('categories')
           .insert([req.body])
           .select()
           .single();
 
-        if (createError) throw createError;
+        if (createError) {
+          console.error('카테고리 생성 오류:', createError);
+          if (createError.message.includes('duplicate key value') || createError.message.includes('unique constraint')) {
+            return res.status(400).json({
+              success: false,
+              error: 'Slug 값이 중복되었습니다. 다른 값을 입력해주세요.'
+            });
+          }
+          return res.status(500).json({
+            success: false,
+            error: createError.message || '카테고리 생성에 실패했습니다.'
+          });
+        }
         return res.status(201).json({ success: true, data: newCategory });
 
       case 'PUT':
@@ -345,6 +373,23 @@ async function handleCategories(req, res, id) {
           return res.status(400).json({ success: false, error: 'ID가 필요합니다.' });
         }
 
+        // Slug 중복 체크 (자기 자신 제외)
+        if (req.body.slug) {
+          const { data: existingCategory } = await supabase
+            .from('categories')
+            .select('id')
+            .eq('slug', req.body.slug)
+            .neq('id', id)
+            .single();
+
+          if (existingCategory) {
+            return res.status(400).json({
+              success: false,
+              error: `'${req.body.slug}' slug는 이미 사용 중입니다. 다른 값을 입력해주세요.`
+            });
+          }
+        }
+
         const { data: updatedCategory, error: updateError } = await supabase
           .from('categories')
           .update(req.body)
@@ -352,7 +397,19 @@ async function handleCategories(req, res, id) {
           .select()
           .single();
 
-        if (updateError) throw updateError;
+        if (updateError) {
+          console.error('카테고리 수정 오류:', updateError);
+          if (updateError.message.includes('duplicate key value') || updateError.message.includes('unique constraint')) {
+            return res.status(400).json({
+              success: false,
+              error: 'Slug 값이 중복되었습니다. 다른 값을 입력해주세요.'
+            });
+          }
+          return res.status(500).json({
+            success: false,
+            error: updateError.message || '카테고리 수정에 실패했습니다.'
+          });
+        }
         return res.status(200).json({ success: true, data: updatedCategory });
 
       case 'DELETE':
@@ -377,9 +434,26 @@ async function handleCategories(req, res, id) {
     }
   } catch (error) {
     console.error('카테고리 API 오류:', error);
+
+    // 데이터베이스 제약 조건 오류 처리
+    if (error.message && (error.message.includes('duplicate') || error.message.includes('unique'))) {
+      return res.status(400).json({
+        success: false,
+        error: 'Slug 값이 중복되었습니다. 다른 값을 입력해주세요.'
+      });
+    }
+
+    // 기타 데이터베이스 오류
+    if (error.code === '23505') { // PostgreSQL unique violation
+      return res.status(400).json({
+        success: false,
+        error: 'Slug 값이 중복되었습니다. 다른 값을 입력해주세요.'
+      });
+    }
+
     return res.status(500).json({
       success: false,
-      error: error.message || '서버 오류가 발생했습니다.'
+      error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
     });
   }
 }
