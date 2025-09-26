@@ -329,13 +329,13 @@ async function handleCategories(req, res, id) {
 
         // Slug 중복 체크
         if (req.body.slug) {
-          const { data: existingCategory } = await supabase
+          const { data: existingCategories, error: checkError } = await supabase
             .from('categories')
             .select('id')
-            .eq('slug', req.body.slug)
-            .single();
+            .eq('slug', req.body.slug);
 
-          if (existingCategory) {
+          // 오류가 없고 이미 존재하는 카테고리가 있는 경우
+          if (!checkError && existingCategories && existingCategories.length > 0) {
             return res.status(400).json({
               success: false,
               error: `'${req.body.slug}' slug는 이미 사용 중입니다. 다른 값을 입력해주세요.`
@@ -375,14 +375,20 @@ async function handleCategories(req, res, id) {
 
         // Slug 중복 체크 (자기 자신 제외)
         if (req.body.slug) {
-          const { data: existingCategory } = await supabase
+          console.log(`Checking slug '${req.body.slug}' for category ID: ${id}`);
+
+          const { data: existingCategories, error: checkError } = await supabase
             .from('categories')
             .select('id')
             .eq('slug', req.body.slug)
-            .neq('id', id)
-            .single();
+            .neq('id', id);
 
-          if (existingCategory) {
+          console.log('Existing categories with same slug:', existingCategories);
+          console.log('Check error:', checkError);
+
+          // 오류가 없고 다른 카테고리가 이미 해당 slug를 사용 중인 경우
+          if (!checkError && existingCategories && existingCategories.length > 0) {
+            console.log('Slug is already in use by another category');
             return res.status(400).json({
               success: false,
               error: `'${req.body.slug}' slug는 이미 사용 중입니다. 다른 값을 입력해주세요.`
