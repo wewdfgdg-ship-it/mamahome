@@ -1006,7 +1006,8 @@
                         // created_at이 이미 한국시간으로 저장되어 있음
                         createdAt: formatKoreanTime(order.created_at),
                         businessName: order.business_name || '',
-                        businessNumber: order.business_number || ''
+                        businessNumber: order.business_number || '',
+                        industryType: order.industry_type || ''  // 업종 추가
                     };
                 });
 
@@ -1040,28 +1041,34 @@
                                 <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
                             </th>
                             <th>주문번호</th>
-                            <th>고객명</th>
+                            <th>매장명</th>
+                            <th>업종</th>
                             <th>패키지</th>
                             <th>상품금액</th>
                             <th>부가세</th>
                             <th>총액</th>
-                            <th>상태</th>
                             <th>주문일시</th>
+                            <th>상태</th>
                             <th>액션</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${orders.map(order => `
+                        ${orders.map(order => {
+                            const businessName = order.businessName || order.business_name || '-';
+                            const industryType = order.industryType || order.industry_type || '-';
+                            return `
                             <tr data-order-id="${order.id}">
                                 <td class="checkbox-cell">
                                     <input type="checkbox" class="order-checkbox" value="${order.id}" onchange="updateDeleteButton()">
                                 </td>
                                 <td><strong>${order.orderNumber}</strong></td>
-                                <td>${order.customer}</td>
+                                <td>${businessName}</td>
+                                <td>${industryType}</td>
                                 <td>${order.packageType}</td>
                                 <td>₩${order.packagePrice.toLocaleString()}</td>
                                 <td>₩${order.vat.toLocaleString()}</td>
                                 <td>₩${order.totalAmount.toLocaleString()}</td>
+                                <td>${order.createdAt}</td>
                                 <td>
                                     <select class="status-select" onchange="quickUpdateStatus('${order.id}', this.value)">
                                         <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>대기중</option>
@@ -1071,7 +1078,6 @@
                                         <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>취소</option>
                                     </select>
                                 </td>
-                                <td>${order.createdAt}</td>
                                 <td>
                                     <div class="action-buttons">
                                         <button class="action-btn" onclick="viewOrderModal('${order.id}')">보기</button>
@@ -1079,7 +1085,7 @@
                                     </div>
                                 </td>
                             </tr>
-                        `).join('')}
+                        `}).join('')}
                     </tbody>
                 </table>
             `;
