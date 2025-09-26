@@ -369,22 +369,41 @@ async function handleCategories(req, res, id) {
           return res.status(401).json({ success: false, error: '관리자 권한이 필요합니다.' });
         }
 
+        console.log('PUT request - ID from params:', id);
+        console.log('PUT request - Body:', req.body);
+
         if (!id) {
           return res.status(400).json({ success: false, error: 'ID가 필요합니다.' });
         }
 
-        // Slug 중복 체크 (자기 자신 제외)
-        if (req.body.slug) {
-          console.log(`Checking slug '${req.body.slug}' for category ID: ${id}`);
+        // 먼저 현재 카테고리 정보를 가져옴
+        const { data: currentCategory, error: getCurrentError } = await supabase
+          .from('categories')
+          .select('slug')
+          .eq('id', id)
+          .single();
+
+        if (getCurrentError || !currentCategory) {
+          console.error('현재 카테고리를 찾을 수 없습니다:', getCurrentError);
+          return res.status(404).json({
+            success: false,
+            error: '해당 카테고리를 찾을 수 없습니다.'
+          });
+        }
+
+        console.log('Current category slug:', currentCategory.slug);
+        console.log('New slug:', req.body.slug);
+
+        // Slug가 변경되었을 때만 중복 체크
+        if (req.body.slug && req.body.slug !== currentCategory.slug) {
+          console.log(`Slug changed from '${currentCategory.slug}' to '${req.body.slug}' - checking for duplicates`);
 
           const { data: existingCategories, error: checkError } = await supabase
             .from('categories')
             .select('id')
-            .eq('slug', req.body.slug)
-            .neq('id', id);
+            .eq('slug', req.body.slug);
 
           console.log('Existing categories with same slug:', existingCategories);
-          console.log('Check error:', checkError);
 
           // 오류가 없고 다른 카테고리가 이미 해당 slug를 사용 중인 경우
           if (!checkError && existingCategories && existingCategories.length > 0) {
@@ -394,6 +413,8 @@ async function handleCategories(req, res, id) {
               error: `'${req.body.slug}' slug는 이미 사용 중입니다. 다른 값을 입력해주세요.`
             });
           }
+        } else {
+          console.log('Slug unchanged, skipping duplicate check');
         }
 
         const { data: updatedCategory, error: updateError } = await supabase
