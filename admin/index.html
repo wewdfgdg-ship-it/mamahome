@@ -1083,6 +1083,11 @@
 
             // 네비게이션 메뉴 클릭 이벤트 설정
             setupNavigation();
+
+            // 패키지 관리 초기화 (인증된 경우)
+            if (isAuthenticated) {
+                initPackageManagement();
+            }
         });
 
         // 인증 확인
@@ -2266,23 +2271,47 @@
 
                 categoriesList.innerHTML = '';
                 data.data.forEach(category => {
-                    const card = `
-                        <div style="background: white; border: 1px solid #ddd; border-radius: 12px; padding: 20px; cursor: pointer; transition: all 0.3s;"
-                             onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'"
-                             onmouseout="this.style.boxShadow='none'"
-                             onclick="selectCategory('${category.id}', '${category.name}')">
-                            <div style="font-size: 24px; margin-bottom: 10px;">📁</div>
-                            <h3 style="margin: 0 0 8px 0; font-size: 18px;">${category.name}</h3>
-                            <p style="color: #666; font-size: 14px; margin: 0;">${category.description || ''}</p>
-                            <div style="margin-top: 15px; display: flex; gap: 8px;">
-                                <button onclick="event.stopPropagation(); editCategory('${category.id}')"
-                                        style="padding: 6px 12px; background: #0071e3; color: white; border: none; border-radius: 6px; font-size: 12px;">수정</button>
-                                <button onclick="event.stopPropagation(); deleteCategory('${category.id}')"
-                                        style="padding: 6px 12px; background: #ff4444; color: white; border: none; border-radius: 6px; font-size: 12px;">삭제</button>
-                            </div>
+                    const card = document.createElement('div');
+                    card.style.cssText = 'background: white; border: 1px solid #ddd; border-radius: 12px; padding: 20px; cursor: pointer; transition: all 0.3s;';
+                    card.dataset.categoryId = category.id;
+                    card.dataset.categoryName = category.name;
+
+                    card.innerHTML = `
+                        <div style="font-size: 24px; margin-bottom: 10px;">📁</div>
+                        <h3 style="margin: 0 0 8px 0; font-size: 18px;">${category.name}</h3>
+                        <p style="color: #666; font-size: 14px; margin: 0;">${category.description || ''}</p>
+                        <div style="margin-top: 15px; display: flex; gap: 8px;">
+                            <button class="edit-btn" data-id="${category.id}"
+                                    style="padding: 6px 12px; background: #0071e3; color: white; border: none; border-radius: 6px; font-size: 12px; cursor: pointer;">수정</button>
+                            <button class="delete-btn" data-id="${category.id}"
+                                    style="padding: 6px 12px; background: #ff4444; color: white; border: none; border-radius: 6px; font-size: 12px; cursor: pointer;">삭제</button>
                         </div>
                     `;
-                    categoriesList.innerHTML += card;
+
+                    // 이벤트 리스너 추가
+                    card.onmouseover = () => card.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                    card.onmouseout = () => card.style.boxShadow = 'none';
+                    card.onclick = (e) => {
+                        if (!e.target.classList.contains('edit-btn') && !e.target.classList.contains('delete-btn')) {
+                            selectCategory(category.id, category.name);
+                        }
+                    };
+
+                    // 수정/삭제 버튼 이벤트
+                    const editBtn = card.querySelector('.edit-btn');
+                    const deleteBtn = card.querySelector('.delete-btn');
+
+                    editBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        editCategory(category.id);
+                    };
+
+                    deleteBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        deleteCategory(category.id);
+                    };
+
+                    categoriesList.appendChild(card);
                 });
             } catch (error) {
                 console.error('카테고리 로드 오류:', error);
@@ -2584,28 +2613,50 @@
 
         // 카테고리 모달 표시
         function showCategoryModal(categoryId = null) {
+            console.log('showCategoryModal called with:', categoryId);
+
             const modal = document.getElementById('categoryModal');
             const form = document.getElementById('categoryForm');
             const title = document.getElementById('categoryModalTitle');
 
+            // 요소 존재 확인
+            if (!modal) {
+                console.error('categoryModal not found');
+                return;
+            }
+            if (!form) {
+                console.error('categoryForm not found');
+                return;
+            }
+            if (!title) {
+                console.error('categoryModalTitle not found');
+                return;
+            }
+
             if (categoryId) {
                 // 수정 모드
                 title.textContent = '카테고리 수정';
-                // TODO: 카테고리 데이터 로드
                 const category = categoriesCache.find(c => c.id === categoryId);
                 if (category) {
-                    document.getElementById('categoryName').value = category.name;
-                    document.getElementById('categorySlug').value = category.slug;
-                    document.getElementById('categoryDescription').value = category.description || '';
-                    document.getElementById('categoryActive').checked = category.is_active;
-                    document.getElementById('categorySort').value = category.sort_order || 0;
+                    const nameInput = document.getElementById('categoryName');
+                    const slugInput = document.getElementById('categorySlug');
+                    const descInput = document.getElementById('categoryDescription');
+                    const activeInput = document.getElementById('categoryActive');
+                    const sortInput = document.getElementById('categorySort');
+
+                    if (nameInput) nameInput.value = category.name;
+                    if (slugInput) slugInput.value = category.slug || '';
+                    if (descInput) descInput.value = category.description || '';
+                    if (activeInput) activeInput.checked = category.is_active !== false;
+                    if (sortInput) sortInput.value = category.sort_order || 0;
                 }
                 form.onsubmit = (e) => updateCategory(e, categoryId);
             } else {
                 // 등록 모드
                 title.textContent = '새 카테고리 등록';
                 form.reset();
-                document.getElementById('categoryActive').checked = true;
+                const activeInput = document.getElementById('categoryActive');
+                if (activeInput) activeInput.checked = true;
                 form.onsubmit = (e) => saveCategory(e);
             }
 
