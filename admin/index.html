@@ -675,7 +675,7 @@
         </div>
 
         <!-- 주문 테이블 -->
-        <div class="orders-section">
+        <div class="orders-section" style="display: none;">
             <div class="section-header">
                 <h2 class="section-title">최근 주문</h2>
                 <div style="display: flex; gap: 10px;">
@@ -2614,6 +2614,7 @@
         // 카테고리 모달 표시
         function showCategoryModal(categoryId = null) {
             console.log('showCategoryModal called with:', categoryId);
+            console.log('categoriesCache:', categoriesCache);
 
             const modal = document.getElementById('categoryModal');
             const form = document.getElementById('categoryForm');
@@ -2637,6 +2638,8 @@
                 // 수정 모드
                 title.textContent = '카테고리 수정';
                 const category = categoriesCache.find(c => c.id === categoryId);
+                console.log('Found category:', category);
+
                 if (category) {
                     const nameInput = document.getElementById('categoryName');
                     const slugInput = document.getElementById('categorySlug');
@@ -2644,11 +2647,41 @@
                     const activeInput = document.getElementById('categoryActive');
                     const sortInput = document.getElementById('categorySort');
 
-                    if (nameInput) nameInput.value = category.name;
-                    if (slugInput) slugInput.value = category.slug || '';
-                    if (descInput) descInput.value = category.description || '';
-                    if (activeInput) activeInput.checked = category.is_active !== false;
-                    if (sortInput) sortInput.value = category.sort_order || 0;
+                    console.log('Input elements:', {
+                        nameInput, slugInput, descInput, activeInput, sortInput
+                    });
+
+                    if (nameInput) {
+                        nameInput.value = category.name || '';
+                    } else {
+                        console.error('categoryName input not found');
+                    }
+
+                    if (slugInput) {
+                        slugInput.value = category.slug || '';
+                    } else {
+                        console.error('categorySlug input not found');
+                    }
+
+                    if (descInput) {
+                        descInput.value = category.description || '';
+                    } else {
+                        console.error('categoryDescription input not found');
+                    }
+
+                    if (activeInput) {
+                        activeInput.checked = category.is_active !== false;
+                    } else {
+                        console.error('categoryActive input not found');
+                    }
+
+                    if (sortInput) {
+                        sortInput.value = category.sort_order || 0;
+                    } else {
+                        console.error('categorySort input not found');
+                    }
+                } else {
+                    console.error('Category not found in cache:', categoryId);
                 }
                 form.onsubmit = (e) => updateCategory(e, categoryId);
             } else {
