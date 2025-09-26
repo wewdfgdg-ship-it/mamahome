@@ -89,6 +89,56 @@
             transform: translateY(-2px);
         }
 
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px 15px;
+            }
+
+            .section {
+                padding: 20px;
+                border-radius: 12px;
+            }
+
+            .section-title {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+
+            .mobile-order-view {
+                display: block !important;
+            }
+
+            .desktop-order-view {
+                display: none !important;
+            }
+
+            .order-card {
+                padding: 0 !important;
+                border: none !important;
+                background: transparent !important;
+                box-shadow: none !important;
+            }
+
+            .welcome-message {
+                font-size: 24px;
+            }
+
+            .dashboard-header {
+                margin-bottom: 30px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-order-view {
+                display: none !important;
+            }
+
+            .desktop-order-view {
+                display: table !important;
+            }
+        }
+
         .order-header {
             display: flex;
             justify-content: space-between;
@@ -787,8 +837,66 @@
                         const packageName = order.packageInfo?.name || order.package_name || '미블 체험단';
 
                         return `
-                            <div class="order-card" style="padding: 20px; overflow-x: auto;">
-                                <table style="width: 100%; border-collapse: collapse;">
+                            <div class="order-card" style="padding: 20px; margin-bottom: 20px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                <!-- 모바일용 카드 레이아웃 -->
+                                <div class="mobile-order-view" style="display: none;">
+                                    <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #eee;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                            <div>
+                                                <div style="font-size: 11px; color: #888; margin-bottom: 4px;">주문번호</div>
+                                                <div style="font-weight: 600; font-size: 15px;">${order.orderNumber || 'N/A'}</div>
+                                            </div>
+                                            <span class="order-status status-${status}" style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${statusText}</span>
+                                        </div>
+                                    </div>
+
+                                    <div style="display: grid; gap: 12px; margin-bottom: 16px;">
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span style="color: #888; font-size: 13px;">매장명</span>
+                                            <span style="font-weight: 500; font-size: 13px;">${businessName}</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span style="color: #888; font-size: 13px;">업종</span>
+                                            <span style="font-weight: 500; font-size: 13px;">${industryType}</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span style="color: #888; font-size: 13px;">패키지</span>
+                                            <span style="font-weight: 500; font-size: 13px;">${packageName}</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span style="color: #888; font-size: 13px;">상품금액</span>
+                                            <span style="font-weight: 500; font-size: 13px;">₩${packagePrice.toLocaleString()}</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span style="color: #888; font-size: 13px;">부가세</span>
+                                            <span style="font-weight: 500; font-size: 13px;">₩${vat.toLocaleString()}</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; padding-top: 12px; border-top: 1px solid #f0f0f0;">
+                                            <span style="color: #333; font-size: 14px; font-weight: 600;">총액</span>
+                                            <span style="font-weight: 700; font-size: 16px; color: var(--color-primary-main);">₩${totalAmount.toLocaleString()}</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span style="color: #888; font-size: 13px;">주문일시</span>
+                                            <span style="font-weight: 500; font-size: 13px;">${orderDate}</span>
+                                        </div>
+                                    </div>
+
+                                    <button onclick="viewPayAppReceipt('${order.orderNumber}', '${order.receiptUrl || ''}')"
+                                            style="width: 100%;
+                                                   background: var(--color-primary-main);
+                                                   color: white;
+                                                   border: none;
+                                                   padding: 12px;
+                                                   border-radius: 8px;
+                                                   font-size: 14px;
+                                                   font-weight: 600;
+                                                   cursor: pointer;">
+                                        📄 영수증 확인
+                                    </button>
+                                </div>
+
+                                <!-- 데스크톱용 테이블 레이아웃 -->
+                                <table class="desktop-order-view" style="width: 100%; border-collapse: collapse;">
                                     <tbody>
                                         <tr style="border-bottom: 1px solid var(--color-border);">
                                             <td style="padding: 12px 8px; text-align: left;">
