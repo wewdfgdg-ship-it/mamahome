@@ -1110,6 +1110,14 @@
                             </div>
                             <div class="mobile-order-details">
                                 <div class="mobile-detail-item">
+                                    <div class="mobile-detail-label">매장명</div>
+                                    <div class="mobile-detail-value">${order.businessName || order.business_name || '-'}</div>
+                                </div>
+                                <div class="mobile-detail-item">
+                                    <div class="mobile-detail-label">업종</div>
+                                    <div class="mobile-detail-value">${order.industryType || order.industry_type || '-'}</div>
+                                </div>
+                                <div class="mobile-detail-item">
                                     <div class="mobile-detail-label">고객명</div>
                                     <div class="mobile-detail-value">${order.customer}</div>
                                 </div>
