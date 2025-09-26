@@ -16,7 +16,18 @@ export default async function handler(req, res) {
   }
 
   // 라우팅: URL 경로에 따라 다른 동작 수행
-  const { action, id } = req.query;
+  const { action, id, category_id, package_id } = req.query;
+
+  // action 파라미터로 API 라우팅
+  if (action === 'categories') {
+    return handleCategories(req, res, id);
+  } else if (action === 'thumbnails') {
+    return handleThumbnails(req, res, id, category_id);
+  } else if (action === 'detail-pages') {
+    return handleDetailPages(req, res, id, req.query.thumbnail_id);
+  } else if (action === 'prices') {
+    return handlePrices(req, res, id, category_id);
+  }
 
   try {
     switch (req.method) {
@@ -285,4 +296,374 @@ async function deletePackage(req, res, id) {
     success: true,
     message: '패키지가 성공적으로 삭제되었습니다.'
   });
+}
+
+// ==================== 카테고리 관련 함수들 ====================
+async function handleCategories(req, res, id) {
+  try {
+    switch (req.method) {
+      case 'GET':
+        if (id) {
+          const { data, error } = await supabase
+            .from('categories')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+          if (error) throw error;
+          return res.status(200).json({ success: true, data });
+        } else {
+          const { data, error } = await supabase
+            .from('categories')
+            .select('*')
+            .order('sort_order', { ascending: true });
+
+          if (error) throw error;
+          return res.status(200).json({ success: true, data: data || [] });
+        }
+
+      case 'POST':
+        if (!checkAdminAuth(req)) {
+          return res.status(401).json({ success: false, error: '관리자 권한이 필요합니다.' });
+        }
+
+        const { data: newCategory, error: createError } = await supabase
+          .from('categories')
+          .insert([req.body])
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        return res.status(201).json({ success: true, data: newCategory });
+
+      case 'PUT':
+        if (!checkAdminAuth(req)) {
+          return res.status(401).json({ success: false, error: '관리자 권한이 필요합니다.' });
+        }
+
+        if (!id) {
+          return res.status(400).json({ success: false, error: 'ID가 필요합니다.' });
+        }
+
+        const { data: updatedCategory, error: updateError } = await supabase
+          .from('categories')
+          .update(req.body)
+          .eq('id', id)
+          .select()
+          .single();
+
+        if (updateError) throw updateError;
+        return res.status(200).json({ success: true, data: updatedCategory });
+
+      case 'DELETE':
+        if (!checkAdminAuth(req)) {
+          return res.status(401).json({ success: false, error: '관리자 권한이 필요합니다.' });
+        }
+
+        if (!id) {
+          return res.status(400).json({ success: false, error: 'ID가 필요합니다.' });
+        }
+
+        const { error: deleteError } = await supabase
+          .from('categories')
+          .delete()
+          .eq('id', id);
+
+        if (deleteError) throw deleteError;
+        return res.status(200).json({ success: true, message: '카테고리가 삭제되었습니다.' });
+
+      default:
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
+  } catch (error) {
+    console.error('카테고리 API 오류:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || '서버 오류가 발생했습니다.'
+    });
+  }
+}
+
+// ==================== 썸네일 관련 함수들 ====================
+async function handleThumbnails(req, res, id, category_id) {
+  try {
+    switch (req.method) {
+      case 'GET':
+        if (id) {
+          const { data, error } = await supabase
+            .from('thumbnails')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+          if (error) throw error;
+          return res.status(200).json({ success: true, data });
+        } else if (category_id) {
+          const { data, error } = await supabase
+            .from('thumbnails')
+            .select('*')
+            .eq('category_id', category_id)
+            .order('sort_order', { ascending: true });
+
+          if (error) throw error;
+          return res.status(200).json({ success: true, data: data || [] });
+        } else {
+          const { data, error } = await supabase
+            .from('thumbnails')
+            .select('*')
+            .order('sort_order', { ascending: true });
+
+          if (error) throw error;
+          return res.status(200).json({ success: true, data: data || [] });
+        }
+
+      case 'POST':
+        if (!checkAdminAuth(req)) {
+          return res.status(401).json({ success: false, error: '관리자 권한이 필요합니다.' });
+        }
+
+        const { data: newThumbnail, error: createError } = await supabase
+          .from('thumbnails')
+          .insert([req.body])
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        return res.status(201).json({ success: true, data: newThumbnail });
+
+      case 'PUT':
+        if (!checkAdminAuth(req)) {
+          return res.status(401).json({ success: false, error: '관리자 권한이 필요합니다.' });
+        }
+
+        if (!id) {
+          return res.status(400).json({ success: false, error: 'ID가 필요합니다.' });
+        }
+
+        const { data: updatedThumbnail, error: updateError } = await supabase
+          .from('thumbnails')
+          .update(req.body)
+          .eq('id', id)
+          .select()
+          .single();
+
+        if (updateError) throw updateError;
+        return res.status(200).json({ success: true, data: updatedThumbnail });
+
+      case 'DELETE':
+        if (!checkAdminAuth(req)) {
+          return res.status(401).json({ success: false, error: '관리자 권한이 필요합니다.' });
+        }
+
+        if (!id) {
+          return res.status(400).json({ success: false, error: 'ID가 필요합니다.' });
+        }
+
+        const { error: deleteError } = await supabase
+          .from('thumbnails')
+          .delete()
+          .eq('id', id);
+
+        if (deleteError) throw deleteError;
+        return res.status(200).json({ success: true, message: '썸네일이 삭제되었습니다.' });
+
+      default:
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
+  } catch (error) {
+    console.error('썸네일 API 오류:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || '서버 오류가 발생했습니다.'
+    });
+  }
+}
+
+// ==================== 상세페이지 관련 함수들 ====================
+async function handleDetailPages(req, res, id, thumbnail_id) {
+  try {
+    switch (req.method) {
+      case 'GET':
+        if (id) {
+          const { data, error } = await supabase
+            .from('detail_pages')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+          if (error) throw error;
+          return res.status(200).json({ success: true, data });
+        } else if (thumbnail_id) {
+          const { data, error } = await supabase
+            .from('detail_pages')
+            .select('*')
+            .eq('thumbnail_id', thumbnail_id)
+            .single();
+
+          if (error) throw error;
+          return res.status(200).json({ success: true, data });
+        } else {
+          const { data, error } = await supabase
+            .from('detail_pages')
+            .select('*');
+
+          if (error) throw error;
+          return res.status(200).json({ success: true, data: data || [] });
+        }
+
+      case 'POST':
+        if (!checkAdminAuth(req)) {
+          return res.status(401).json({ success: false, error: '관리자 권한이 필요합니다.' });
+        }
+
+        const { data: newDetailPage, error: createError } = await supabase
+          .from('detail_pages')
+          .insert([req.body])
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        return res.status(201).json({ success: true, data: newDetailPage });
+
+      case 'PUT':
+        if (!checkAdminAuth(req)) {
+          return res.status(401).json({ success: false, error: '관리자 권한이 필요합니다.' });
+        }
+
+        if (!id) {
+          return res.status(400).json({ success: false, error: 'ID가 필요합니다.' });
+        }
+
+        const { data: updatedDetailPage, error: updateError } = await supabase
+          .from('detail_pages')
+          .update(req.body)
+          .eq('id', id)
+          .select()
+          .single();
+
+        if (updateError) throw updateError;
+        return res.status(200).json({ success: true, data: updatedDetailPage });
+
+      case 'DELETE':
+        if (!checkAdminAuth(req)) {
+          return res.status(401).json({ success: false, error: '관리자 권한이 필요합니다.' });
+        }
+
+        if (!id) {
+          return res.status(400).json({ success: false, error: 'ID가 필요합니다.' });
+        }
+
+        const { error: deleteError } = await supabase
+          .from('detail_pages')
+          .delete()
+          .eq('id', id);
+
+        if (deleteError) throw deleteError;
+        return res.status(200).json({ success: true, message: '상세페이지가 삭제되었습니다.' });
+
+      default:
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
+  } catch (error) {
+    console.error('상세페이지 API 오류:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || '서버 오류가 발생했습니다.'
+    });
+  }
+}
+
+// ==================== 가격 옵션 관련 함수들 ====================
+async function handlePrices(req, res, id, category_id) {
+  try {
+    switch (req.method) {
+      case 'GET':
+        if (id) {
+          const { data, error } = await supabase
+            .from('package_prices')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+          if (error) throw error;
+          return res.status(200).json({ success: true, data });
+        } else if (category_id) {
+          const { data, error } = await supabase
+            .from('package_prices')
+            .select('*')
+            .eq('category_id', category_id)
+            .order('sort_order', { ascending: true });
+
+          if (error) throw error;
+          return res.status(200).json({ success: true, data: data || [] });
+        } else {
+          const { data, error } = await supabase
+            .from('package_prices')
+            .select('*')
+            .order('sort_order', { ascending: true });
+
+          if (error) throw error;
+          return res.status(200).json({ success: true, data: data || [] });
+        }
+
+      case 'POST':
+        if (!checkAdminAuth(req)) {
+          return res.status(401).json({ success: false, error: '관리자 권한이 필요합니다.' });
+        }
+
+        const { data: newPrice, error: createError } = await supabase
+          .from('package_prices')
+          .insert([req.body])
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        return res.status(201).json({ success: true, data: newPrice });
+
+      case 'PUT':
+        if (!checkAdminAuth(req)) {
+          return res.status(401).json({ success: false, error: '관리자 권한이 필요합니다.' });
+        }
+
+        if (!id) {
+          return res.status(400).json({ success: false, error: 'ID가 필요합니다.' });
+        }
+
+        const { data: updatedPrice, error: updateError } = await supabase
+          .from('package_prices')
+          .update(req.body)
+          .eq('id', id)
+          .select()
+          .single();
+
+        if (updateError) throw updateError;
+        return res.status(200).json({ success: true, data: updatedPrice });
+
+      case 'DELETE':
+        if (!checkAdminAuth(req)) {
+          return res.status(401).json({ success: false, error: '관리자 권한이 필요합니다.' });
+        }
+
+        if (!id) {
+          return res.status(400).json({ success: false, error: 'ID가 필요합니다.' });
+        }
+
+        const { error: deleteError } = await supabase
+          .from('package_prices')
+          .delete()
+          .eq('id', id);
+
+        if (deleteError) throw deleteError;
+        return res.status(200).json({ success: true, message: '가격 옵션이 삭제되었습니다.' });
+
+      default:
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
+  } catch (error) {
+    console.error('가격 옵션 API 오류:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || '서버 오류가 발생했습니다.'
+    });
+  }
 }
