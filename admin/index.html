@@ -851,6 +851,132 @@
 
             <!-- 패키지 목록 (숨김 처리) -->
             <div id="packagesList" style="display: none;"></div>
+        </div>
+
+        <!-- ==================== 모달 폼들 ==================== -->
+
+        <!-- 카테고리 모달 -->
+        <div id="categoryModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000;">
+            <div style="background: white; max-width: 500px; margin: 100px auto; padding: 30px; border-radius: 12px;">
+                <h3 id="categoryModalTitle">새 카테고리</h3>
+                <form onsubmit="saveCategory(event)">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">카테고리명 *</label>
+                        <input type="text" id="categoryName" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">슬러그 *</label>
+                        <input type="text" id="categorySlug" required pattern="[a-z0-9-]+" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                        <small style="color: #666;">영문 소문자, 숫자, 하이픈만 사용</small>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">설명</label>
+                        <textarea id="categoryDescription" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;"></textarea>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: flex; align-items: center;">
+                            <input type="checkbox" id="categoryActive" checked style="margin-right: 8px;">
+                            활성화
+                        </label>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button type="button" onclick="closeCategoryModal()" style="padding: 10px 20px; background: #f5f5f5; border: none; border-radius: 6px; cursor: pointer;">취소</button>
+                        <button type="submit" style="padding: 10px 20px; background: #0071e3; color: white; border: none; border-radius: 6px; cursor: pointer;">저장</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 썸네일 모달 -->
+        <div id="thumbnailModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000;">
+            <div style="background: white; max-width: 600px; margin: 80px auto; padding: 30px; border-radius: 12px; max-height: 80vh; overflow-y: auto;">
+                <h3 id="thumbnailModalTitle">새 썸네일</h3>
+                <form onsubmit="saveThumbnail(event)">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">제목 *</label>
+                        <input type="text" id="thumbnailTitle" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">부제목</label>
+                        <input type="text" id="thumbnailSubtitle" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">설명</label>
+                        <textarea id="thumbnailDescription" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;"></textarea>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">썸네일 이미지 URL</label>
+                        <input type="text" id="thumbnailUrl" placeholder="https://..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">텍스트 색상</label>
+                        <input type="color" id="thumbnailTextColor" value="#333333" style="width: 100%; height: 40px; border: 1px solid #ddd; border-radius: 6px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">텍스트 크기</label>
+                        <select id="thumbnailTextSize" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                            <option value="14px">14px</option>
+                            <option value="16px" selected>16px</option>
+                            <option value="18px">18px</option>
+                            <option value="20px">20px</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: flex; align-items: center;">
+                            <input type="checkbox" id="thumbnailActive" checked style="margin-right: 8px;">
+                            활성화
+                        </label>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button type="button" onclick="closeThumbnailModal()" style="padding: 10px 20px; background: #f5f5f5; border: none; border-radius: 6px; cursor: pointer;">취소</button>
+                        <button type="submit" style="padding: 10px 20px; background: #0071e3; color: white; border: none; border-radius: 6px; cursor: pointer;">저장</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 가격 모달 -->
+        <div id="priceModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000;">
+            <div style="background: white; max-width: 500px; margin: 100px auto; padding: 30px; border-radius: 12px;">
+                <h3 id="priceModalTitle">새 가격</h3>
+                <form onsubmit="savePrice(event)">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">패키지명 *</label>
+                        <input type="text" id="priceName" required placeholder="예: 10명 패키지" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">인원수 *</label>
+                        <input type="number" id="pricePeople" required min="1" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">정가</label>
+                        <input type="number" id="priceOriginal" min="0" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">판매가 *</label>
+                        <input type="number" id="priceSale" required min="0" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">할인율 (%)</label>
+                        <input type="number" id="priceDiscount" min="0" max="100" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">배지 텍스트</label>
+                        <input type="text" id="priceBadge" placeholder="예: 인기" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: flex; align-items: center;">
+                            <input type="checkbox" id="priceActive" checked style="margin-right: 8px;">
+                            활성화
+                        </label>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button type="button" onclick="closePriceModal()" style="padding: 10px 20px; background: #f5f5f5; border: none; border-radius: 6px; cursor: pointer;">취소</button>
+                        <button type="submit" style="padding: 10px 20px; background: #0071e3; color: white; border: none; border-radius: 6px; cursor: pointer;">저장</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
             <!-- 패키지 등록/수정 폼 (모달) -->
             <div id="packageFormModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000;">
@@ -2098,6 +2224,10 @@
         let currentDetailPageId = null;
         let currentEditId = null;
 
+        // 데이터 캐시
+        let categoriesCache = [];
+        let thumbnailsCache = [];
+
         // ==================== 1단계: 카테고리 관리 ====================
 
         // 카테고리 목록 보기
@@ -2127,8 +2257,12 @@
 
                 if (!data.success || data.data.length === 0) {
                     categoriesList.innerHTML = '<div style="text-align: center; padding: 40px; color: #999;">등록된 카테고리가 없습니다.</div>';
+                    categoriesCache = [];
                     return;
                 }
+
+                // 캐시 업데이트
+                categoriesCache = data.data;
 
                 categoriesList.innerHTML = '';
                 data.data.forEach(category => {
@@ -2185,8 +2319,12 @@
 
                 if (!data.success || data.data.length === 0) {
                     thumbnailsList.innerHTML = '<div style="text-align: center; padding: 40px; color: #999;">등록된 썸네일이 없습니다.</div>';
+                    thumbnailsCache = [];
                     return;
                 }
+
+                // 캐시 업데이트
+                thumbnailsCache = data.data;
 
                 thumbnailsList.innerHTML = '';
                 data.data.forEach(thumbnail => {
@@ -2438,6 +2576,451 @@
                 console.error('가격 로드 오류:', error);
                 pricesList.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #ff4444;">가격을 불러오는데 실패했습니다.</td></tr>';
             }
+        }
+
+        // ==================== CRUD 함수 구현 ====================
+
+        // ========== 카테고리 CRUD ==========
+
+        // 카테고리 모달 표시
+        function showCategoryModal(categoryId = null) {
+            const modal = document.getElementById('categoryModal');
+            const form = document.getElementById('categoryForm');
+            const title = document.getElementById('categoryModalTitle');
+
+            if (categoryId) {
+                // 수정 모드
+                title.textContent = '카테고리 수정';
+                // TODO: 카테고리 데이터 로드
+                const category = categoriesCache.find(c => c.id === categoryId);
+                if (category) {
+                    document.getElementById('categoryName').value = category.name;
+                    document.getElementById('categorySlug').value = category.slug;
+                    document.getElementById('categoryDescription').value = category.description || '';
+                    document.getElementById('categoryActive').checked = category.is_active;
+                    document.getElementById('categorySort').value = category.sort_order || 0;
+                }
+                form.onsubmit = (e) => updateCategory(e, categoryId);
+            } else {
+                // 등록 모드
+                title.textContent = '새 카테고리 등록';
+                form.reset();
+                document.getElementById('categoryActive').checked = true;
+                form.onsubmit = (e) => saveCategory(e);
+            }
+
+            modal.style.display = 'block';
+        }
+
+        // 카테고리 저장
+        async function saveCategory(event) {
+            event.preventDefault();
+
+            const categoryData = {
+                name: document.getElementById('categoryName').value,
+                slug: document.getElementById('categorySlug').value,
+                description: document.getElementById('categoryDescription').value,
+                is_active: document.getElementById('categoryActive').checked,
+                sort_order: parseInt(document.getElementById('categorySort').value) || 0
+            };
+
+            try {
+                const response = await fetch('/api/packages?action=categories', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(categoryData)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('카테고리가 등록되었습니다.');
+                    closeCategoryModal();
+                    loadCategories();
+                } else {
+                    alert('카테고리 등록에 실패했습니다: ' + (result.error || ''));
+                }
+            } catch (error) {
+                console.error('카테고리 저장 오류:', error);
+                alert('카테고리 저장 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 카테고리 수정
+        async function updateCategory(event, categoryId) {
+            event.preventDefault();
+
+            const categoryData = {
+                name: document.getElementById('categoryName').value,
+                slug: document.getElementById('categorySlug').value,
+                description: document.getElementById('categoryDescription').value,
+                is_active: document.getElementById('categoryActive').checked,
+                sort_order: parseInt(document.getElementById('categorySort').value) || 0
+            };
+
+            try {
+                const response = await fetch(`/api/packages?action=categories&id=${categoryId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(categoryData)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('카테고리가 수정되었습니다.');
+                    closeCategoryModal();
+                    loadCategories();
+                } else {
+                    alert('카테고리 수정에 실패했습니다: ' + (result.error || ''));
+                }
+            } catch (error) {
+                console.error('카테고리 수정 오류:', error);
+                alert('카테고리 수정 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 카테고리 편집
+        function editCategory(categoryId) {
+            showCategoryModal(categoryId);
+        }
+
+        // 카테고리 삭제
+        async function deleteCategory(categoryId) {
+            if (!confirm('이 카테고리를 삭제하시겠습니까? 하위 썸네일과 가격도 모두 삭제됩니다.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/packages?action=categories&id=${categoryId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('카테고리가 삭제되었습니다.');
+                    loadCategories();
+                } else {
+                    alert('카테고리 삭제에 실패했습니다: ' + (result.error || ''));
+                }
+            } catch (error) {
+                console.error('카테고리 삭제 오류:', error);
+                alert('카테고리 삭제 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 카테고리 모달 닫기
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').style.display = 'none';
+            document.getElementById('categoryForm').reset();
+        }
+
+        // ========== 썸네일 CRUD ==========
+
+        // 썸네일 모달 표시
+        function showThumbnailModal(thumbnailId = null) {
+            const modal = document.getElementById('thumbnailModal');
+            const form = document.getElementById('thumbnailForm');
+            const title = document.getElementById('thumbnailModalTitle');
+
+            if (thumbnailId) {
+                // 수정 모드
+                title.textContent = '썸네일 수정';
+                const thumbnail = thumbnailsCache.find(t => t.id === thumbnailId);
+                if (thumbnail) {
+                    document.getElementById('thumbnailTitle').value = thumbnail.title;
+                    document.getElementById('thumbnailSubtitle').value = thumbnail.subtitle || '';
+                    document.getElementById('thumbnailDescription').value = thumbnail.description || '';
+                    document.getElementById('thumbnailImage').value = thumbnail.thumbnail_url || '';
+                    document.getElementById('thumbnailTextColor').value = thumbnail.text_color || '#000000';
+                    document.getElementById('thumbnailTextSize').value = thumbnail.text_size || 'medium';
+                    document.getElementById('thumbnailActive').checked = thumbnail.is_active;
+                }
+                form.onsubmit = (e) => updateThumbnail(e, thumbnailId);
+            } else {
+                // 등록 모드
+                title.textContent = '새 썸네일 등록';
+                form.reset();
+                document.getElementById('thumbnailActive').checked = true;
+                form.onsubmit = (e) => saveThumbnail(e);
+            }
+
+            modal.style.display = 'block';
+        }
+
+        // 썸네일 저장
+        async function saveThumbnail(event) {
+            event.preventDefault();
+
+            const thumbnailData = {
+                category_id: currentCategoryId,
+                title: document.getElementById('thumbnailTitle').value,
+                subtitle: document.getElementById('thumbnailSubtitle').value,
+                description: document.getElementById('thumbnailDescription').value,
+                thumbnail_url: document.getElementById('thumbnailImage').value,
+                text_color: document.getElementById('thumbnailTextColor').value,
+                text_size: document.getElementById('thumbnailTextSize').value,
+                is_active: document.getElementById('thumbnailActive').checked
+            };
+
+            try {
+                const response = await fetch('/api/packages?action=thumbnails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(thumbnailData)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('썸네일이 등록되었습니다.');
+                    closeThumbnailModal();
+                    loadThumbnails(currentCategoryId);
+                } else {
+                    alert('썸네일 등록에 실패했습니다: ' + (result.error || ''));
+                }
+            } catch (error) {
+                console.error('썸네일 저장 오류:', error);
+                alert('썸네일 저장 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 썸네일 수정
+        async function updateThumbnail(event, thumbnailId) {
+            event.preventDefault();
+
+            const thumbnailData = {
+                title: document.getElementById('thumbnailTitle').value,
+                subtitle: document.getElementById('thumbnailSubtitle').value,
+                description: document.getElementById('thumbnailDescription').value,
+                thumbnail_url: document.getElementById('thumbnailImage').value,
+                text_color: document.getElementById('thumbnailTextColor').value,
+                text_size: document.getElementById('thumbnailTextSize').value,
+                is_active: document.getElementById('thumbnailActive').checked
+            };
+
+            try {
+                const response = await fetch(`/api/packages?action=thumbnails&id=${thumbnailId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(thumbnailData)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('썸네일이 수정되었습니다.');
+                    closeThumbnailModal();
+                    loadThumbnails(currentCategoryId);
+                } else {
+                    alert('썸네일 수정에 실패했습니다: ' + (result.error || ''));
+                }
+            } catch (error) {
+                console.error('썸네일 수정 오류:', error);
+                alert('썸네일 수정 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 썸네일 편집
+        function editThumbnail(thumbnailId) {
+            showThumbnailModal(thumbnailId);
+        }
+
+        // 썸네일 삭제
+        async function deleteThumbnail(thumbnailId) {
+            if (!confirm('이 썸네일을 삭제하시겠습니까?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/packages?action=thumbnails&id=${thumbnailId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('썸네일이 삭제되었습니다.');
+                    loadThumbnails(currentCategoryId);
+                } else {
+                    alert('썸네일 삭제에 실패했습니다: ' + (result.error || ''));
+                }
+            } catch (error) {
+                console.error('썸네일 삭제 오류:', error);
+                alert('썸네일 삭제 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 썸네일 모달 닫기
+        function closeThumbnailModal() {
+            document.getElementById('thumbnailModal').style.display = 'none';
+            document.getElementById('thumbnailForm').reset();
+        }
+
+        // ========== 가격 CRUD ==========
+
+        // 가격 모달 표시
+        function showPriceModal(priceId = null) {
+            const modal = document.getElementById('priceModal');
+            const form = document.getElementById('priceForm');
+            const title = document.getElementById('priceModalTitle');
+
+            if (priceId) {
+                // 수정 모드
+                title.textContent = '가격 수정';
+                // TODO: 가격 데이터 로드
+                form.onsubmit = (e) => updatePrice(e, priceId);
+            } else {
+                // 등록 모드
+                title.textContent = '새 가격 등록';
+                form.reset();
+                document.getElementById('priceActive').checked = true;
+                form.onsubmit = (e) => savePrice(e);
+            }
+
+            modal.style.display = 'block';
+        }
+
+        // 가격 저장
+        async function savePrice(event) {
+            event.preventDefault();
+
+            const priceData = {
+                category_id: currentCategoryId,
+                people: parseInt(document.getElementById('pricePeople').value),
+                original_price: parseInt(document.getElementById('priceOriginal').value) || null,
+                sale_price: parseInt(document.getElementById('priceSale').value),
+                discount_rate: parseInt(document.getElementById('priceDiscount').value) || 0,
+                is_active: document.getElementById('priceActive').checked
+            };
+
+            try {
+                const response = await fetch('/api/packages?action=prices', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(priceData)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('가격이 등록되었습니다.');
+                    closePriceModal();
+                    loadPrices(currentCategoryId);
+                } else {
+                    alert('가격 등록에 실패했습니다: ' + (result.error || ''));
+                }
+            } catch (error) {
+                console.error('가격 저장 오류:', error);
+                alert('가격 저장 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 가격 수정
+        async function updatePrice(event, priceId) {
+            event.preventDefault();
+
+            const priceData = {
+                people: parseInt(document.getElementById('pricePeople').value),
+                original_price: parseInt(document.getElementById('priceOriginal').value) || null,
+                sale_price: parseInt(document.getElementById('priceSale').value),
+                discount_rate: parseInt(document.getElementById('priceDiscount').value) || 0,
+                is_active: document.getElementById('priceActive').checked
+            };
+
+            try {
+                const response = await fetch(`/api/packages?action=prices&id=${priceId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(priceData)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('가격이 수정되었습니다.');
+                    closePriceModal();
+                    loadPrices(currentCategoryId);
+                } else {
+                    alert('가격 수정에 실패했습니다: ' + (result.error || ''));
+                }
+            } catch (error) {
+                console.error('가격 수정 오류:', error);
+                alert('가격 수정 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 가격 편집
+        async function editPrice(priceId) {
+            // 먼저 가격 데이터 로드
+            try {
+                const response = await fetch(`/api/packages?action=prices&id=${priceId}`);
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    const price = result.data;
+                    document.getElementById('pricePeople').value = price.people;
+                    document.getElementById('priceOriginal').value = price.original_price || '';
+                    document.getElementById('priceSale').value = price.sale_price;
+                    document.getElementById('priceDiscount').value = price.discount_rate || 0;
+                    document.getElementById('priceActive').checked = price.is_active;
+
+                    showPriceModal(priceId);
+                }
+            } catch (error) {
+                console.error('가격 데이터 로드 오류:', error);
+                alert('가격 정보를 불러오는데 실패했습니다.');
+            }
+        }
+
+        // 가격 삭제
+        async function deletePrice(priceId) {
+            if (!confirm('이 가격을 삭제하시겠습니까?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/packages?action=prices&id=${priceId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('가격이 삭제되었습니다.');
+                    loadPrices(currentCategoryId);
+                } else {
+                    alert('가격 삭제에 실패했습니다: ' + (result.error || ''));
+                }
+            } catch (error) {
+                console.error('가격 삭제 오류:', error);
+                alert('가격 삭제 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 가격 모달 닫기
+        function closePriceModal() {
+            document.getElementById('priceModal').style.display = 'none';
+            document.getElementById('priceForm').reset();
         }
 
         // 초기 로드 시 카테고리 표시
