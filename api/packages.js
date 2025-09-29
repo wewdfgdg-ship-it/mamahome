@@ -20,13 +20,13 @@ export default async function handler(req, res) {
 
   // action 파라미터로 API 라우팅
   if (action === 'categories') {
-    return handleCategories(req, res, id);
+    return await handleCategories(req, res, id);
   } else if (action === 'thumbnails') {
-    return handleThumbnails(req, res, id, category_id);
+    return await handleThumbnails(req, res, id, category_id);
   } else if (action === 'detail-pages') {
-    return handleDetailPages(req, res, id, req.query.thumbnail_id);
+    return await handleDetailPages(req, res, id, req.query.thumbnail_id);
   } else if (action === 'prices') {
-    return handlePrices(req, res, id, category_id);
+    return await handlePrices(req, res, id, category_id);
   }
 
   try {
@@ -523,13 +523,18 @@ async function handleThumbnails(req, res, id, category_id) {
           return res.status(401).json({ success: false, error: '관리자 권한이 필요합니다.' });
         }
 
+        console.log('썸네일 생성 요청 데이터:', req.body);
+
         const { data: newThumbnail, error: createError } = await supabase
           .from('thumbnails')
           .insert([req.body])
           .select()
           .single();
 
-        if (createError) throw createError;
+        if (createError) {
+          console.error('썸네일 생성 오류 상세:', createError);
+          throw createError;
+        }
         return res.status(201).json({ success: true, data: newThumbnail });
 
       case 'PUT':
