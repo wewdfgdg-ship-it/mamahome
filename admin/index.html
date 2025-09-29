@@ -878,7 +878,10 @@
             <div id="priceManagement" style="display: none;">
                 <div class="section-header">
                     <h2 class="section-title">가격 패키지 관리</h2>
-                    <button class="refresh-btn" onclick="showPriceModal()">+ 새 가격</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="refresh-btn" onclick="showPriceModal()">+ 새 가격</button>
+                        <button class="refresh-btn" style="background: #34c759;" onclick="syncAllPackages()">🔄 패키지 동기화</button>
+                    </div>
                 </div>
                 <div style="background: white; border-radius: 12px; overflow: hidden; margin-top: 20px;">
                     <table style="width: 100%; border-collapse: collapse;">
@@ -3563,37 +3566,63 @@
             document.getElementById('priceForm').reset();
         }
 
+        // 모든 패키지 동기화 (수동 실행용)
+        async function syncAllPackages() {
+            if (!currentCategoryId) {
+                alert('먼저 카테고리를 선택해주세요.');
+                return;
+            }
+
+            if (confirm('현재 카테고리의 모든 데이터를 패키지로 동기화하시겠습니까?')) {
+                try {
+                    await syncPackageData(currentCategoryId);
+                    alert('패키지 동기화가 완료되었습니다. pricing.html 페이지에서 확인하세요.');
+                } catch (error) {
+                    alert('동기화 중 오류가 발생했습니다: ' + error.message);
+                }
+            }
+        }
+
         // 패키지 데이터 통합 및 packages 테이블 동기화
         async function syncPackageData(categoryId) {
+            console.log('=== 패키지 동기화 시작 ===');
+            console.log('카테고리 ID:', categoryId);
+
             try {
                 // 1. 카테고리 정보 가져오기
+                console.log('1. 카테고리 정보 가져오기...');
                 const categoryResponse = await fetch(`/api/packages?action=categories&id=${categoryId}`);
                 const categoryData = await categoryResponse.json();
 
                 if (!categoryData.success || !categoryData.data) {
                     console.error('카테고리 정보를 찾을 수 없습니다.');
-                    return;
+                    throw new Error('카테고리 정보를 찾을 수 없습니다.');
                 }
 
                 const category = categoryData.data;
+                console.log('카테고리:', category);
 
                 // 2. 썸네일 정보 가져오기
+                console.log('2. 썸네일 정보 가져오기...');
                 const thumbnailsResponse = await fetch(`/api/packages?action=thumbnails&category_id=${categoryId}`);
                 const thumbnailsData = await thumbnailsResponse.json();
 
                 if (!thumbnailsData.success || !thumbnailsData.data || thumbnailsData.data.length === 0) {
                     console.log('썸네일 정보가 없습니다.');
-                    return;
+                    throw new Error('썸네일 정보가 없습니다. 먼저 썸네일을 등록해주세요.');
                 }
+                console.log('썸네일 개수:', thumbnailsData.data.length);
 
                 // 3. 가격 정보 가져오기
+                console.log('3. 가격 정보 가져오기...');
                 const pricesResponse = await fetch(`/api/packages?action=prices&category_id=${categoryId}`);
                 const pricesData = await pricesResponse.json();
 
                 if (!pricesData.success || !pricesData.data || pricesData.data.length === 0) {
                     console.log('가격 정보가 없습니다.');
-                    return;
+                    throw new Error('가격 정보가 없습니다. 먼저 가격을 등록해주세요.');
                 }
+                console.log('가격 옵션 개수:', pricesData.data.length);
 
                 // 4. 각 썸네일에 대해 packages 테이블에 데이터 생성/업데이트
                 for (const thumbnail of thumbnailsData.data) {
