@@ -3435,6 +3435,7 @@
 
             const priceData = {
                 category_id: currentCategoryId,
+                name: document.getElementById('priceName').value,
                 people: parseInt(document.getElementById('pricePeople').value),
                 original_price: parseInt(document.getElementById('priceOriginal').value) || null,
                 sale_price: parseInt(document.getElementById('priceSale').value),
@@ -3457,6 +3458,9 @@
                     alert('가격이 등록되었습니다.');
                     closePriceModal();
                     loadPrices(currentCategoryId);
+
+                    // 패키지 데이터 통합 및 저장
+                    await syncPackageData(currentCategoryId);
                 } else {
                     alert('가격 등록에 실패했습니다: ' + (result.error || ''));
                 }
@@ -3471,6 +3475,7 @@
             event.preventDefault();
 
             const priceData = {
+                name: document.getElementById('priceName').value,
                 people: parseInt(document.getElementById('pricePeople').value),
                 original_price: parseInt(document.getElementById('priceOriginal').value) || null,
                 sale_price: parseInt(document.getElementById('priceSale').value),
@@ -3556,6 +3561,103 @@
         function closePriceModal() {
             document.getElementById('priceModal').style.display = 'none';
             document.getElementById('priceForm').reset();
+        }
+
+        // 패키지 데이터 통합 및 packages 테이블 동기화
+        async function syncPackageData(categoryId) {
+            try {
+                // 1. 카테고리 정보 가져오기
+                const categoryResponse = await fetch(`/api/packages?action=categories&id=${categoryId}`);
+                const categoryData = await categoryResponse.json();
+
+                if (!categoryData.success || !categoryData.data) {
+                    console.error('카테고리 정보를 찾을 수 없습니다.');
+                    return;
+                }
+
+                const category = categoryData.data;
+
+                // 2. 썸네일 정보 가져오기
+                const thumbnailsResponse = await fetch(`/api/packages?action=thumbnails&category_id=${categoryId}`);
+                const thumbnailsData = await thumbnailsResponse.json();
+
+                if (!thumbnailsData.success || !thumbnailsData.data || thumbnailsData.data.length === 0) {
+                    console.log('썸네일 정보가 없습니다.');
+                    return;
+                }
+
+                // 3. 가격 정보 가져오기
+                const pricesResponse = await fetch(`/api/packages?action=prices&category_id=${categoryId}`);
+                const pricesData = await pricesResponse.json();
+
+                if (!pricesData.success || !pricesData.data || pricesData.data.length === 0) {
+                    console.log('가격 정보가 없습니다.');
+                    return;
+                }
+
+                // 4. 각 썸네일에 대해 packages 테이블에 데이터 생성/업데이트
+                for (const thumbnail of thumbnailsData.data) {
+                    // 상세페이지 정보 가져오기 (있으면)
+                    let detailContent = '';
+                    let detailImages = [];
+
+                    try {
+                        const detailResponse = await fetch(`/api/packages?action=detail-pages&thumbnail_id=${thumbnail.id}`);
+                        const detailData = await detailResponse.json();
+
+                        if (detailData.success && detailData.data) {
+                            detailContent = detailData.data.content || '';
+                            detailImages = detailData.data.images || [];
+                        }
+                    } catch (err) {
+                        console.log('상세페이지 정보 없음');
+                    }
+
+                    // 가격 옵션 형식 변환
+                    const pricingOptions = pricesData.data.map(price => ({
+                        people: price.people,
+                        original_price: price.original_price,
+                        sale_price: price.sale_price,
+                        discount_rate: price.discount_rate
+                    }));
+
+                    // packages 테이블용 데이터 구성
+                    const packageData = {
+                        name: thumbnail.title || category.name,
+                        category: category.slug || 'general',
+                        pricing_options: pricingOptions,
+                        thumbnail_url: thumbnail.thumbnail_url || '',
+                        detail_images: detailImages,
+                        short_description: thumbnail.subtitle || '',
+                        full_description: detailContent || thumbnail.description || '',
+                        features: [], // 필요시 추가
+                        is_active: thumbnail.is_active && category.is_active,
+                        sort_order: thumbnail.sort_order || 0
+                    };
+
+                    // packages 테이블에 저장
+                    const packageResponse = await fetch('/api/packages', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify(packageData)
+                    });
+
+                    const packageResult = await packageResponse.json();
+                    if (packageResult.success) {
+                        console.log('패키지 동기화 성공:', thumbnail.title);
+                    } else {
+                        console.error('패키지 동기화 실패:', thumbnail.title, packageResult.error);
+                    }
+                }
+
+                console.log('모든 패키지 데이터 동기화 완료');
+
+            } catch (error) {
+                console.error('패키지 데이터 동기화 오류:', error);
+            }
         }
 
         // 초기 로드 시 카테고리 표시
