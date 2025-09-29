@@ -3373,7 +3373,7 @@
             };
 
             try {
-                const response = await fetch('/api/packages?action=thumbnails', {
+                const response = await fetch(`/api/packages?action=thumbnails&category_id=${currentCategoryId}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
