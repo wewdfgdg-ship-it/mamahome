@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 대시보드 - 미블(Mrble) 체험단 마케팅 서비스</title>
-    <!-- CSS 파일 연결 -->
-    <link rel="stylesheet" href="/admin/css/admin.css">
-
+    <!-- admin.css 제거 - 인라인 스타일로 처리 -->
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Apple Gothic', 'HY Gulim', MalgunGothic, sans-serif;
             background: rgb(245, 245, 247);
@@ -3944,11 +3948,5 @@
             </form>
         </div>
     </div>
-    <!-- JavaScript 파일 연결 -->
-    <script src="/admin/js/utils.js"></script>
-    <script src="/admin/js/modules/categories.js"></script>
-    <script src="/admin/js/modules/thumbnails.js"></script>
-    <script src="/admin/js/modules/upload.js"></script>
-    <script src="/admin/js/app.js"></script>
 </body>
 </html>

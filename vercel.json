@@ -32,6 +32,9 @@
     },
     "api/packages.js": {
       "maxDuration": 10
+    },
+    "api/upload-image.js": {
+      "maxDuration": 10
     }
   },
   "rewrites": [
