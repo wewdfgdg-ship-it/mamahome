@@ -1,5 +1,45 @@
 // ========== 이미지 업로드 모듈 ========== //
 
+// showMessage 함수 정의 (utils.js가 로드되지 않을 경우를 위한 폴백)
+if (typeof showMessage === 'undefined') {
+    window.showMessage = function(message, type = 'info') {
+        const messageDiv = document.createElement('div');
+        messageDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background: ${type === 'error' ? 'rgb(255, 59, 48)' : type === 'success' ? 'rgb(52, 199, 89)' : 'rgb(0, 113, 227)'};
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+        `;
+        messageDiv.textContent = message;
+        document.body.appendChild(messageDiv);
+
+        setTimeout(() => {
+            messageDiv.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => messageDiv.remove(), 300);
+        }, 3000);
+    };
+}
+
+// 썸네일 미리보기 업데이트
+function updateThumbnailPreview(imageUrl) {
+    const previewDiv = document.getElementById('thumbnailPreview');
+    if (previewDiv) {
+        previewDiv.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: 100%; object-fit: cover;">`;
+    }
+
+    // URL 필드도 업데이트
+    const urlInput = document.getElementById('thumbnailImage') || document.getElementById('thumbnailUrl');
+    if (urlInput) {
+        urlInput.value = imageUrl;
+    }
+}
+
 // 썸네일 이미지 드롭 처리
 function handleThumbnailDrop(event) {
     event.preventDefault();
@@ -182,6 +222,37 @@ async function uploadDetailImage(file) {
         console.error('업로드 오류:', error);
         showMessage('이미지 업로드 중 오류 발생', 'error');
     }
+}
+
+// 상세 페이지 이미지 URL 필드 추가
+function addDetailImageField(url = '') {
+    const imagesList = document.getElementById('detailImagesList');
+    if (!imagesList) {
+        console.error('detailImagesList element not found');
+        return;
+    }
+
+    const imageItem = document.createElement('div');
+    imageItem.style.cssText = 'display: flex; gap: 8px; margin-bottom: 8px;';
+    imageItem.innerHTML = `
+        <input type="text" value="${url}" placeholder="이미지 URL" style="
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid rgb(209, 209, 214);
+            border-radius: 6px;
+            font-size: 14px;
+        ">
+        <button type="button" onclick="this.parentElement.remove()" style="
+            padding: 8px 16px;
+            background: rgb(255, 59, 48);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        ">삭제</button>
+    `;
+    imagesList.appendChild(imageItem);
 }
 
 // 상세 이미지 미리보기 제거
