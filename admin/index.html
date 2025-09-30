@@ -3366,10 +3366,9 @@
                 title: document.getElementById('thumbnailTitle').value,
                 subtitle: document.getElementById('thumbnailSubtitle').value,
                 description: document.getElementById('thumbnailDescription').value,
-                thumbnail_url: document.getElementById('thumbnailUrl').value || currentImageUrl,
-                text_color: document.getElementById('thumbnailTextColor').value,
-                text_size: document.getElementById('thumbnailTextSize').value,
-                is_active: document.getElementById('thumbnailActive').checked
+                image_url: document.getElementById('thumbnailUrl').value || currentImageUrl,
+                is_active: document.getElementById('thumbnailActive').checked,
+                sort_order: 0
             };
 
             try {
@@ -3404,9 +3403,7 @@
                 title: document.getElementById('thumbnailTitle').value,
                 subtitle: document.getElementById('thumbnailSubtitle').value,
                 description: document.getElementById('thumbnailDescription').value,
-                thumbnail_url: document.getElementById('thumbnailImage').value,
-                text_color: document.getElementById('thumbnailTextColor').value,
-                text_size: document.getElementById('thumbnailTextSize').value,
+                image_url: document.getElementById('thumbnailUrl').value || currentImageUrl,
                 is_active: document.getElementById('thumbnailActive').checked
             };
 
@@ -3540,25 +3537,46 @@
         }
 
         // 이미지 파일 처리
-        function processImageFile(file) {
+        async function processImageFile(file) {
             // 파일 크기 체크 (5MB)
             if (file.size > 5 * 1024 * 1024) {
                 alert('파일 크기는 5MB 이하여야 합니다.');
                 return;
             }
 
-            // FileReader로 이미지 읽기
+            // 미리보기 표시 (일단 로컬 미리보기)
             const reader = new FileReader();
             reader.onload = function(e) {
-                const imageUrl = e.target.result;
-                displayImagePreview(imageUrl);
-                // 실제 업로드는 여기서 처리하거나,
-                // base64 데이터를 서버로 전송할 수 있습니다.
-                currentImageUrl = imageUrl;
-                // URL 입력 필드 비우기
-                document.getElementById('thumbnailUrl').value = '';
+                displayImagePreview(e.target.result);
             };
             reader.readAsDataURL(file);
+
+            // 서버에 실제 업로드
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const response = await fetch('/api/upload-image', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (result.success && result.url) {
+                    currentImageUrl = result.url;
+                    // URL 입력 필드 비우기
+                    document.getElementById('thumbnailUrl').value = '';
+                    console.log('이미지 업로드 성공:', result.url);
+                } else {
+                    alert('이미지 업로드에 실패했습니다: ' + (result.error || ''));
+                }
+            } catch (error) {
+                console.error('이미지 업로드 오류:', error);
+                alert('이미지 업로드 중 오류가 발생했습니다.');
+            }
         }
 
         // URL 입력 처리
