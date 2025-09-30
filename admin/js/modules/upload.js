@@ -300,7 +300,27 @@ function initUploadEvents() {
                 0% { transform: rotate(0deg); }
                 100% { transform: rotate(360deg); }
             }
+            @keyframes slideIn {
+                from { opacity: 0; transform: translateX(100%); }
+                to { opacity: 1; transform: translateX(0); }
+            }
+            @keyframes slideOut {
+                from { opacity: 1; transform: translateX(0); }
+                to { opacity: 0; transform: translateX(100%); }
+            }
         `;
         document.head.appendChild(style);
     }
 }
+
+// 전역 함수로 등록 (window 객체에 추가)
+window.handleThumbnailDrop = handleThumbnailDrop;
+window.handleThumbnailFileSelect = handleThumbnailFileSelect;
+window.uploadThumbnailImage = uploadThumbnailImage;
+window.updateThumbnailPreview = updateThumbnailPreview;
+window.handleDetailDrop = handleDetailDrop;
+window.handleDetailFileSelect = handleDetailFileSelect;
+window.uploadDetailImage = uploadDetailImage;
+window.addDetailImageField = addDetailImageField;
+window.removeDetailImage = removeDetailImage;
+window.initUploadEvents = initUploadEvents;

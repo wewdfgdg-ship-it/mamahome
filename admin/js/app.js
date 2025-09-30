@@ -264,20 +264,12 @@ async function loadDetailPage(thumbnailId) {
 
 // 상세 이미지 필드 추가
 function addDetailImage() {
-    addDetailImageField('');
-}
-
-function addDetailImageField(url) {
-    const imagesList = document.getElementById('detailImagesList');
-    const div = document.createElement('div');
-    div.style.cssText = 'display: flex; gap: 8px; margin-bottom: 8px;';
-    div.innerHTML = `
-        <input type="text" value="${url}" placeholder="이미지 URL"
-               style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
-        <button onclick="this.parentElement.remove()"
-                style="padding: 8px 12px; background: #ff4444; color: white; border: none; border-radius: 6px;">삭제</button>
-    `;
-    imagesList.appendChild(div);
+    // upload.js의 함수를 사용
+    if (typeof window.addDetailImageField === 'function') {
+        window.addDetailImageField('');
+    } else {
+        console.error('addDetailImageField 함수를 찾을 수 없습니다');
+    }
 }
 
 // 미리보기 업데이트
