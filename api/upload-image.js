@@ -85,18 +85,25 @@ export default async function handler(req, res) {
     if (error) {
       console.error('Supabase 업로드 오류:', error);
 
-      // 버킷이 없으면 생성
-      if (error.message.includes('Bucket not found')) {
-        const { error: createError } = await supabase.storage.createBucket('images', {
-          public: true
+      // 버킷이 없으면 생성 시도
+      if (error.message && (error.message.includes('Bucket not found') || error.message.includes('not found'))) {
+        console.log('버킷이 없습니다. 생성을 시도합니다...');
+
+        const { data: createData, error: createError } = await supabase.storage.createBucket('images', {
+          public: true,
+          allowedMimeTypes: ['image/*'],
+          fileSizeLimit: 10485760 // 10MB
         });
 
         if (createError) {
           console.error('버킷 생성 실패:', createError);
-          return res.status(500).json({
-            error: '이미지 저장소를 생성할 수 없습니다.',
-            details: createError.message
-          });
+          // 이미 존재하는 경우 무시하고 계속 진행
+          if (!createError.message.includes('already exists')) {
+            return res.status(500).json({
+              error: '이미지 저장소를 생성할 수 없습니다.',
+              details: createError.message
+            });
+          }
         }
 
         // 다시 업로드 시도

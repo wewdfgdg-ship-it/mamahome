@@ -3194,6 +3194,17 @@
             });
         }
 
+        // 메시지 표시 함수
+        function showMessage(message, type) {
+            if (type === 'success') {
+                alert(message);
+            } else if (type === 'error') {
+                alert('오류: ' + message);
+            } else {
+                alert(message);
+            }
+        }
+
         // 상세 페이지 이미지 업로드
         async function uploadDetailImage(file) {
             // 미리보기 추가
