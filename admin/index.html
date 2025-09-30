@@ -2650,12 +2650,10 @@
 
             const detailData = {
                 thumbnail_id: currentThumbnailId,
-                content_html: document.getElementById('detailContent').value,
-                content_images: images,
-                text_styles: {
-                    color: document.getElementById('textColor').value,
-                    size: document.getElementById('textSize').value
-                }
+                content: document.getElementById('detailContent').value,
+                images: images,
+                features: [],
+                specifications: {}
             };
 
             try {
