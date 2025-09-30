@@ -2,8 +2,8 @@
 // /api/upload-image
 
 import { createClient } from '@supabase/supabase-js';
-import formidable from 'formidable';
-import fs from 'fs';
+import { IncomingForm } from 'formidable';
+import { promises as fs } from 'fs';
 import path from 'path';
 
 // Supabase 클라이언트 초기화
@@ -46,7 +46,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const form = new formidable.IncomingForm({
+    const form = new IncomingForm({
       keepExtensions: true,
       maxFileSize: 10 * 1024 * 1024, // 10MB
     });
@@ -65,7 +65,7 @@ export default async function handler(req, res) {
     }
 
     // 파일 읽기
-    const fileBuffer = fs.readFileSync(file.filepath || file.path);
+    const fileBuffer = await fs.readFile(file.filepath || file.path);
 
     // 파일 확장자 추출
     const fileExt = path.extname(file.originalFilename || file.name || 'image.jpg');
@@ -135,7 +135,12 @@ export default async function handler(req, res) {
 
     // 임시 파일 삭제
     if (file.filepath) {
-      fs.unlinkSync(file.filepath);
+      try {
+        await fs.unlink(file.filepath);
+      } catch (err) {
+        // 파일 삭제 실패는 무시
+        console.error('임시 파일 삭제 실패:', err);
+      }
     }
 
     return res.status(200).json({
