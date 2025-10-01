@@ -1,30 +1,31 @@
 // ========== 이미지 업로드 모듈 ========== //
 
-// showMessage 함수 정의 (utils.js가 로드되지 않을 경우를 위한 폴백)
-if (typeof showMessage === 'undefined') {
-    window.showMessage = function(message, type = 'info') {
-        const messageDiv = document.createElement('div');
-        messageDiv.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            background: ${type === 'error' ? 'rgb(255, 59, 48)' : type === 'success' ? 'rgb(52, 199, 89)' : 'rgb(0, 113, 227)'};
-            color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 9999;
-            animation: slideIn 0.3s ease;
-        `;
-        messageDiv.textContent = message;
-        document.body.appendChild(messageDiv);
+// showMessage 함수 정의 (전역으로 강제 정의)
+window.showMessage = window.showMessage || function(message, type = 'info') {
+    const messageDiv = document.createElement('div');
+    messageDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        background: ${type === 'error' ? 'rgb(255, 59, 48)' : type === 'success' ? 'rgb(52, 199, 89)' : 'rgb(0, 113, 227)'};
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 9999;
+        animation: slideIn 0.3s ease;
+    `;
+    messageDiv.textContent = message;
+    document.body.appendChild(messageDiv);
 
-        setTimeout(() => {
-            messageDiv.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => messageDiv.remove(), 300);
-        }, 3000);
-    };
-}
+    setTimeout(() => {
+        messageDiv.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => messageDiv.remove(), 300);
+    }, 3000);
+};
+
+// 전역 변수로도 등록
+const showMessage = window.showMessage;
 
 // 썸네일 미리보기 업데이트
 function updateThumbnailPreview(imageUrl) {
@@ -313,14 +314,19 @@ function initUploadEvents() {
     }
 }
 
-// 전역 함수로 등록 (window 객체에 추가)
-window.handleThumbnailDrop = handleThumbnailDrop;
-window.handleThumbnailFileSelect = handleThumbnailFileSelect;
-window.uploadThumbnailImage = uploadThumbnailImage;
-window.updateThumbnailPreview = updateThumbnailPreview;
-window.handleDetailDrop = handleDetailDrop;
-window.handleDetailFileSelect = handleDetailFileSelect;
-window.uploadDetailImage = uploadDetailImage;
-window.addDetailImageField = addDetailImageField;
-window.removeDetailImage = removeDetailImage;
-window.initUploadEvents = initUploadEvents;
+// 전역 함수로 등록 (window 객체에 추가) - 즉시 실행
+(function() {
+    window.handleThumbnailDrop = handleThumbnailDrop;
+    window.handleThumbnailFileSelect = handleThumbnailFileSelect;
+    window.uploadThumbnailImage = uploadThumbnailImage;
+    window.updateThumbnailPreview = updateThumbnailPreview;
+    window.handleDetailDrop = handleDetailDrop;
+    window.handleDetailFileSelect = handleDetailFileSelect;
+    window.uploadDetailImage = uploadDetailImage;
+    window.addDetailImageField = addDetailImageField;
+    window.removeDetailImage = removeDetailImage;
+    window.initUploadEvents = initUploadEvents;
+
+    // 콘솔에 로드 확인 메시지
+    console.log('Upload.js loaded - all functions registered globally');
+})();
