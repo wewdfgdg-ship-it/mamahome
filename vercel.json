@@ -2,6 +2,7 @@
   "buildCommand": "echo 'No build required'",
   "outputDirectory": ".",
   "framework": null,
+  "trailingSlash": false,
   "functions": {
     "api/orders.js": {
       "maxDuration": 10
