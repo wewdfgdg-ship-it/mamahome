@@ -51,6 +51,14 @@
       "destination": "/admin/index.html"
     },
     {
+      "source": "/admin/js/:path*",
+      "destination": "/admin/js/:path*"
+    },
+    {
+      "source": "/admin/css/:path*",
+      "destination": "/admin/css/:path*"
+    },
+    {
       "source": "/myinfo",
       "destination": "/pages/my-info.html"
     },
