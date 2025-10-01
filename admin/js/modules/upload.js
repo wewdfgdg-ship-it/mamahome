@@ -1,7 +1,15 @@
 // ========== 이미지 업로드 모듈 ========== //
 
-// showMessage 함수 정의 (전역으로 강제 정의)
-window.showMessage = window.showMessage || function(message, type = 'info') {
+// showMessage 함수 정의 - 간단한 버전
+function showMessage(message, type = 'info') {
+    // console로 로그 출력
+    if (type === 'error') {
+        console.error(message);
+    } else {
+        console.log(message);
+    }
+
+    // 화면에 메시지 표시
     const messageDiv = document.createElement('div');
     messageDiv.style.cssText = `
         position: fixed;
@@ -13,19 +21,14 @@ window.showMessage = window.showMessage || function(message, type = 'info') {
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         z-index: 9999;
-        animation: slideIn 0.3s ease;
     `;
     messageDiv.textContent = message;
     document.body.appendChild(messageDiv);
 
     setTimeout(() => {
-        messageDiv.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => messageDiv.remove(), 300);
+        messageDiv.remove();
     }, 3000);
-};
-
-// 전역 변수로도 등록
-const showMessage = window.showMessage;
+}
 
 // 썸네일 미리보기 업데이트
 function updateThumbnailPreview(imageUrl) {
